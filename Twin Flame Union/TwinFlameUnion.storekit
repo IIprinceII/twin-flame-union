@@ -1,0 +1,97 @@
+{
+  "identifier" : "8A3F1C2E-4D5B-6E7F-8A9B-0C1D2E3F4A5B",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Ask To Buy"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Billing Grace Period"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Billing Issue"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Revocation"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "20C1D2E3-F4A5-B6C7-D8E9-F0A1B2C3D4E5",
+      "localizations" : [
+
+      ],
+      "name" : "Twin Flame Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlimited AI coaching, all meditations, and full cosmic guidance every month.",
+              "displayName" : "Monthly Premium",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.twinflameunion.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly Premium",
+          "subscriptionGroupID" : "20C1D2E3-F4A5-B6C7-D8E9-F0A1B2C3D4E5",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "59.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "2B3C4D5E-6F7A-8B9C-0D1E-2F3A4B5C6D7E",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Everything in Premium, billed annually. Save over 50% vs monthly.",
+              "displayName" : "Annual Premium",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.twinflameunion.premium.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Annual Premium",
+          "subscriptionGroupID" : "20C1D2E3-F4A5-B6C7-D8E9-F0A1B2C3D4E5",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "formatVersion" : "2.0"
+  }
+}

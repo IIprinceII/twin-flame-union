@@ -10,14 +10,15 @@ import SwiftData
 
 @main
 struct Twin_Flame_UnionApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    @State private var showLaunch      = true
+    @State private var showOnboarding  = false
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([JournalEntry.self, DreamEntry.self, SynchronicityEntry.self])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(for: schema, configurations: [config])
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -25,7 +26,25 @@ struct Twin_Flame_UnionApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if showLaunch {
+                LaunchAnimationView {
+                    withAnimation(.easeInOut(duration: 0.5)) {
+                        showLaunch        = false
+                        showOnboarding    = !hasCompletedOnboarding
+                    }
+                }
+                .transition(.opacity)
+            } else if showOnboarding {
+                OnboardingView {
+                    withAnimation(.easeInOut(duration: 0.6)) {
+                        showOnboarding = false
+                    }
+                }
+                .transition(.opacity)
+            } else {
+                MainTabView()
+                    .transition(.opacity)
+            }
         }
         .modelContainer(sharedModelContainer)
     }
