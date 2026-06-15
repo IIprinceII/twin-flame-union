@@ -131,10 +131,6 @@ final class ToneGenerator {
 
         audioObservers = [interruption, routeChange]
     }
-
-    deinit {
-        audioObservers.forEach { NotificationCenter.default.removeObserver($0) }
-    }
 }
 
 // Plain reference holder for the realtime audio render thread. Only the audio
