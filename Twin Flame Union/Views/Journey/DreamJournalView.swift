@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import StoreKit
 
 // MARK: - Dream Journal List View
 
@@ -16,55 +17,113 @@ struct DreamJournalView: View {
 
     @State private var showEditor = false
     @State private var entryToEdit: DreamEntry? = nil
+    @State private var appeared = false
+    @State private var dreamToInterpret: DreamEntry? = nil
+    @State private var showPaywall = false
 
     var body: some View {
         ZStack {
             CosmicBackground()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 24) {
+            // Morpheus dream-blue atmospheric glow
+            RadialGradient(
+                colors: [Color(hex: "4A90D9").opacity(0.06), Color.clear],
+                center: .top,
+                startRadius: 0,
+                endRadius: 320
+            )
+            .ignoresSafeArea()
 
-                    // Header
-                    VStack(spacing: 8) {
-                        Text("Dream Journal")
-                            .font(AppFont.serifHeadline(30))
-                            .foregroundStyle(AppColors.cream)
-                        Text("Your nightly messages from the cosmos")
-                            .font(AppFont.body(14))
-                            .foregroundStyle(AppColors.lavender)
-                            .multilineTextAlignment(.center)
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+
+                    // ── Morpheus · Hypnos Deity Banner ──
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(RadialGradient(
+                                    colors: [Color(hex: "4A90D9").opacity(0.45), Color(hex: "4A90D9").opacity(0.08)],
+                                    center: .center, startRadius: 0, endRadius: 26
+                                ))
+                                .frame(width: 52, height: 52)
+                            Circle()
+                                .strokeBorder(Color(hex: "4A90D9").opacity(0.35), lineWidth: 1)
+                                .frame(width: 52, height: 52)
+                            Image(systemName: "moon.zzz.fill")
+                                .font(.system(size: 20))
+                                .foregroundStyle(Color(hex: "4A90D9"))
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("CHANNELLING")
+                                .font(.system(size: 9, weight: .semibold, design: .rounded))
+                                .tracking(2.5)
+                                .foregroundStyle(AppColors.lavender.opacity(0.5))
+                            Text("Morpheus · Hypnos")
+                                .font(AppFont.serifTitle(17))
+                                .foregroundStyle(Color(hex: "4A90D9"))
+                            Text("In dreams the veil lifts. What you saw is real.")
+                                .font(AppFont.caption(11))
+                                .foregroundStyle(AppColors.lavender.opacity(0.6))
+                                .italic()
+                        }
+                        Spacer()
                     }
-                    .padding(.top, 8)
                     .padding(.horizontal, 24)
+                    .padding(.top, 8)
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 10)
 
                     if entries.isEmpty {
-                        // Empty state
-                        VStack(spacing: 16) {
-                            Image(systemName: "moon.stars.fill")
-                                .font(.system(size: 52))
-                                .foregroundStyle(AppColors.gold.opacity(0.7))
-                                .padding(.top, 48)
+                        // ── Empty State ──
+                        VStack(spacing: 20) {
+                            ZStack {
+                                ForEach(0..<3, id: \.self) { i in
+                                    Circle()
+                                        .stroke(Color(hex: "4A90D9").opacity(0.1 - Double(i) * 0.025), lineWidth: 1)
+                                        .frame(width: CGFloat(80 + i * 26), height: CGFloat(80 + i * 26))
+                                }
+                                ZStack {
+                                    Circle()
+                                        .fill(RadialGradient(
+                                            colors: [Color(hex: "4A90D9").opacity(0.35), Color(hex: "4A90D9").opacity(0.05)],
+                                            center: .center, startRadius: 0, endRadius: 38
+                                        ))
+                                        .frame(width: 76, height: 76)
+                                    Image(systemName: "moon.stars.fill")
+                                        .font(.system(size: 32))
+                                        .foregroundStyle(Color(hex: "7BB8F0"))
+                                }
+                            }
+                            .frame(height: 150)
+                            .padding(.top, 48)
 
-                            Text("No dreams recorded yet")
-                                .font(AppFont.serifTitle(20))
-                                .foregroundStyle(AppColors.cream)
-
-                            Text("Your soul speaks through dreams.\nBegin capturing them.")
-                                .font(AppFont.body(14))
-                                .foregroundStyle(AppColors.lavender)
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(4)
+                            VStack(spacing: 8) {
+                                Text("No Dreams Recorded")
+                                    .font(AppFont.serifTitle(22))
+                                    .foregroundStyle(AppColors.cream)
+                                Text("Morpheus sends messages every night.\nBegin capturing what the veil reveals.")
+                                    .font(AppFont.body(14))
+                                    .foregroundStyle(AppColors.lavender)
+                                    .multilineTextAlignment(.center)
+                                    .lineSpacing(4)
+                            }
                         }
                         .padding(.horizontal, 32)
                         .padding(.bottom, 40)
                     } else {
-                        // Dream entry rows
+                        // ── Dream entry rows ──
                         LazyVStack(spacing: 12) {
                             ForEach(entries) { entry in
-                                DreamEntryRow(entry: entry) {
+                                DreamEntryRow(entry: entry, onTap: {
                                     entryToEdit = entry
                                     showEditor = true
-                                }
+                                }, onInterpret: {
+                                    if StoreService.shared.isPremium {
+                                        dreamToInterpret = entry
+                                    } else {
+                                        showPaywall = true
+                                    }
+                                })
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         modelContext.delete(entry)
@@ -72,6 +131,7 @@ struct DreamJournalView: View {
                                         Label("Delete", systemImage: "trash")
                                     }
                                 }
+                                .opacity(appeared ? 1 : 0)
                             }
                         }
                         .padding(.horizontal, 20)
@@ -79,6 +139,9 @@ struct DreamJournalView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.7)) { appeared = true }
         }
         .navigationTitle("Dream Journal")
         .navigationBarTitleDisplayMode(.large)
@@ -98,6 +161,12 @@ struct DreamJournalView: View {
         .sheet(isPresented: $showEditor) {
             DreamEntryEditor(entry: entryToEdit)
         }
+        .sheet(item: $dreamToInterpret) { dream in
+            DreamInterpretationView(entry: dream)
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
         .preferredColorScheme(.dark)
     }
 }
@@ -107,6 +176,8 @@ struct DreamJournalView: View {
 private struct DreamEntryRow: View {
     let entry: DreamEntry
     let onTap: () -> Void
+    let onInterpret: () -> Void
+    @State private var glow = false
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -116,29 +187,53 @@ private struct DreamEntryRow: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 12) {
 
                 // Date + title row
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(Self.dateFormatter.string(from: entry.createdAt))
-                        .font(AppFont.caption(12, weight: .semibold))
-                        .foregroundStyle(AppColors.lavender)
-                        .frame(minWidth: 36, alignment: .leading)
+                HStack(spacing: 10) {
+                    // Moon orb for date
+                    ZStack {
+                        Circle()
+                            .fill(Color(hex: "4A90D9").opacity(0.15))
+                            .frame(width: 38, height: 38)
+                        VStack(spacing: 0) {
+                            Text(Self.dateFormatter.string(from: entry.createdAt)
+                                    .components(separatedBy: " ").first ?? "")
+                                .font(.system(size: 8, weight: .semibold, design: .rounded))
+                                .foregroundStyle(Color(hex: "7BB8F0").opacity(0.8))
+                            Text(Self.dateFormatter.string(from: entry.createdAt)
+                                    .components(separatedBy: " ").last ?? "")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundStyle(Color(hex: "7BB8F0"))
+                        }
+                    }
 
-                    Text(entry.title.isEmpty ? "Untitled Dream" : entry.title)
-                        .font(AppFont.body(16, weight: .semibold))
-                        .foregroundStyle(AppColors.cream)
-                        .lineLimit(1)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(entry.title.isEmpty ? "Untitled Dream" : entry.title)
+                            .font(AppFont.body(15, weight: .semibold))
+                            .foregroundStyle(AppColors.cream)
+                            .lineLimit(1)
+                        if entry.isTwinFlameDream {
+                            Text("Twin Flame Dream")
+                                .font(.system(size: 10, weight: .medium, design: .rounded))
+                                .tracking(0.5)
+                                .foregroundStyle(AppColors.gold.opacity(0.8))
+                        }
+                    }
 
                     Spacer()
+
+                    Image(systemName: "moon.zzz.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color(hex: "4A90D9").opacity(0.5))
                 }
 
                 // Content preview
                 if !entry.content.isEmpty {
-                    let preview = String(entry.content.prefix(60))
-                    Text(entry.content.count > 60 ? preview + "…" : preview)
+                    let preview = String(entry.content.prefix(100))
+                    Text(entry.content.count > 100 ? preview + "…" : preview)
                         .font(AppFont.body(13))
-                        .foregroundStyle(AppColors.lavender)
+                        .foregroundStyle(AppColors.lavender.opacity(0.75))
                         .lineLimit(2)
                         .lineSpacing(3)
                 }
@@ -146,26 +241,53 @@ private struct DreamEntryRow: View {
                 // Badges row
                 HStack(spacing: 8) {
                     if entry.isLucid {
-                        DreamBadge(label: "◇ Lucid", backgroundColor: AppColors.purple.opacity(0.25), borderColor: AppColors.purple.opacity(0.6), textColor: AppColors.lavender)
-                    }
-                    if entry.isTwinFlameDream {
-                        DreamBadge(label: "🔥 TF Dream", backgroundColor: AppColors.gold.opacity(0.15), borderColor: AppColors.gold.opacity(0.5), textColor: AppColors.gold)
+                        DreamBadge(label: "◇ Lucid", backgroundColor: AppColors.purple.opacity(0.2), borderColor: AppColors.purple.opacity(0.5), textColor: AppColors.lavender)
                     }
                     if !entry.wakeFeeling.isEmpty {
-                        DreamBadge(label: entry.wakeFeeling, backgroundColor: AppColors.deepViolet.opacity(0.5), borderColor: AppColors.purple.opacity(0.3), textColor: AppColors.cream)
+                        DreamBadge(label: entry.wakeFeeling, backgroundColor: Color(hex: "4A90D9").opacity(0.12), borderColor: Color(hex: "4A90D9").opacity(0.3), textColor: Color(hex: "7BB8F0"))
                     }
                     Spacer()
+
+                    // Interpret button
+                    Button(action: onInterpret) {
+                        HStack(spacing: 5) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 11))
+                            Text("Interpret")
+                                .font(AppFont.caption(12, weight: .semibold))
+                        }
+                        .foregroundStyle(AppColors.gold)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(AppColors.gold.opacity(0.12), in: Capsule())
+                        .overlay(Capsule().strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 18))
-            .overlay(
+            .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1)
+                    .fill(AppColors.deepViolet.opacity(0.75))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [
+                                        Color(hex: "4A90D9").opacity(glow ? 0.22 : 0.12),
+                                        AppColors.purple.opacity(glow ? 0.18 : 0.08),
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    )
             )
         }
         .buttonStyle(.plain)
+        .onAppear { glow = true }
     }
 }
 
@@ -421,6 +543,7 @@ private struct DreamEntryEditor: View {
                 isTwinFlameDream: isTwinFlameDream
             )
             modelContext.insert(newEntry)
+            GamificationService.shared.awardXP(amount: 20, source: "dream", framework: .apollux, skillKey: "ap_awareness", detail: "Logged dream: \(title)")
         }
         dismiss()
     }
@@ -520,6 +643,184 @@ private struct FlexWrapSingleSelect: View {
                     )
             }
             .buttonStyle(.plain)
+        }
+    }
+}
+
+// MARK: - Dream Interpretation View (Premium)
+
+struct DreamInterpretationView: View {
+    let entry: DreamEntry
+    @Environment(\.dismiss) private var dismiss
+    @State private var interpretation = ""
+    @State private var isLoading = true
+    @State private var errorMessage: String?
+    @AppStorage("mySunSign") private var mySunSign = ""
+    @AppStorage("tfCurrentStage") private var tfStageID = 0
+
+    private let stageNames = ["Recognition","Testing","Crisis","Runner & Chaser",
+                               "Surrender","Illumination","Radiance","Harmonizing Union"]
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                CosmicBackground()
+
+                // Morpheus glow
+                RadialGradient(
+                    colors: [Color(hex: "4A90D9").opacity(0.08), Color.clear],
+                    center: .top, startRadius: 0, endRadius: 300
+                )
+                .ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 20) {
+
+                        // Header
+                        VStack(spacing: 10) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(hex: "4A90D9").opacity(0.2))
+                                    .frame(width: 64, height: 64)
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 26))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            colors: [AppColors.gold, Color(hex: "4A90D9")],
+                                            startPoint: .topLeading, endPoint: .bottomTrailing
+                                        )
+                                    )
+                            }
+
+                            Text("Dream Interpretation")
+                                .font(AppFont.serifHeadline(22))
+                                .foregroundStyle(AppColors.cream)
+
+                            Text("Channelling Morpheus · Hypnos · Nyx")
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .tracking(1.5)
+                                .foregroundStyle(Color(hex: "4A90D9").opacity(0.8))
+                        }
+                        .padding(.top, 12)
+
+                        // Dream summary
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(entry.title.isEmpty ? "Untitled Dream" : entry.title)
+                                .font(AppFont.body(15, weight: .semibold))
+                                .foregroundStyle(AppColors.cream)
+                            Text(entry.content.prefix(200) + (entry.content.count > 200 ? "..." : ""))
+                                .font(AppFont.body(13))
+                                .foregroundStyle(AppColors.lavender.opacity(0.7))
+                                .lineSpacing(3)
+                        }
+                        .padding(16)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppColors.deepViolet.opacity(0.6), in: RoundedRectangle(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(Color(hex: "4A90D9").opacity(0.2), lineWidth: 1)
+                        )
+                        .padding(.horizontal, 20)
+
+                        // Interpretation
+                        if isLoading {
+                            VStack(spacing: 14) {
+                                ProgressView()
+                                    .tint(Color(hex: "4A90D9"))
+                                    .scaleEffect(1.1)
+                                Text("Morpheus is reading your dream...")
+                                    .font(AppFont.body(14))
+                                    .foregroundStyle(AppColors.lavender)
+                            }
+                            .padding(.top, 40)
+                        } else if let error = errorMessage {
+                            VStack(spacing: 12) {
+                                Text(error)
+                                    .font(AppFont.body(14))
+                                    .foregroundStyle(AppColors.lavender.opacity(0.8))
+                                    .multilineTextAlignment(.center)
+                                Button {
+                                    Task { await fetchInterpretation() }
+                                } label: {
+                                    Label("Try Again", systemImage: "arrow.clockwise")
+                                        .font(AppFont.body(14, weight: .semibold))
+                                        .foregroundStyle(AppColors.gold)
+                                }
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.top, 24)
+                        } else {
+                            Text(interpretation)
+                                .font(AppFont.serifTitle(16))
+                                .foregroundStyle(AppColors.cream)
+                                .lineSpacing(6)
+                                .padding(20)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [Color(hex: "4A90D9").opacity(0.08), AppColors.deepViolet.opacity(0.6)],
+                                                startPoint: .topLeading, endPoint: .bottomTrailing
+                                            )
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .strokeBorder(Color(hex: "4A90D9").opacity(0.25), lineWidth: 1)
+                                        )
+                                )
+                                .padding(.horizontal, 20)
+                        }
+
+                        Spacer().frame(height: 40)
+                    }
+                }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(AppColors.lavender.opacity(0.6))
+                    }
+                }
+            }
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .preferredColorScheme(.dark)
+        }
+        .task {
+            await fetchInterpretation()
+        }
+    }
+
+    private func fetchInterpretation() async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+
+        do {
+            let stage = stageNames[min(tfStageID, stageNames.count - 1)]
+
+            var dreamDetails = "Dream title: \(entry.title)\n\nDream content: \(entry.content)"
+            if !entry.symbols.isEmpty { dreamDetails += "\n\nSymbols present: \(entry.symbols)" }
+            if !entry.people.isEmpty { dreamDetails += "\n\nWho appeared: \(entry.people)" }
+            if !entry.wakeFeeling.isEmpty { dreamDetails += "\n\nFeeling on wake: \(entry.wakeFeeling)" }
+            if entry.isLucid { dreamDetails += "\n\nThis was a lucid dream." }
+            if entry.isTwinFlameDream { dreamDetails += "\n\nThe dreamer believes this was a twin flame dream." }
+            dreamDetails += "\n\nMy sun sign: \(mySunSign.isEmpty ? "Unknown" : mySunSign)"
+            dreamDetails += "\nMy twin flame stage: \(stage)"
+
+            let userMessage = "Interpret this dream through the lens of Morpheus, Hypnos, and the twin flame journey. Be DIRECT. Tell me exactly what this dream means, which deity sent it, and what I need to DO about it.\n\n\(dreamDetails)"
+
+            interpretation = try await ClaudeProxyService.send(
+                model: "claude-haiku-4-5-20251001",
+                maxTokens: 800,
+                system: LoveCoachService.dreamInterpretationPrompt,
+                messages: [.init(role: "user", content: userMessage)]
+            )
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 }

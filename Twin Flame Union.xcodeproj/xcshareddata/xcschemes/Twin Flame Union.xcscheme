@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0929384A2F74F15C00EC2FE0"
-               BuildableName = "Twin Flame Union.app"
+               BuildableName = "The Twin Flame Union App.app"
                BlueprintName = "Twin Flame Union"
                ReferencedContainer = "container:Twin Flame Union.xcodeproj">
             </BuildableReference>
@@ -38,13 +38,14 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      storeKitConfigurationFileReference = "Twin Flame Union/TwinFlameUnion.storekit">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0929384A2F74F15C00EC2FE0"
-            BuildableName = "Twin Flame Union.app"
+            BuildableName = "The Twin Flame Union App.app"
             BlueprintName = "Twin Flame Union"
             ReferencedContainer = "container:Twin Flame Union.xcodeproj">
          </BuildableReference>
@@ -61,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0929384A2F74F15C00EC2FE0"
-            BuildableName = "Twin Flame Union.app"
+            BuildableName = "The Twin Flame Union App.app"
             BlueprintName = "Twin Flame Union"
             ReferencedContainer = "container:Twin Flame Union.xcodeproj">
          </BuildableReference>

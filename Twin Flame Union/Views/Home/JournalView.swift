@@ -165,6 +165,7 @@ struct JournalView: View {
         } else {
             let entry = JournalEntry(title: title, content: content, mood: mood)
             modelContext.insert(entry)
+            GamificationService.shared.awardXP(amount: 25, source: "journal", framework: .apollux, skillKey: "ap_emotional_fuel", detail: "Wrote journal entry")
         }
     }
 }

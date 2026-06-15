@@ -6,5 +6,15 @@
 	<true/>
 	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Twin Flame Union reads your mindful session history to track your meditation journey and show your sacred practice progress.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Twin Flame Union saves your meditation sessions to Apple Health so you can track your sacred practice alongside your other wellness data.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 </dict>
 </plist>

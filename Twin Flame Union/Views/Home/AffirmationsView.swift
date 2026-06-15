@@ -146,6 +146,7 @@ struct AffirmationsView: View {
     @AppStorage("affirmationFavoriteIDs") private var favoritesStorage: String = ""
     @State private var currentIndex: Int = 0
     @State private var dragOffset: CGSize = .zero
+    @State private var isAnimatingSwipe = false
     @State private var isDeckExhausted: Bool = false
     @State private var showFavoritesSheet: Bool = false
     @State private var lastSwipeWasRight: Bool = false
@@ -384,12 +385,15 @@ struct AffirmationsView: View {
     }
 
     private func animateCardOff(toRight: Bool) {
+        guard !isAnimatingSwipe else { return }
+        isAnimatingSwipe = true
         let direction: CGFloat = toRight ? 600 : -600
         withAnimation(.easeOut(duration: 0.35)) {
             dragOffset = CGSize(width: direction, height: 0)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.36) {
             advance()
+            isAnimatingSwipe = false
         }
     }
 

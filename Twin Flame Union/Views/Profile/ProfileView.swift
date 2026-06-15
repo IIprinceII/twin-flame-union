@@ -152,10 +152,12 @@ struct ProfileView: View {
     @AppStorage("mySunSign")            private var mySunSignRaw         = ""
     @AppStorage("myMoonSign")           private var myMoonSignRaw        = ""
     @AppStorage("myRisingSign")         private var myRisingSignRaw      = ""
+    @AppStorage("myBirthTimestamp")     private var myBirthTimestamp     = 0.0
     @AppStorage("partnerName")          private var partnerName          = ""
     @AppStorage("partnerSunSign")       private var partnerSunSignRaw    = ""
     @AppStorage("partnerMoonSign")      private var partnerMoonSignRaw   = ""
     @AppStorage("partnerRisingSign")    private var partnerRisingSignRaw = ""
+    @AppStorage("partnerBirthTimestamp") private var partnerBirthTimestamp = 0.0
     @AppStorage("showPartnerChart")     private var showPartnerChart     = false
 
     @State private var streak              = StreakTracker.current
@@ -163,7 +165,8 @@ struct ProfileView: View {
     @State private var nameInput           = ""
     @State private var reminderTime        = Date()
     @State private var showPermissionAlert = false
-    @State private var showTutorial = false
+    @State private var showTutorial        = false
+    @State private var appeared            = false
 
     private var displayName: String { userName.isEmpty ? "Soul" : userName }
 
@@ -187,11 +190,39 @@ struct ProfileView: View {
         ZStack {
             CosmicBackground()
 
+            // Seshat golden-blue atmospheric glow
+            RadialGradient(
+                colors: [Color(hex: "A0A0D0").opacity(0.06), Color.clear],
+                center: .top,
+                startRadius: 0,
+                endRadius: 300
+            )
+            .ignoresSafeArea()
+
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
 
+                    // ── Seshat Deity Banner ──
+                    seshatBanner
+                        .padding(.top, 8)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 10)
+
                     // MARK: Avatar + Name
                     avatarSection
+                        .opacity(appeared ? 1 : 0)
+
+                    // MARK: Sacred Progress
+                    if let profile = GamificationService.shared.profile {
+                        NavigationLink {
+                            ProgressionView()
+                                .environment(GamificationService.shared)
+                        } label: {
+                            VibrationalScoreCard(profile: profile)
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 24)
+                    }
 
                     // MARK: Streak
                     streakSection
@@ -237,6 +268,7 @@ struct ProfileView: View {
             comps.hour   = reminderHour
             comps.minute = reminderMinute
             reminderTime = Calendar.current.date(from: comps) ?? Date()
+            withAnimation(.easeOut(duration: 0.7)) { appeared = true }
         }
         .alert("Notifications Needed", isPresented: $showPermissionAlert) {
             Button("Open Settings") {
@@ -250,22 +282,72 @@ struct ProfileView: View {
         }
     }
 
+    // MARK: - Seshat Banner
+
+    private var seshatBanner: some View {
+        HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(RadialGradient(
+                        colors: [Color(hex: "A0A0D0").opacity(0.45), Color(hex: "A0A0D0").opacity(0.08)],
+                        center: .center, startRadius: 0, endRadius: 26
+                    ))
+                    .frame(width: 52, height: 52)
+                Circle()
+                    .strokeBorder(Color(hex: "A0A0D0").opacity(0.35), lineWidth: 1)
+                    .frame(width: 52, height: 52)
+                Image(systemName: "pencil.and.list.clipboard")
+                    .font(.system(size: 18))
+                    .foregroundStyle(Color(hex: "A0A0D0"))
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("SACRED RECORD · SESHAT")
+                    .font(.system(size: 9, weight: .semibold, design: .rounded))
+                    .tracking(2.0)
+                    .foregroundStyle(AppColors.lavender.opacity(0.5))
+                Text(displayName + "'s Soul Record")
+                    .font(AppFont.serifTitle(17))
+                    .foregroundStyle(Color(hex: "A0A0D0"))
+                Text("Seshat recorded your soul contract in the stars.")
+                    .font(AppFont.caption(11))
+                    .foregroundStyle(AppColors.lavender.opacity(0.6))
+                    .italic()
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+    }
+
     // MARK: - Avatar Section
 
     private var avatarSection: some View {
         VStack(spacing: 14) {
             ZStack {
+                // Outer halo rings
+                ForEach(0..<2, id: \.self) { i in
+                    Circle()
+                        .stroke(AppColors.gold.opacity(0.08 - Double(i) * 0.03), lineWidth: 1)
+                        .frame(width: CGFloat(104 + i * 18), height: CGFloat(104 + i * 18))
+                }
                 Circle()
                     .fill(
-                        LinearGradient(
-                            colors: [AppColors.purple.opacity(0.6), AppColors.deepViolet],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                        RadialGradient(
+                            colors: [AppColors.purple.opacity(0.8), AppColors.deepViolet],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 44
                         )
                     )
                     .frame(width: 88, height: 88)
                 Circle()
-                    .strokeBorder(AppColors.gold.opacity(0.35), lineWidth: 1.5)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [AppColors.gold.opacity(0.6), AppColors.gold.opacity(0.2), AppColors.gold.opacity(0.5)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.5
+                    )
                     .frame(width: 88, height: 88)
                 Text(displayName.prefix(1).uppercased())
                     .font(AppFont.serifHeadline(36))
@@ -349,11 +431,22 @@ struct ProfileView: View {
 
     private var birthChartSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ProfileSectionHeader(title: "Birth Chart")
+            ProfileSectionHeader(title: "My Birth Chart")
 
             VStack(spacing: 0) {
+                // Birth date picker
+                BirthDateRow(
+                    label: "🎂 Birth Date",
+                    timestamp: $myBirthTimestamp,
+                    onDateChange: { ts in
+                        if let sign = sunSignFrom(timestamp: ts) {
+                            mySunSignRaw = sign.rawValue
+                        }
+                    }
+                )
+                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                 SignPickerRow(
-                    label: "☀️ Sun Sign",
+                    label: myBirthTimestamp > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign",
                     selectedRaw: $mySunSignRaw
                 )
                 Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
@@ -411,7 +504,17 @@ struct ProfileView: View {
 
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
 
-                    SignPickerRow(label: "☀️ Sun Sign", selectedRaw: $partnerSunSignRaw)
+                    BirthDateRow(
+                        label: "🎂 Birth Date",
+                        timestamp: $partnerBirthTimestamp,
+                        onDateChange: { ts in
+                            if let sign = sunSignFrom(timestamp: ts) {
+                                partnerSunSignRaw = sign.rawValue
+                            }
+                        }
+                    )
+                    Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
+                    SignPickerRow(label: partnerBirthTimestamp > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign", selectedRaw: $partnerSunSignRaw)
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                     SignPickerRow(label: "🌙 Moon Sign", selectedRaw: $partnerMoonSignRaw)
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
@@ -432,7 +535,19 @@ struct ProfileView: View {
 
     private var compatibilitySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ProfileSectionHeader(title: "Compatibility")
+            HStack(spacing: 6) {
+                ProfileSectionHeader(title: "Soul Compatibility")
+                Spacer()
+                HStack(spacing: 4) {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Color(hex: "88D8B0").opacity(0.7))
+                    Text("Harmonia · Maat")
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color(hex: "88D8B0").opacity(0.7))
+                }
+                .padding(.trailing, 4)
+            }
 
             VStack(spacing: 20) {
                 // Score ring
@@ -664,6 +779,98 @@ struct ProfileView: View {
     }
 }
 
+// MARK: - Sun Sign Calculator
+
+private func sunSignFrom(timestamp: Double) -> ZodiacSign? {
+    guard timestamp > 0 else { return nil }
+    let date = Date(timeIntervalSince1970: timestamp)
+    let cal = Calendar.current
+    let month = cal.component(.month, from: date)
+    let day   = cal.component(.day,   from: date)
+    switch month {
+    case 1:  return day >= 20 ? .aquarius    : .capricorn
+    case 2:  return day >= 19 ? .pisces      : .aquarius
+    case 3:  return day >= 21 ? .aries       : .pisces
+    case 4:  return day >= 20 ? .taurus      : .aries
+    case 5:  return day >= 21 ? .gemini      : .taurus
+    case 6:  return day >= 21 ? .cancer      : .gemini
+    case 7:  return day >= 23 ? .leo         : .cancer
+    case 8:  return day >= 23 ? .virgo       : .leo
+    case 9:  return day >= 23 ? .libra       : .virgo
+    case 10: return day >= 24 ? .scorpio     : .libra
+    case 11: return day >= 23 ? .sagittarius : .scorpio
+    case 12: return day >= 22 ? .capricorn   : .sagittarius
+    default: return nil
+    }
+}
+
+// MARK: - Birth Date Row
+
+private struct BirthDateRow: View {
+    let label: String
+    @Binding var timestamp: Double
+    let onDateChange: (Double) -> Void
+
+    @State private var isExpanded = false
+
+    private var date: Date {
+        timestamp > 0 ? Date(timeIntervalSince1970: timestamp) : Date(timeIntervalSinceReferenceDate: -946771200) // ~1970
+    }
+
+    private var displayText: String {
+        guard timestamp > 0 else { return "Set date" }
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .none
+        return f.string(from: date)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Button {
+                withAnimation(.spring(response: 0.35)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 12) {
+                    Text(label)
+                        .font(AppFont.body(14, weight: .semibold))
+                        .foregroundStyle(AppColors.cream)
+                    Spacer()
+                    Text(displayText)
+                        .font(AppFont.caption(13))
+                        .foregroundStyle(timestamp > 0 ? AppColors.gold : AppColors.lavender.opacity(0.5))
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(AppColors.lavender.opacity(0.5))
+                }
+                .padding(.horizontal, 18)
+                .padding(.vertical, 14)
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                DatePicker(
+                    "",
+                    selection: Binding(
+                        get: { date },
+                        set: { newDate in
+                            timestamp = newDate.timeIntervalSince1970
+                            onDateChange(newDate.timeIntervalSince1970)
+                        }
+                    ),
+                    in: ...Date(),
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .tint(AppColors.gold)
+                .colorScheme(.dark)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 8)
+            }
+        }
+    }
+}
+
 // MARK: - Sign Picker Row
 
 private struct SignPickerRow: View {
@@ -735,9 +942,10 @@ private struct SignPickerRow: View {
 private struct ProfileSectionHeader: View {
     let title: String
     var body: some View {
-        Text(title)
-            .font(AppFont.body(13, weight: .semibold))
-            .foregroundStyle(AppColors.lavender)
+        Text(title.uppercased())
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
+            .tracking(1.5)
+            .foregroundStyle(AppColors.lavender.opacity(0.7))
             .padding(.horizontal, 4)
     }
 }

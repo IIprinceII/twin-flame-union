@@ -45,21 +45,21 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "9.99",
+          "displayPrice" : "1.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "1A2B3C4D-5E6F-7A8B-9C0D-1E2F3A4B5C6D",
+          "internalID" : "3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Unlimited AI coaching, all meditations, and full cosmic guidance every month.",
-              "displayName" : "Monthly Premium",
+              "description" : "Full access to all Twin Flame Union features, billed weekly.",
+              "displayName" : "Weekly Premium",
               "locale" : "en_US"
             }
           ],
-          "productID" : "com.twinflameunion.premium.monthly",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Monthly Premium",
+          "productID" : "com.twinflameunion.premium.weekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly Premium",
           "subscriptionGroupID" : "20C1D2E3-F4A5-B6C7-D8E9-F0A1B2C3D4E5",
           "type" : "RecurringSubscription"
         },
@@ -70,14 +70,22 @@
           "codeOffers" : [
 
           ],
-          "displayPrice" : "59.99",
+          "displayPrice" : "9.99",
           "familyShareable" : false,
           "groupNumber" : 2,
           "internalID" : "2B3C4D5E-6F7A-8B9C-0D1E-2F3A4B5C6D7E",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "displayPrice" : "0.00",
+            "duration" : "P3D",
+            "identifier" : null,
+            "mode" : "freeTrial",
+            "offerID" : null,
+            "subscriptionPeriod" : "P3D",
+            "type" : "introductory"
+          },
           "localizations" : [
             {
-              "description" : "Everything in Premium, billed annually. Save over 50% vs monthly.",
+              "description" : "Full access to all Twin Flame Union features. 3-day free trial, then $9.99 per year.",
               "displayName" : "Annual Premium",
               "locale" : "en_US"
             }

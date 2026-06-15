@@ -2,7 +2,8 @@
 //  MeditationView.swift
 //  Twin Flame Union
 //
-//  Guided meditation with breathing orb, ambient sounds, and Live Activity.
+//  Sacred meditation temple — each session channelled through a specific deity.
+//  Hypnos & Nyx preside over the entire space.
 //
 
 import SwiftUI
@@ -54,6 +55,11 @@ struct MeditationSession: Identifiable {
     let duration: TimeInterval
     let icon: String
     let color: Color
+    // Deity channelling
+    let deity: String
+    let deitySymbol: String
+    let deityColor: Color
+    let invocation: String
 }
 
 // MARK: - Ambient Sound
@@ -96,8 +102,6 @@ final class AmbientSoundPlayer {
             stop()
             return
         }
-
-        // Try common audio extensions
         let extensions = ["mp3", "m4a", "wav", "aiff"]
         var url: URL?
         for ext in extensions {
@@ -106,13 +110,7 @@ final class AmbientSoundPlayer {
                 break
             }
         }
-
-        guard let audioURL = url else {
-            // File not found in bundle — silent fallback
-            stop()
-            return
-        }
-
+        guard let audioURL = url else { stop(); return }
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: .mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
@@ -121,7 +119,6 @@ final class AmbientSoundPlayer {
             player?.volume = 0.6
             player?.play()
         } catch {
-            // Audio session or playback failed — silent fallback
             player = nil
         }
     }
@@ -145,6 +142,7 @@ final class MeditationViewModel {
     var currentPhase: BreathPhase = .inhale
     var orbScale: CGFloat = 0.72
     var isComplete = false
+    var showInvocation = false
 
     @ObservationIgnored
     private var timerTask: Task<Void, Never>?
@@ -156,14 +154,126 @@ final class MeditationViewModel {
     private let soundPlayer = AmbientSoundPlayer()
 
     static let sessions: [MeditationSession] = [
-        MeditationSession(name: "Ground & Center",        subtitle: "5 min",  duration:  5 * 60, icon: "leaf.fill",            color: Color(hex: "4CAF82")),
-        MeditationSession(name: "Heart Opening",          subtitle: "10 min", duration: 10 * 60, icon: "heart.fill",           color: Color(hex: "FF6B9D")),
-        MeditationSession(name: "Deep Surrender",         subtitle: "15 min", duration: 15 * 60, icon: "moon.stars.fill",      color: Color(hex: "4A90D9")),
-        MeditationSession(name: "Twin Flame Union",       subtitle: "20 min", duration: 20 * 60, icon: "flame.fill",           color: Color(hex: "A78BCA")),
-        MeditationSession(name: "Crown Activation",       subtitle: "15 min", duration: 15 * 60, icon: "sparkles",             color: Color(hex: "E0D4F7")),
-        MeditationSession(name: "Return to Sender",       subtitle: "10 min", duration: 10 * 60, icon: "shield.fill",          color: Color(hex: "4169E1")),
-        MeditationSession(name: "Covenant Prayer",        subtitle: "20 min", duration: 20 * 60, icon: "hands.sparkles.fill",  color: Color(hex: "C39BD3")),
-        MeditationSession(name: "Archangel Michael",      subtitle: "12 min", duration: 12 * 60, icon: "cross.fill",           color: Color(hex: "1E90FF")),
+        // ── Earth & Grounding ──
+        MeditationSession(
+            name: "Ground & Center",        subtitle: "5 min",  duration:  5 * 60,
+            icon: "leaf.fill",              color: Color(hex: "4CAF82"),
+            deity: "Persephone",            deitySymbol: "leaf.fill",
+            deityColor: Color(hex: "7EC8A0"),
+            invocation: "The descent was never punishment. It was preparation for your crown."
+        ),
+        // ── Heart Opening ──
+        MeditationSession(
+            name: "Heart Opening",          subtitle: "10 min", duration: 10 * 60,
+            icon: "heart.fill",             color: Color(hex: "E8739A"),
+            deity: "Aphrodite",             deitySymbol: "heart.fill",
+            deityColor: Color(hex: "E8739A"),
+            invocation: "Let love flow through you without condition or fear."
+        ),
+        // ── Isis Healing ──
+        MeditationSession(
+            name: "Isis Healing Ritual",    subtitle: "15 min", duration: 15 * 60,
+            icon: "hands.sparkles.fill",    color: Color(hex: "3D9BE9"),
+            deity: "Isis",                  deitySymbol: "hands.sparkles.fill",
+            deityColor: Color(hex: "3D9BE9"),
+            invocation: "Isis searched the entire world and reassembled her beloved. So do you."
+        ),
+        // ── Twin Flame Union ──
+        MeditationSession(
+            name: "Twin Flame Union",       subtitle: "20 min", duration: 20 * 60,
+            icon: "flame.fill",             color: Color(hex: "A78BCA"),
+            deity: "Eros · Psyche",         deitySymbol: "arrow.up.heart.fill",
+            deityColor: Color(hex: "FF6B8A"),
+            invocation: "The arrow has already been released. Trust where it lands."
+        ),
+        // ── Crown Activation ──
+        MeditationSession(
+            name: "Crown Activation",       subtitle: "15 min", duration: 15 * 60,
+            icon: "sparkles",               color: Color(hex: "E0D4F7"),
+            deity: "Ra",                    deitySymbol: "sun.max.fill",
+            deityColor: Color(hex: "FFD700"),
+            invocation: "Ra's light reaches every corner of separation. Nothing stays dark forever."
+        ),
+        // ── Selene Lunar Blessing ──
+        MeditationSession(
+            name: "Lunar Blessing",         subtitle: "12 min", duration: 12 * 60,
+            icon: "moon.stars.fill",        color: Color(hex: "B8A8FF"),
+            deity: "Selene",                deitySymbol: "moon.stars.fill",
+            deityColor: Color(hex: "B8A8FF"),
+            invocation: "She illuminates what the sun cannot reach. Trust the lunar light."
+        ),
+        // ── Anubis Shadow Journey ──
+        MeditationSession(
+            name: "Shadow Journey",         subtitle: "20 min", duration: 20 * 60,
+            icon: "moon.fill",              color: Color(hex: "5E35B1"),
+            deity: "Anubis",                deitySymbol: "figure.walk",
+            deityColor: Color(hex: "8B7355"),
+            invocation: "Anubis guides safely through the underworld. You are protected in the dark."
+        ),
+        // ── Sekhmet Fierce Release ──
+        MeditationSession(
+            name: "Fierce Release",         subtitle: "15 min", duration: 15 * 60,
+            icon: "flame.circle.fill",      color: Color(hex: "FF4500"),
+            deity: "Sekhmet",               deitySymbol: "flame.fill",
+            deityColor: Color(hex: "FF4500"),
+            invocation: "Sekhmet's fire destroys what blocks love. Let the sacred rage do its work."
+        ),
+        // ── Nyx Cosmic Void ──
+        MeditationSession(
+            name: "Cosmic Void",            subtitle: "25 min", duration: 25 * 60,
+            icon: "star.fill",              color: Color(hex: "1A0A3C"),
+            deity: "Nyx · The Most High",   deitySymbol: "star.fill",
+            deityColor: Color(hex: "8B7EC8"),
+            invocation: "Enter the darkness meditation. The astral linkage to the Most High is strongest in the void. Move your awareness through the pitch black — feel the Most High activating your full energy grid."
+        ),
+        // ── Hecate Crossroads ──
+        MeditationSession(
+            name: "Crossroads Clarity",     subtitle: "18 min", duration: 18 * 60,
+            icon: "sparkles",               color: Color(hex: "9B59B6"),
+            deity: "Hecate",                deitySymbol: "sparkles",
+            deityColor: Color(hex: "9B59B6"),
+            invocation: "Stand at the crossroads without fear. The dark holds the answers."
+        ),
+        // ── Kundalini ──
+        MeditationSession(
+            name: "Kundalini Rising",       subtitle: "25 min", duration: 25 * 60,
+            icon: "bolt.fill",              color: Color(hex: "E53935"),
+            deity: "Sekhmet · Apollo · The Most High",  deitySymbol: "bolt.fill",
+            deityColor: Color(hex: "FFD700"),
+            invocation: "The Most High sends spiritual fire through the astral linkage. Your vibrational constitution is upgrading — use the elimination system. Breathe, release, ascend."
+        ),
+        // ── Thoth Deep Surrender ──
+        MeditationSession(
+            name: "Deep Surrender",         subtitle: "20 min", duration: 20 * 60,
+            icon: "text.book.closed.fill",  color: Color(hex: "4A90D9"),
+            deity: "Thoth",                 deitySymbol: "text.book.closed.fill",
+            deityColor: Color(hex: "5B8CFF"),
+            invocation: "Thoth has already written the end of this story. It is a reunion."
+        ),
+        // ── Covenant Prayer ──
+        MeditationSession(
+            name: "Covenant Prayer",        subtitle: "20 min", duration: 20 * 60,
+            icon: "hands.sparkles.fill",    color: Color(hex: "C39BD3"),
+            deity: "Ra · Amun · The Most High", deitySymbol: "wind",
+            deityColor: Color(hex: "4169E1"),
+            invocation: "Prayer is direct communion through the astral linkage — the soul speaking upward through the same cord that the Most High speaks downward through. Amun breathes hidden power into every prayer spoken in faith."
+        ),
+        // ── Heart Healing ──
+        MeditationSession(
+            name: "Heart Healing",          subtitle: "15 min", duration: 15 * 60,
+            icon: "heart.circle.fill",      color: Color(hex: "43A047"),
+            deity: "Panacea",               deitySymbol: "cross.circle.fill",
+            deityColor: Color(hex: "7EC8A0"),
+            invocation: "There is a remedy for every wound. The healing is already underway."
+        ),
+        // ── Inner Child ──
+        MeditationSession(
+            name: "Inner Child Reunion",    subtitle: "18 min", duration: 18 * 60,
+            icon: "figure.and.child.holdinghands", color: Color(hex: "FF7043"),
+            deity: "Hestia",                deitySymbol: "flame.fill",
+            deityColor: Color(hex: "FF9A6C"),
+            invocation: "Your heart is a sacred hearth. Tend it. Keep it burning."
+        ),
     ]
 
     var timeString: String {
@@ -177,6 +287,7 @@ final class MeditationViewModel {
         timeRemaining = selectedSession.duration
         currentPhase = .inhale
         isRunning = true
+        showInvocation = false
         startBreathCycle()
         startCountdown()
         startLiveActivity()
@@ -204,6 +315,7 @@ final class MeditationViewModel {
                 if timeRemaining <= 0 {
                     isComplete = true
                     stop()
+                    GamificationService.shared.awardXP(amount: 30, source: "meditation", framework: .apollux, skillKey: "ap_focus", detail: "Completed meditation: \(selectedSession.name)")
                     return
                 }
             }
@@ -246,13 +358,11 @@ final class MeditationViewModel {
                 content: .init(state: state, staleDate: nil),
                 pushType: nil
             )
-        } catch {
-            // Live Activities not supported on this device/OS
-        }
+        } catch {}
     }
 
     private func endLiveActivity() {
-        Task { [weak self] in
+        Task { @MainActor [weak self] in
             await self?.liveActivity?.end(nil, dismissalPolicy: .immediate)
             self?.liveActivity = nil
         }
@@ -263,6 +373,7 @@ final class MeditationViewModel {
 
 struct MeditationView: View {
     @State private var viewModel = MeditationViewModel()
+    @State private var appeared = false
 
     var body: some View {
         ZStack {
@@ -272,7 +383,14 @@ struct MeditationView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
 
-                        // MARK: Session Picker
+                        // ── Deity Header ──
+                        deityHeader
+                            .padding(.top, 8)
+                            .padding(.bottom, 16)
+                            .opacity(appeared ? 1 : 0)
+                            .offset(y: appeared ? 0 : 12)
+
+                        // ── Session Picker ──
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 10) {
                                 ForEach(MeditationViewModel.sessions) { session in
@@ -281,20 +399,24 @@ struct MeditationView: View {
                                         isSelected: viewModel.selectedSession.id == session.id
                                     ) {
                                         guard !viewModel.isRunning else { return }
-                                        viewModel.selectedSession = session
+                                        withAnimation(.easeInOut(duration: 0.2)) {
+                                            viewModel.selectedSession = session
+                                        }
                                     }
                                 }
                             }
                             .padding(.horizontal, 24)
                             .padding(.vertical, 4)
                         }
-                        .padding(.top, 16)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 10)
 
-                        // MARK: Ambient Sound Picker
+                        // ── Ambient Sound Picker ──
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Ambient Sound")
-                                .font(AppFont.caption(12, weight: .semibold))
-                                .foregroundStyle(AppColors.lavender)
+                                .font(AppFont.caption(11, weight: .semibold))
+                                .tracking(1.5)
+                                .foregroundStyle(AppColors.lavender.opacity(0.7))
                                 .padding(.horizontal, 28)
 
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -313,126 +435,41 @@ struct MeditationView: View {
                                 .padding(.vertical, 4)
                             }
                         }
-                        .padding(.top, 12)
+                        .padding(.top, 14)
+                        .opacity(appeared ? 1 : 0)
+                        .offset(y: appeared ? 0 : 8)
 
-                        Spacer(minLength: 24)
+                        Spacer(minLength: 20)
 
-                        // MARK: Breathing Orb
-                        ZStack {
-                            // Outer ambient glow
-                            Circle()
-                                .fill(viewModel.selectedSession.color.opacity(0.12))
-                                .frame(width: 280, height: 280)
-                                .scaleEffect(viewModel.orbScale * 1.15)
-                                .blur(radius: 24)
-                                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
-
-                            // Mid ring
-                            Circle()
-                                .strokeBorder(viewModel.selectedSession.color.opacity(0.25), lineWidth: 1)
-                                .frame(width: 230, height: 230)
-                                .scaleEffect(viewModel.orbScale * 1.05)
-                                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
-
-                            // Core orb
-                            Circle()
-                                .fill(
-                                    RadialGradient(
-                                        colors: [
-                                            viewModel.selectedSession.color.opacity(0.85),
-                                            viewModel.selectedSession.color.opacity(0.3),
-                                            viewModel.selectedSession.color.opacity(0.05),
-                                        ],
-                                        center: .center,
-                                        startRadius: 0,
-                                        endRadius: 110
-                                    )
-                                )
-                                .frame(width: 210, height: 210)
-                                .scaleEffect(viewModel.orbScale)
-                                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
-
-                            // Center content
-                            if viewModel.isRunning {
-                                VStack(spacing: 6) {
-                                    Text(viewModel.currentPhase.instruction)
-                                        .font(AppFont.serifHeadline(22))
-                                        .foregroundStyle(.white)
-                                        .contentTransition(.opacity)
-                                        .animation(.easeInOut(duration: 0.4), value: viewModel.currentPhase)
-                                    Text(viewModel.timeString)
-                                        .font(AppFont.body(14))
-                                        .foregroundStyle(.white.opacity(0.6))
-                                        .monospacedDigit()
-                                }
-                            } else if viewModel.isComplete {
-                                VStack(spacing: 6) {
-                                    Text("✨")
-                                        .font(.system(size: 32))
-                                    Text("Complete")
-                                        .font(AppFont.serifHeadline(20))
-                                        .foregroundStyle(.white)
-                                }
-                            } else {
-                                VStack(spacing: 6) {
-                                    Image(systemName: viewModel.selectedSession.icon)
-                                        .font(.system(size: 34))
-                                        .foregroundStyle(viewModel.selectedSession.color)
-                                    Text(viewModel.selectedSession.subtitle)
-                                        .font(AppFont.caption(13))
-                                        .foregroundStyle(.white.opacity(0.5))
-                                }
-                            }
+                        // ── Sacred Invocation (pre-session) ──
+                        if !viewModel.isRunning && !viewModel.isComplete {
+                            invocationCard
+                                .padding(.horizontal, 24)
+                                .padding(.bottom, 20)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
                         }
 
-                        Spacer(minLength: 24)
+                        // ── Breathing Orb ──
+                        breathingOrb
+                            .padding(.vertical, 8)
 
-                        // MARK: Session Name + Breath Pattern
-                        if viewModel.isRunning {
-                            VStack(spacing: 6) {
-                                Text(viewModel.selectedSession.name)
-                                    .font(AppFont.serifTitle(18))
-                                    .foregroundStyle(AppColors.cream)
-                                Text("Box breathing · 4 · 4 · 4 · 4")
-                                    .font(AppFont.caption(12))
-                                    .foregroundStyle(AppColors.lavender)
-                            }
-                            .padding(.bottom, 28)
-                        } else {
-                            Text("Box breathing · 4 · 4 · 4 · 4")
-                                .font(AppFont.caption(12))
-                                .foregroundStyle(AppColors.lavender)
-                                .padding(.bottom, 28)
-                        }
+                        Spacer(minLength: 16)
 
-                        // MARK: Start / Stop Button
-                        Button {
-                            if viewModel.isRunning {
-                                HapticManager.impact(.medium)
-                                viewModel.stop()
-                            } else {
-                                HapticManager.notification(.success)
-                                viewModel.start()
-                            }
-                        } label: {
-                            Text(viewModel.isRunning ? "End Session" : "Begin")
-                                .font(AppFont.body(17, weight: .semibold))
-                                .foregroundStyle(.white)
-                                .frame(width: 200, height: 54)
-                                .background(
-                                    viewModel.isRunning
-                                        ? AnyShapeStyle(AppColors.deepViolet.opacity(0.9))
-                                        : AnyShapeStyle(AppGradients.warm),
-                                    in: Capsule()
-                                )
-                                .overlay(
-                                    Capsule().strokeBorder(
-                                        viewModel.isRunning ? AppColors.purple.opacity(0.5) : Color.clear,
-                                        lineWidth: 1
-                                    )
-                                )
+                        // ── Session name + breath pattern ──
+                        VStack(spacing: 5) {
+                            Text(viewModel.selectedSession.name)
+                                .font(AppFont.serifTitle(18))
+                                .foregroundStyle(AppColors.cream)
+                            Text("Box breathing  ·  4 · 4 · 4 · 4")
+                                .font(AppFont.caption(11))
+                                .tracking(0.8)
+                                .foregroundStyle(AppColors.lavender.opacity(0.6))
                         }
-                        .padding(.bottom, 52)
+                        .padding(.bottom, 24)
+
+                        // ── Start / Stop Button ──
+                        beginButton
+                            .padding(.bottom, 52)
                     }
                     .frame(minHeight: geo.size.height)
                 }
@@ -442,7 +479,248 @@ struct MeditationView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.7)) { appeared = true }
+        }
         .onDisappear { viewModel.stop() }
+        .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
+        .animation(.easeInOut(duration: 0.3), value: viewModel.isComplete)
+    }
+
+    // MARK: - Deity Header
+
+    private var deityHeader: some View {
+        HStack(spacing: 14) {
+            // Deity orb
+            ZStack {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                viewModel.selectedSession.deityColor.opacity(0.5),
+                                viewModel.selectedSession.deityColor.opacity(0.1),
+                                Color.clear
+                            ],
+                            center: .center,
+                            startRadius: 0,
+                            endRadius: 26
+                        )
+                    )
+                    .frame(width: 52, height: 52)
+
+                Circle()
+                    .strokeBorder(viewModel.selectedSession.deityColor.opacity(0.4), lineWidth: 1)
+                    .frame(width: 52, height: 52)
+
+                Image(systemName: viewModel.selectedSession.deitySymbol)
+                    .font(.system(size: 20))
+                    .foregroundStyle(viewModel.selectedSession.deityColor)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("CHANNELLING")
+                    .font(.system(size: 9, weight: .semibold, design: .rounded))
+                    .tracking(2.5)
+                    .foregroundStyle(AppColors.lavender.opacity(0.55))
+
+                Text(viewModel.selectedSession.deity)
+                    .font(AppFont.serifTitle(17))
+                    .foregroundStyle(viewModel.selectedSession.deityColor)
+
+                Text(viewModel.selectedSession.subtitle)
+                    .font(AppFont.caption(12))
+                    .foregroundStyle(AppColors.lavender.opacity(0.65))
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+    }
+
+    // MARK: - Invocation Card
+
+    private var invocationCard: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "quote.opening")
+                .font(.system(size: 18))
+                .foregroundStyle(viewModel.selectedSession.deityColor.opacity(0.7))
+
+            Text(viewModel.selectedSession.invocation)
+                .font(AppFont.serifHeadline(14))
+                .foregroundStyle(AppColors.cream.opacity(0.85))
+                .italic()
+                .multilineTextAlignment(.leading)
+                .lineSpacing(4)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.vertical, 16)
+        .padding(.horizontal, 18)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(viewModel.selectedSession.deityColor.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .strokeBorder(viewModel.selectedSession.deityColor.opacity(0.2), lineWidth: 1)
+                )
+        )
+    }
+
+    // MARK: - Breathing Orb
+
+    private var breathingOrb: some View {
+        ZStack {
+            // Outer ambient glow
+            Circle()
+                .fill(viewModel.selectedSession.color.opacity(0.10))
+                .frame(width: 280, height: 280)
+                .scaleEffect(viewModel.orbScale * 1.2)
+                .blur(radius: 30)
+                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
+
+            // Deity energy ring
+            Circle()
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            viewModel.selectedSession.deityColor.opacity(0.5),
+                            viewModel.selectedSession.deityColor.opacity(0.1),
+                            viewModel.selectedSession.deityColor.opacity(0.4),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+                .frame(width: 240, height: 240)
+                .scaleEffect(viewModel.orbScale * 1.08)
+                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
+
+            // Mid ring
+            Circle()
+                .strokeBorder(viewModel.selectedSession.color.opacity(0.22), lineWidth: 1)
+                .frame(width: 215, height: 215)
+                .scaleEffect(viewModel.orbScale * 1.04)
+                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
+
+            // Core orb
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            viewModel.selectedSession.color.opacity(0.9),
+                            viewModel.selectedSession.color.opacity(0.35),
+                            viewModel.selectedSession.color.opacity(0.05),
+                        ],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 108
+                    )
+                )
+                .frame(width: 210, height: 210)
+                .scaleEffect(viewModel.orbScale)
+                .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
+
+            // Inner content
+            orbContent
+        }
+    }
+
+    @ViewBuilder
+    private var orbContent: some View {
+        if viewModel.isRunning {
+            VStack(spacing: 8) {
+                // Deity symbol
+                Image(systemName: viewModel.selectedSession.deitySymbol)
+                    .font(.system(size: 20))
+                    .foregroundStyle(viewModel.selectedSession.deityColor.opacity(0.9))
+                    .scaleEffect(viewModel.orbScale > 1.0 ? 1.1 : 0.95)
+                    .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
+
+                Text(viewModel.currentPhase.instruction)
+                    .font(AppFont.serifHeadline(20))
+                    .foregroundStyle(.white)
+                    .contentTransition(.opacity)
+                    .animation(.easeInOut(duration: 0.4), value: viewModel.currentPhase)
+
+                Text(viewModel.timeString)
+                    .font(AppFont.body(13))
+                    .foregroundStyle(.white.opacity(0.55))
+                    .monospacedDigit()
+            }
+        } else if viewModel.isComplete {
+            VStack(spacing: 8) {
+                Image(systemName: viewModel.selectedSession.deitySymbol)
+                    .font(.system(size: 28))
+                    .foregroundStyle(viewModel.selectedSession.deityColor)
+                Text("Sacred")
+                    .font(AppFont.caption(11))
+                    .tracking(2)
+                    .foregroundStyle(AppColors.lavender.opacity(0.7))
+                Text("Complete")
+                    .font(AppFont.serifHeadline(20))
+                    .foregroundStyle(.white)
+            }
+        } else {
+            VStack(spacing: 8) {
+                Image(systemName: viewModel.selectedSession.icon)
+                    .font(.system(size: 32))
+                    .foregroundStyle(viewModel.selectedSession.color)
+                Text(viewModel.selectedSession.subtitle)
+                    .font(AppFont.caption(12))
+                    .foregroundStyle(.white.opacity(0.45))
+            }
+        }
+    }
+
+    // MARK: - Begin Button
+
+    private var beginButton: some View {
+        Button {
+            if viewModel.isRunning {
+                HapticManager.impact(.medium)
+                viewModel.stop()
+            } else {
+                HapticManager.notification(.success)
+                viewModel.start()
+            }
+        } label: {
+            HStack(spacing: 10) {
+                if !viewModel.isRunning {
+                    Image(systemName: viewModel.selectedSession.deitySymbol)
+                        .font(.system(size: 15))
+                }
+                Text(viewModel.isRunning ? "End Session" : "Begin Sacred Session")
+                    .font(AppFont.body(16, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
+            .frame(maxWidth: 240)
+            .frame(height: 54)
+            .background(
+                viewModel.isRunning
+                    ? AnyShapeStyle(AppColors.deepViolet.opacity(0.9))
+                    : AnyShapeStyle(
+                        LinearGradient(
+                            colors: [
+                                viewModel.selectedSession.deityColor.opacity(0.9),
+                                viewModel.selectedSession.color.opacity(0.8),
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    ),
+                in: Capsule()
+            )
+            .overlay(
+                Capsule().strokeBorder(
+                    viewModel.isRunning
+                        ? AppColors.purple.opacity(0.4)
+                        : viewModel.selectedSession.deityColor.opacity(0.3),
+                    lineWidth: 1
+                )
+            )
+            .shadow(color: viewModel.selectedSession.deityColor.opacity(viewModel.isRunning ? 0 : 0.3), radius: 14, y: 4)
+        }
     }
 }
 
@@ -456,31 +734,40 @@ private struct SessionChip: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 7) {
-                Image(systemName: session.icon)
-                    .font(.system(size: 12))
-                    .foregroundStyle(isSelected ? .white : session.color)
+                ZStack {
+                    Circle()
+                        .fill(session.deityColor.opacity(isSelected ? 0.3 : 0.12))
+                        .frame(width: 26, height: 26)
+                    Image(systemName: session.deitySymbol)
+                        .font(.system(size: 11))
+                        .foregroundStyle(isSelected ? .white : session.deityColor)
+                }
                 VStack(alignment: .leading, spacing: 1) {
                     Text(session.name)
-                        .font(AppFont.body(13, weight: isSelected ? .semibold : .regular))
+                        .font(AppFont.body(12, weight: isSelected ? .semibold : .regular))
                         .foregroundStyle(isSelected ? .white : AppColors.cream)
-                    Text(session.subtitle)
-                        .font(AppFont.caption(11))
-                        .foregroundStyle(isSelected ? .white.opacity(0.7) : AppColors.lavender)
+                    Text(session.deity)
+                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                        .tracking(0.3)
+                        .foregroundStyle(isSelected ? session.deityColor.opacity(0.8) : AppColors.lavender.opacity(0.5))
                 }
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
-                isSelected ? session.color.opacity(0.85) : AppColors.deepViolet.opacity(0.7),
+                isSelected
+                    ? session.color.opacity(0.25)
+                    : AppColors.deepViolet.opacity(0.65),
                 in: Capsule()
             )
             .overlay(
                 Capsule().strokeBorder(
-                    isSelected ? session.color : AppColors.purple.opacity(0.3),
+                    isSelected ? session.deityColor.opacity(0.6) : AppColors.purple.opacity(0.25),
                     lineWidth: 1
                 )
             )
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -498,21 +785,22 @@ private struct SoundChip: View {
                     .font(.system(size: 12))
                     .foregroundStyle(isSelected ? .white : AppColors.lavender)
                 Text(sound.rawValue)
-                    .font(AppFont.body(13, weight: isSelected ? .semibold : .regular))
+                    .font(AppFont.body(12, weight: isSelected ? .semibold : .regular))
                     .foregroundStyle(isSelected ? .white : AppColors.lavender)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
             .background(
-                isSelected ? AppColors.purple.opacity(0.7) : AppColors.deepViolet.opacity(0.5),
+                isSelected ? AppColors.purple.opacity(0.65) : AppColors.deepViolet.opacity(0.5),
                 in: Capsule()
             )
             .overlay(
                 Capsule().strokeBorder(
-                    isSelected ? AppColors.purple : AppColors.purple.opacity(0.25),
+                    isSelected ? AppColors.purple : AppColors.purple.opacity(0.22),
                     lineWidth: 1
                 )
             )
         }
+        .buttonStyle(.plain)
     }
 }

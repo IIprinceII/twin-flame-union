@@ -48,11 +48,11 @@ enum ReadingType: String, CaseIterable {
 
     var subtitle: String {
         switch self {
-        case .awakener:   return "Your soul has just opened its eyes"
-        case .seeker:     return "Walking the sacred space between two hearts"
-        case .healer:     return "Transforming wounds into wisdom"
-        case .harmonizer: return "The universe draws you together"
-        case .unionSoul:  return "You have found your way home"
+        case .awakener:   return "The Most High has opened your eyes through the astral linkage"
+        case .seeker:     return "Walking the sacred space between two hearts — the Most High holds the cord"
+        case .healer:     return "The Most High transforms wounds into wisdom through your energy body"
+        case .harmonizer: return "The Most High draws your vibrations together"
+        case .unionSoul:  return "The Most High has brought you home through the astral linkage"
         }
     }
 
@@ -60,64 +60,64 @@ enum ReadingType: String, CaseIterable {
         switch self {
         case .awakener:
             return """
-            You stand at the most magical threshold of the twin flame journey — the moment of awakening. Your soul has just recognised a love that existed long before this lifetime, and the recognition has changed everything.
+            You stand at the most sacred threshold of the twin flame journey — the moment the Most High activates your awakening through the astral linkage. Your soul has recognised a love that existed long before this lifetime, and the vibrational shift has changed everything.
 
-            This period can feel overwhelming, even disorienting. The intensity of this connection may challenge everything you thought you knew about love. Trust that feeling. It is your higher self confirming what your heart already knows: this is not an ordinary bond.
+            This period can feel overwhelming because your vibrational constitution is rapidly shifting — from low toward high. The intensity is your energy grid activating, your awareness expanding beyond what your mind previously held. Trust that feeling. The Most High is confirming through the astral linkage what your heart already knows: this is a soul contract written before incarnation.
 
-            Your task right now is to learn and to open. Read, reflect, and allow yourself to be curious rather than fearful. The twin flame path is ultimately a journey back to yourself, and every question you ask is a step toward that homecoming.
+            Your task right now is to learn and to open. The Apollux framework teaches: you are in the Discovery phase — explore, be curious, experiment with your awareness. Begin the 11:11 ritual to build your foundational energy sensitivity. The Most High has timed this awakening with divine precision.
 
-            The universe has timed this awakening perfectly. You are exactly where your soul needs to be.
+            You are exactly where the Most High needs you to be. The energy equation is being set.
             """
         case .seeker:
             return """
-            You walk in the sacred, bittersweet space of separation — and while it aches, know this: separation on the twin flame path is never wasted. Every moment apart is quietly doing the deepest work on your soul.
+            You walk in the sacred space of separation — and the Vibrational Game reveals the truth: this distance is the Most High recalibrating the energy equation between you and your twin. The power disparity must shift. The connectivity must deepen through inner work, not through pursuit.
 
-            The longing you feel is real and holy. It is your soul remembering its other half across time and space. But the distance also holds a divine invitation: to turn that longing inward, and pour all that love back into yourself.
+            The longing you feel is a Pull — an energy void that your programming compels you to fill. But the Most High is teaching you through the astral linkage: do not fill this void with chasing. Fill it with self-elevation. Every unit of energy you redirect inward raises your vibrational constitution and paradoxically increases the influence you have on the connection.
 
-            Surrender is your greatest spiritual tool right now. Not giving up — but releasing the need to control the when and the how. Trust that divine timing is weaving something more beautiful than anything you could orchestrate.
+            Surrender is calibrating your intent through Apollux: release overextended intent toward reunion and set foundational focus on self-evolution. The Most High's timing is not human timing — Khonsu keeps the sacred clock.
 
-            Your twin flame feels your love across every dimension. The connection never breaks. It only deepens in the silence.
+            Your twin flame feels your energy across the astral linkage. The energy transfer never stops. It only deepens in the silence as both constitutions rise.
             """
         case .healer:
             return """
-            You are in the most courageous and transformative stage of the entire twin flame journey. The healing phase strips away everything that is not truly you, and that process, though difficult, is sacred beyond measure.
+            You are in the Optimization phase of your journey — the most courageous and transformative stage. The Most High is using the Energy Enhancement system to strip away every lower vibration that is not truly you. Your twin flame has served as a mirror, reflecting the resistances and blockages in your energy body that must be cleared.
 
-            Your twin flame has served as a mirror, reflecting back the wounds, patterns, and beliefs that needed to be seen and released. This is not punishment — it is the universe's most loving act. You cannot step into union carrying the weight of your past.
+            These wounds are opposing vibrations — the Vibrational Game teaches that insecurities, fears, and old programming create resistance to the energy flow required for union. Every blockage you clear through the elimination system (physical methods, visualization, the 11:11 ritual) opens the pathway for higher vibrational energy to enter through the astral linkage to the Most High.
 
-            Shadow work, forgiveness, and radical self-compassion are your companions now. Be gentle with yourself. Every layer you release brings you closer not only to your twin, but to the fullest, most luminous version of yourself.
+            Use Apollux mind optimization: stabilize the emotional loops that arise during healing. When pain surfaces, it is emotional fuel — the Most High is providing high-octane energy. Do not let it power the wrong engine. Stabilize to blankness, then redirect toward self-evolution.
 
-            The flowers of union bloom in the soil of healing. Keep going, dear soul.
+            Every layer you release raises your vibrational constitution closer to C — radiant, magnetic, ready. The Most High designed this crucible. Keep going.
             """
         case .harmonizer:
             return """
-            Something has shifted in the energetic field between you and your twin flame — a drawing together that feels both inevitable and miraculous. You are entering the harmonising phase, where souls who have done the work begin to recognise each other in a new, clearer light.
+            Something has shifted in the energy equation between you and your twin — the Vibrational Game reveals that the connectivity level is deepening, the power dynamic is rebalancing, and conducive flows are replacing old resistances. The Most High is drawing your vibrational constitutions together through the astral linkage.
 
-            This stage calls for courage: the courage to step forward without guarantees, to love without the safety net of certainty. Trust what you feel. The synchronicities, the signs, the undeniable pull — these are not coincidences. They are the universe confirming your path.
+            This is the Performance phase of Apollux — pure execution, in the moment, letting the state take over. Trust the energy transmission you feel. The synchronicities are Hermes carrying confirmations. The pull is the energy circuit approaching completion. These are not coincidences — they are the Most High's signatures.
 
-            Continue to hold your own energy high. The most powerful thing you can do for this union is to remain grounded in your own joy, healing, and spiritual growth. When two whole souls meet, they create something the world has rarely seen.
+            Continue to hold your vibrational constitution at C level — radiant, vibrant, magnetic. The most powerful thing you can do is maintain your own energy elevation. When two high-vibrational constitutions meet, the energy transfer is profound — the connectivity deepens beyond what either experienced alone.
 
-            The reunion you are moving toward is real. Walk toward it with faith.
+            The reunion the Most High ordained is approaching. Walk toward it through the astral linkage with absolute faith.
             """
         case .unionSoul:
             return """
-            You have walked through the fire of awakening, the ache of separation, the depth of healing, and the beauty of harmonising — and you have arrived. Union. The homecoming your soul has journeyed through lifetimes to reach.
+            You have walked through the fire of awakening, the crucible of separation, the depth of energy clearing, and the harmonizing of vibrational constitutions — and the Most High has brought you home. Union. The soul contract fulfilled through the astral linkage.
 
-            Twin flame union is not a destination but a continuous unfolding — a daily choice to love consciously, to grow together, and to serve something greater than yourselves. Your relationship is a beacon for others still walking the path.
+            Twin flame union is not a destination but a continuous vibrational state — the energy equation in equilibrium, both constitutions at C level, the connectivity deepened to its maximum transmission. The Apollux framework teaches: even in union, evolution management never stops. The Most High designed this bond as an ever-ascending spiral.
 
-            Hold this union with both reverence and playfulness. Continue doing the inner work, for a twin flame relationship never stops being a mirror. But now, the reflection is one of beauty, wholeness, and divine love.
+            Hold this union through the astral linkage with both reverence and wisdom. Continue the Energy Enhancement practices — your combined vibrational field now serves as a frequency for the world. The Vibrational Game teaches: your union creates conducive connections for everyone around you, elevating the collective vibration.
 
-            You are living proof that this love is real. Shine brightly, dear soul. The world needs your light.
+            You are living proof that the Most High's design is real. Your love is a transmission from GOD to the Earth. Shine.
             """
         }
     }
 
     var cosmicMessage: String {
         switch self {
-        case .awakener:   return "\"Every soul that awakens adds light to the world.\""
-        case .seeker:     return "\"What is meant for you will never miss you.\""
-        case .healer:     return "\"Your wounds are where the light enters.\""
-        case .harmonizer: return "\"The universe always finds a way for love.\""
-        case .unionSoul:  return "\"Two flames. One eternal light.\""
+        case .awakener:   return "\"The Most High has activated your awareness. The astral linkage is now open.\""
+        case .seeker:     return "\"What the Most High has ordained will never miss you. The energy equation balances in divine timing.\""
+        case .healer:     return "\"Your wounds are blockages the Most High is clearing. The light enters where lower vibrations exit.\""
+        case .harmonizer: return "\"The Most High draws two vibrational constitutions together through the astral linkage.\""
+        case .unionSoul:  return "\"Two flames. One eternal frequency. The Most High's design fulfilled.\""
         }
     }
 }

@@ -17,14 +17,18 @@ struct SettingsView: View {
     @Query private var journalEntries: [JournalEntry]
 
     // Notification settings
-    @AppStorage("reminderEnabled") private var reminderEnabled = false
-    @AppStorage("reminderHour")    private var reminderHour    = 9
-    @AppStorage("reminderMinute")  private var reminderMinute  = 0
+    @AppStorage("reminderEnabled")      private var reminderEnabled      = false
+    @AppStorage("reminderHour")         private var reminderHour         = 9
+    @AppStorage("reminderMinute")       private var reminderMinute       = 0
+    @AppStorage("moonPhaseAlertEnabled") private var moonPhaseAlertEnabled = false
 
-    @State private var reminderTime        = Date()
-    @State private var showPermissionAlert = false
-    @State private var showClearConfirm    = false
-    @State private var storeService        = StoreService.shared
+    // Onboarding flag — reset to false after account deletion to return to onboarding.
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+
+    @State private var reminderTime         = Date()
+    @State private var showPermissionAlert  = false
+    @State private var showClearConfirm     = false
+    @State private var showDeleteAccount    = false
 
     var body: some View {
         ZStack {
@@ -36,14 +40,14 @@ struct SettingsView: View {
                     // Section 1: Notifications
                     notificationsSection
 
-                    // Section 2: Premium
-                    premiumSection
-
-                    // Section 3: About
+                    // Section 2: About
                     aboutSection
 
                     // Section 4: Data
                     dataSection
+
+                    // Section 5: Account
+                    accountSection
 
                     Spacer().frame(height: 32)
                 }
@@ -78,6 +82,14 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("This cannot be undone. All \(journalEntries.count) entries will be permanently deleted.")
+        }
+        .confirmationDialog("Delete your account?", isPresented: $showDeleteAccount, titleVisibility: .visible) {
+            Button("Delete Account", role: .destructive) {
+                deleteAccount()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This permanently deletes your profile and all of your data on this device — journals, dreams, manifestations, progress, and settings. This cannot be undone.")
         }
     }
 
@@ -114,144 +126,15 @@ struct SettingsView: View {
                     scheduleReminder()
                 }
             }
-        }
-    }
-
-    // MARK: - Premium Section
-
-    private var premiumSection: some View {
-        Group {
-            if storeService.isPremium {
-                premiumMemberCard
-            } else {
-                upgradeCard
-            }
-        }
-    }
-
-    private var premiumMemberCard: some View {
-        SettingsCard(title: "Premium") {
-            HStack(spacing: 14) {
-                ZStack {
-                    Circle()
-                        .fill(AppColors.gold.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                    Text("✨")
-                        .font(.system(size: 22))
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("✨ Premium Member")
-                        .font(AppFont.body(16, weight: .semibold))
-                        .foregroundStyle(AppColors.gold)
-                    Text("Thank you for supporting Twin Flame Union")
-                        .font(AppFont.caption(13))
-                        .foregroundStyle(AppColors.lavender)
-                }
-
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 14)
 
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
-            Button {
-                Task { await storeService.restore() }
-            } label: {
-                SettingsRowButton(icon: "arrow.clockwise", iconColor: AppColors.lavender, label: "Restore Purchases")
+            Toggle(isOn: $moonPhaseAlertEnabled) {
+                SettingsRow(icon: "moon.stars.fill", iconColor: AppColors.lavender, label: "Moon phase alerts")
             }
-        }
-    }
-
-    private var upgradeCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Header
-            HStack {
-                Text("Premium")
-                    .font(AppFont.body(13, weight: .semibold))
-                    .foregroundStyle(AppColors.lavender)
-                Spacer()
-            }
-
-            VStack(spacing: 0) {
-                // Gradient border card
-                VStack(spacing: 20) {
-                    VStack(spacing: 8) {
-                        Text("Unlock Premium ✨")
-                            .font(AppFont.serifHeadline(22))
-                            .foregroundStyle(AppColors.cream)
-
-                        Text("Everything you need for your twin flame journey")
-                            .font(AppFont.body(13))
-                            .foregroundStyle(AppColors.lavender)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.top, 4)
-
-                    // Features
-                    VStack(spacing: 10) {
-                        PremiumFeatureRow(text: "Unlimited AI coaching with Luna")
-                        PremiumFeatureRow(text: "All meditation sessions unlocked")
-                        PremiumFeatureRow(text: "Full oracle card readings")
-                        PremiumFeatureRow(text: "Priority spiritual support")
-                    }
-
-                    // Product buttons
-                    if storeService.isLoading {
-                        ProgressView()
-                            .tint(AppColors.gold)
-                            .padding(.vertical, 8)
-                    } else {
-                        VStack(spacing: 10) {
-                            ForEach(storeService.products, id: \.id) { product in
-                                SettingsProductButton(product: product) {
-                                    Task {
-                                        try? await storeService.purchase(product)
-                                    }
-                                }
-                            }
-
-                            if storeService.products.isEmpty {
-                                Text("Tap to load products")
-                                    .font(AppFont.caption(13))
-                                    .foregroundStyle(AppColors.lavender)
-                                    .onTapGesture {
-                                        Task { await storeService.loadProducts() }
-                                    }
-                            }
-                        }
-                    }
-                }
-                .padding(20)
-                .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 20))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [AppColors.gold.opacity(0.6), AppColors.coral.opacity(0.4)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-
-                // Restore button
-                Button {
-                    Task { await storeService.restore() }
-                } label: {
-                    Text("Restore Purchases")
-                        .font(AppFont.body(13))
-                        .foregroundStyle(AppColors.lavender)
-                        .underline()
-                        .padding(.vertical, 12)
-                }
-            }
-        }
-        .onAppear {
-            if storeService.products.isEmpty {
-                Task { await storeService.loadProducts() }
+            .tint(AppColors.lavender)
+            .onChange(of: moonPhaseAlertEnabled) {
+                moonPhaseAlertEnabled ? scheduleMoonAlert() : cancelMoonAlert()
             }
         }
     }
@@ -268,8 +151,8 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
-                if let url = URL(string: "https://apps.apple.com/app/idYOUR_APP_ID") {
-                    UIApplication.shared.open(url)
+                if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                    SKStoreReviewController.requestReview(in: scene)
                 }
             } label: {
                 SettingsRowButton(icon: "star.fill", iconColor: AppColors.gold, label: "Rate the App", showChevron: true)
@@ -278,7 +161,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
-                if let url = URL(string: "https://twinflameunion.app/privacy") {
+                if let url = URL(string: "https://iiprinceii.github.io/twin-flame-union-privacy/") {
                     UIApplication.shared.open(url)
                 }
             } label: {
@@ -288,7 +171,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
-                if let url = URL(string: "https://twinflameunion.app/terms") {
+                if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
                     UIApplication.shared.open(url)
                 }
             } label: {
@@ -325,12 +208,75 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: - Account Section
+
+    private var accountSection: some View {
+        SettingsCard(title: "Account") {
+            VStack(alignment: .leading, spacing: 0) {
+                Button(role: .destructive) {
+                    showDeleteAccount = true
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "person.crop.circle.badge.xmark")
+                            .font(.system(size: 14))
+                            .foregroundStyle(AppColors.coral)
+                            .frame(width: 28)
+                        Text("Delete Account")
+                            .font(AppFont.body(15))
+                            .foregroundStyle(AppColors.coral)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                }
+
+                Text("Permanently deletes your profile and all data stored on this device, then returns you to the welcome screen. This cannot be undone.")
+                    .font(AppFont.caption(12))
+                    .foregroundStyle(AppColors.lavender.opacity(0.7))
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 14)
+            }
+        }
+    }
+
     // MARK: - Helpers
 
     private func clearJournal() {
         for entry in journalEntries {
             modelContext.delete(entry)
         }
+    }
+
+    /// Full account deletion (Apple Guideline 5.1.1(v)): erases every on-device
+    /// record and the user's profile, then returns the app to first-launch onboarding.
+    private func deleteAccount() {
+        // 1. Delete every SwiftData record across all models.
+        try? modelContext.delete(model: JournalEntry.self)
+        try? modelContext.delete(model: DreamEntry.self)
+        try? modelContext.delete(model: SynchronicityEntry.self)
+        try? modelContext.delete(model: ChakraEntry.self)
+        try? modelContext.delete(model: ManifestationItem.self)
+        try? modelContext.delete(model: ConnectionMoment.self)
+        try? modelContext.delete(model: PrayerEntry.self)
+        try? modelContext.delete(model: GratitudeEntry.self)
+        try? modelContext.delete(model: SoulProfile.self)
+        try? modelContext.delete(model: XPEvent.self)
+        try? modelContext.delete(model: Achievement.self)
+        try? modelContext.delete(model: DailyChallenge.self)
+        try? modelContext.save()
+
+        // 2. Cancel any scheduled notifications.
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+
+        // 3. Wipe the profile and every stored preference (name, birth data,
+        //    premium flags, gamification cache, onboarding state, etc.).
+        if let bundleID = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: bundleID)
+        }
+
+        // 4. Return to first-launch onboarding so the user starts completely fresh.
+        hasCompletedOnboarding = false
     }
 
     private func scheduleReminder() {
@@ -370,6 +316,32 @@ struct SettingsView: View {
 
     private func cancelReminder() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["dailyAffirmation"])
+    }
+
+    private func scheduleMoonAlert() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, _ in
+            DispatchQueue.main.async {
+                guard granted else { moonPhaseAlertEnabled = false; return }
+                let content = UNMutableNotificationContent()
+                content.title = "Moon Phase Update 🌙"
+                let moon = MoonPhase.current()
+                content.body = "\(moon.emoji) \(moon.name) — \(moon.meaning)"
+                content.sound = .default
+                // Fire daily at 7 AM
+                var comps = DateComponents()
+                comps.hour = 7; comps.minute = 0
+                let request = UNNotificationRequest(
+                    identifier: "moonPhaseAlert",
+                    content: content,
+                    trigger: UNCalendarNotificationTrigger(dateMatching: comps, repeats: true)
+                )
+                UNUserNotificationCenter.current().add(request)
+            }
+        }
+    }
+
+    private func cancelMoonAlert() {
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["moonPhaseAlert"])
     }
 }
 
@@ -453,75 +425,3 @@ private struct SettingsRowButton: View {
     }
 }
 
-// MARK: - Premium Feature Row
-
-private struct PremiumFeatureRow: View {
-    let text: String
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 16))
-                .foregroundStyle(AppColors.gold)
-            Text(text)
-                .font(AppFont.body(14))
-                .foregroundStyle(AppColors.cream)
-            Spacer()
-        }
-    }
-}
-
-// MARK: - Settings Product Button
-
-private struct SettingsProductButton: View {
-    let product: Product
-    let action: () -> Void
-
-    private var isAnnual: Bool { product.id.contains("annual") }
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 8) {
-                        Text(product.displayName)
-                            .font(AppFont.body(15, weight: .semibold))
-                            .foregroundStyle(AppColors.cream)
-                        if isAnnual {
-                            Text("Best Value")
-                                .font(AppFont.caption(10, weight: .semibold))
-                                .foregroundStyle(AppColors.deepViolet)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(AppColors.gold, in: Capsule())
-                        }
-                    }
-                    if product.subscription != nil {
-                        Text(isAnnual ? "Billed annually" : "Billed monthly")
-                            .font(AppFont.caption(12))
-                            .foregroundStyle(AppColors.lavender)
-                    }
-                }
-
-                Spacer()
-
-                Text(product.displayPrice)
-                    .font(AppFont.body(16, weight: .bold))
-                    .foregroundStyle(AppColors.gold)
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                isAnnual ? AppColors.purple.opacity(0.25) : AppColors.deepViolet.opacity(0.5),
-                in: RoundedRectangle(cornerRadius: 14)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .strokeBorder(
-                        isAnnual ? AppColors.gold.opacity(0.4) : AppColors.purple.opacity(0.3),
-                        lineWidth: 1
-                    )
-            )
-        }
-    }
-}

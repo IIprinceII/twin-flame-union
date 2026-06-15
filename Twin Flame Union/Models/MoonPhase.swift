@@ -69,6 +69,15 @@ struct StreakTracker {
 
         defaults.set(streak, forKey: "streakCount")
         defaults.set(today, forKey: "lastOpenDate")
+
+        // Track best streak
+        let best = defaults.integer(forKey: "bestStreakCount")
+        if streak > best {
+            defaults.set(streak, forKey: "bestStreakCount")
+        }
+
         return streak
     }
+
+    static var bestStreak: Int { defaults.integer(forKey: "bestStreakCount") }
 }

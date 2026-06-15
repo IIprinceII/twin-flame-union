@@ -23,6 +23,7 @@ extension Color {
         case 8: // ARGB (32-bit)
             (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:
+            assertionFailure("Color(hex:) — unsupported hex string: '\(hex)'")
             (a, r, g, b) = (255, 0, 0, 0)
         }
         self.init(
@@ -38,38 +39,55 @@ extension Color {
 // MARK: - App Color Palette
 
 enum AppColors {
-    static let deepViolet = Color(hex: "120820")
-    static let purple     = Color(hex: "6B2FA0")
-    static let gold       = Color.white
-    static let coral      = Color(hex: "CC88FF")
-    static let cream      = Color(hex: "F4F0FF")
-    static let lavender   = Color(hex: "A898B8")
+    static let deepViolet = Color(hex: "0E0620")   // deeper, richer void
+    static let purple     = Color(hex: "7B35B8")   // Aphrodite's violet
+    static let gold       = Color(hex: "F0C060")   // Athena's true gold
+    static let rose       = Color(hex: "E8739A")   // Aphrodite's rose
+    static let sage       = Color(hex: "7EC8A0")   // Hygieia's healing green
+    static let coral      = Color(hex: "CC88FF")   // soft lavender-violet
+    static let cream      = Color(hex: "F5EFE6")   // Hestia's warm hearth-light
+    static let lavender   = Color(hex: "B8A8D0")   // softer, more luminous
+    static let ember      = Color(hex: "FF9A6C")   // Hestia's hearthfire
 }
 
 // MARK: - Gradient Definitions
 
 enum AppGradients {
-    /// Deep violet fading into rich purple — used for dark backgrounds
+    /// Deep void into sacred violet — Hestia's night sky
     static let dark = LinearGradient(
-        colors: [AppColors.deepViolet, AppColors.purple],
+        colors: [AppColors.deepViolet, Color(hex: "1A0830")],
         startPoint: .top,
         endPoint: .bottom
     )
 
-    /// Rich amethyst — used for CTAs and primary buttons
+    /// Athena's gold to Aphrodite's rose — warm and divine
     static let warm = LinearGradient(
-        colors: [Color(hex: "8B5CF6"), Color(hex: "4C1D95")],
+        colors: [Color(hex: "9B4FCC"), Color(hex: "4C1D95")],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
 
-    /// Purple flowing into deep blue with a celestial, star-like feel
+    /// The sacred cosmos — Panacea's infinite healing sky
     static let cosmic = LinearGradient(
         colors: [
-            AppColors.purple,
-            Color(hex: "2D1B69"),
-            Color(hex: "0D0221")
+            Color(hex: "1A0830"),
+            Color(hex: "0D0418"),
+            Color(hex: "060212")
         ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
+    /// Gold sunrise — Athena's dawn wisdom
+    static let golden = LinearGradient(
+        colors: [Color(hex: "F0C060"), Color(hex: "E8A040")],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
+
+    /// Aphrodite's rose — divine love and grace
+    static let rose = LinearGradient(
+        colors: [Color(hex: "CC6699"), Color(hex: "9B35A0")],
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )

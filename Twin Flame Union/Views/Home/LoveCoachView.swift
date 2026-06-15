@@ -99,7 +99,7 @@ private struct IntroCard: View {
             }
 
             VStack(spacing: 8) {
-                Text("I'm Luna")
+                Text("I'm Seraphina")
                     .font(AppFont.serifHeadline(24))
                     .foregroundStyle(AppColors.cream)
 
@@ -137,7 +137,7 @@ private struct MessageBubble: View {
             if isUser { Spacer(minLength: 50) }
 
             if !isUser {
-                // Luna avatar
+                // Seraphina avatar
                 ZStack {
                     Circle()
                         .fill(AppColors.purple.opacity(0.3))
@@ -258,7 +258,7 @@ private struct InputBar: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            TextField("Ask Luna anything...", text: $text, axis: .vertical)
+            TextField("Ask Seraphina anything...", text: $text, axis: .vertical)
                 .font(AppFont.body(15))
                 .foregroundStyle(AppColors.cream)
                 .tint(AppColors.gold)

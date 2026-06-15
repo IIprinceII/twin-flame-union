@@ -15,6 +15,8 @@ struct SynchronicityLogView: View {
     @Query(sort: \SynchronicityEntry.createdAt, order: .reverse) private var entries: [SynchronicityEntry]
 
     @State private var showAngelNumberSheet = false
+    @State private var insightEntry: SynchronicityEntry?
+    @State private var showPaywall = false
 
     // MARK: Computed Properties
 
@@ -70,6 +72,15 @@ struct SynchronicityLogView: View {
             AngelNumberInputSheet { number in
                 logEntry(type: "Angel Number", detail: number)
             }
+        }
+        .sheet(item: $insightEntry) { entry in
+            SacredInsightSheet(
+                type: .synchronicityDecode,
+                content: "Synchronicity type: \(entry.type)\nDetail: \(entry.detail)\nLogged: \(entry.createdAt.formatted())"
+            )
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
 
@@ -146,7 +157,13 @@ struct SynchronicityLogView: View {
                             .padding(.top, 4)
 
                         ForEach(dayEntries) { entry in
-                            SyncEntryRow(entry: entry)
+                            SyncEntryRow(entry: entry, onDecode: {
+                                if StoreService.shared.isPremium {
+                                    insightEntry = entry
+                                } else {
+                                    showPaywall = true
+                                }
+                            })
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
                                         deleteEntry(entry)
@@ -188,6 +205,7 @@ struct SynchronicityLogView: View {
     private func logEntry(type: String, detail: String) {
         let entry = SynchronicityEntry(type: type, detail: detail)
         modelContext.insert(entry)
+        GamificationService.shared.awardXP(amount: 15, source: "synchronicity", framework: .vibrationalGame, skillKey: "vg_influence", detail: "Logged synchronicity: \(type)")
     }
 
     private func deleteEntry(_ entry: SynchronicityEntry) {
@@ -298,6 +316,7 @@ private struct SyncTypeButton: View {
 
 private struct SyncEntryRow: View {
     let entry: SynchronicityEntry
+    var onDecode: (() -> Void)? = nil
 
     private var typeEmoji: String {
         switch entry.type {
@@ -355,6 +374,13 @@ private struct SyncEntryRow: View {
                     .font(.system(size: 12, weight: .regular, design: .default).italic())
                     .foregroundStyle(AppColors.lavender)
                     .padding(.leading, 34)
+            }
+
+            if let onDecode {
+                HStack {
+                    Spacer()
+                    InsightButton(label: "Decode", action: onDecode)
+                }
             }
         }
         .padding(.horizontal, 16)

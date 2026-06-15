@@ -40,7 +40,7 @@ final class HealthService {
 
         #if canImport(HealthKit)
         let store = HKHealthStore()
-        let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession)!
+        guard let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession) else { return }
 
         let typesToShare: Set<HKSampleType> = [mindfulType]
         let typesToRead: Set<HKObjectType> = [mindfulType]
@@ -57,7 +57,7 @@ final class HealthService {
 
         #if canImport(HealthKit)
         let store = HKHealthStore()
-        let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession)!
+        guard let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession) else { return }
 
         let end = Date()
         let start = end.addingTimeInterval(-duration)
@@ -80,7 +80,7 @@ final class HealthService {
 
         #if canImport(HealthKit)
         let store = HKHealthStore()
-        let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession)!
+        guard let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession) else { return [] }
 
         let since = Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
         let predicate = HKQuery.predicateForSamples(withStart: since, end: Date(), options: .strictStartDate)
