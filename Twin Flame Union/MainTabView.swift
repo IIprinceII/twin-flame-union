@@ -89,6 +89,7 @@ struct MainTabView: View {
         }
         .animation(.spring(response: 0.4), value: toneGenerator.isPlaying)
         .onAppear { StreakTracker.checkIn() }
+        .overlay { GamificationOverlay() }
     }
 }
 
@@ -149,5 +150,97 @@ private struct MiniFrequencyPlayer: View {
             alignment: .top
         )
         .onAppear { pulse = true }
+    }
+}
+
+// MARK: - Gamification Feedback Overlay
+
+/// Surfaces GamificationService celebration signals (XP gains, level-ups,
+/// achievement unlocks) as transient overlays. Attached once at the tab root.
+private struct GamificationOverlay: View {
+    @State private var gam = GamificationService.shared
+    @State private var xpToken = 0
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            Color.clear.allowsHitTesting(false)
+
+            if gam.recentXPGain > 0 {
+                XPGainIndicator(amount: gam.recentXPGain)
+                    .id(xpToken)
+                    .padding(.top, 72)
+                    .allowsHitTesting(false)
+            }
+
+            if gam.showLevelUp {
+                LevelUpBanner(level: gam.newLevel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .allowsHitTesting(false)
+                    .zIndex(3)
+            }
+
+            // Toast keeps default hit-testing so tap-to-dismiss works.
+            if let achievement = gam.showAchievement {
+                AchievementToast(achievement: achievement) {
+                    gam.showAchievement = nil
+                }
+                .id(achievement.key)
+                .padding(.top, 12)
+                .zIndex(4)
+            }
+        }
+        .animation(.spring(response: 0.45, dampingFraction: 0.8), value: gam.showAchievement?.key)
+        .animation(.spring(response: 0.45, dampingFraction: 0.8), value: gam.showLevelUp)
+        .animation(.easeOut(duration: 0.3), value: gam.recentXPGain)
+        .onChange(of: gam.recentXPGain) { _, newValue in
+            guard newValue > 0 else { return }
+            xpToken += 1
+            let token = xpToken
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_600_000_000)
+                if token == xpToken { gam.recentXPGain = 0 }
+            }
+        }
+        .onChange(of: gam.showLevelUp) { _, isUp in
+            guard isUp else { return }
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                withAnimation { gam.showLevelUp = false }
+            }
+        }
+    }
+}
+
+private struct LevelUpBanner: View {
+    let level: Int
+    @State private var appear = false
+
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 40))
+                .foregroundStyle(AppColors.gold)
+            Text("LEVEL UP")
+                .font(.system(size: 12, weight: .heavy, design: .rounded))
+                .tracking(4)
+                .foregroundStyle(AppColors.gold.opacity(0.9))
+            Text("Level \(level)")
+                .font(AppFont.title(28))
+                .foregroundStyle(AppColors.cream)
+        }
+        .padding(.horizontal, 40)
+        .padding(.vertical, 30)
+        .background(
+            RoundedRectangle(cornerRadius: 28)
+                .fill(AppColors.deepViolet.opacity(0.96))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .strokeBorder(AppColors.gold.opacity(0.4), lineWidth: 1.5)
+                )
+                .shadow(color: AppColors.gold.opacity(0.35), radius: 20)
+        )
+        .scaleEffect(appear ? 1 : 0.7)
+        .opacity(appear ? 1 : 0)
+        .onAppear { withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { appear = true } }
     }
 }

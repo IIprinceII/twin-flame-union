@@ -163,7 +163,7 @@ final class GamificationService {
         let recentActivity = min(400.0, Double(recentXP) * 0.5)
 
         // Streak bonus (caps at 100)
-        let streak = UserDefaults.standard.integer(forKey: "sacredStreakCount")
+        let streak = UserDefaults.standard.integer(forKey: "streakCount")
         let streakBonus = min(100.0, Double(streak) * 5.0)
 
         // Balance bonus: ratio of smallest to largest framework XP (caps at 200)
@@ -190,7 +190,7 @@ final class GamificationService {
         var mult = 1.0
 
         // Streak multiplier: up to 1.6x at 30-day streak
-        let streak = UserDefaults.standard.integer(forKey: "sacredStreakCount")
+        let streak = UserDefaults.standard.integer(forKey: "streakCount")
         mult += Double(min(streak, 30)) * 0.02
 
         // 11:11 PM window (11:00-11:30 PM): 1.5x
@@ -248,11 +248,11 @@ final class GamificationService {
         case "rising_phoenix":        return profile.currentLevel >= 15
         case "divine_architect":      return profile.currentLevel >= 50
         case "week_devotion":
-            return UserDefaults.standard.integer(forKey: "sacredStreakCount") >= 7
+            return UserDefaults.standard.integer(forKey: "streakCount") >= 7
         case "moon_cycle":
-            return UserDefaults.standard.integer(forKey: "sacredStreakCount") >= 30
+            return UserDefaults.standard.integer(forKey: "streakCount") >= 30
         case "eternal_flame":
-            return UserDefaults.standard.integer(forKey: "sacredStreakCount") >= 100
+            return UserDefaults.standard.integer(forKey: "streakCount") >= 100
         case "trinity_balance":
             return todayFrameworks.count >= 3
         case "constitution_awakened":

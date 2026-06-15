@@ -49,8 +49,9 @@ final class SoulProfile {
     }
 
     var xpForCurrentLevel: Int {
+        guard currentLevel > 0 else { return totalXP }
         var consumed = 0
-        for l in 1...max(1, currentLevel) {
+        for l in 1...currentLevel {
             consumed += l * 100 + 50
         }
         return totalXP - consumed

@@ -21,8 +21,8 @@ final class ToneGenerator {
     // MARK: Private
     private let engine = AVAudioEngine()
     private var sourceNode: AVAudioSourceNode?
-    private var phase: Double = 0
     private var timerTask: Task<Void, Never>?
+    private var audioObservers: [NSObjectProtocol] = []
 
     // MARK: Playback
 
@@ -37,14 +37,17 @@ final class ToneGenerator {
         let sampleRate = sr == 0 ? 44100.0 : sr
         guard let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1) else { return }
 
-        let node = AVAudioSourceNode { [weak self] _, _, frameCount, audioBufferList in
-            guard let self else { return noErr }
+        // The render block runs on a realtime audio thread. It must NOT read
+        // MainActor-isolated state. Capture the frequency once (it never changes
+        // mid-playback — play() always stops first) into a plain holder the audio
+        // thread alone mutates.
+        let state = ToneState(phaseInc: 2.0 * .pi * frequency / sampleRate)
+        let node = AVAudioSourceNode { _, _, frameCount, audioBufferList in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
-            let phaseInc = 2.0 * .pi * self.currentFrequency / sampleRate
             for frame in 0..<Int(frameCount) {
-                let value = Float(sin(self.phase)) * 0.25
-                self.phase += phaseInc
-                if self.phase > 2.0 * .pi { self.phase -= 2.0 * .pi }
+                let value = Float(sin(state.phase)) * 0.25
+                state.phase += state.phaseInc
+                if state.phase > 2.0 * .pi { state.phase -= 2.0 * .pi }
                 for buf in ablPointer {
                     UnsafeMutableBufferPointer<Float>(buf)[frame] = value
                 }
@@ -62,6 +65,7 @@ final class ToneGenerator {
             try engine.start()
             isPlaying = true
             startTimer()
+            registerAudioObservers()
         } catch {
             stop()
         }
@@ -80,7 +84,6 @@ final class ToneGenerator {
         currentFrequencyName = ""
         currentFrequencyColor = .clear
         elapsedSeconds = 0
-        phase = 0
     }
 
     // MARK: Timer
@@ -95,4 +98,49 @@ final class ToneGenerator {
             }
         }
     }
+
+    // MARK: Audio session handling
+
+    // Stop cleanly when the system interrupts audio (phone call, Siri) or the
+    // output route disappears (headphones unplugged) — otherwise isPlaying and the
+    // timer desync from reality.
+    private func registerAudioObservers() {
+        guard audioObservers.isEmpty else { return }
+        let nc = NotificationCenter.default
+        let session = AVAudioSession.sharedInstance()
+
+        let interruption = nc.addObserver(
+            forName: AVAudioSession.interruptionNotification, object: session, queue: .main
+        ) { [weak self] note in
+            guard let self,
+                  let raw = note.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  let type = AVAudioSession.InterruptionType(rawValue: raw),
+                  type == .began else { return }
+            MainActor.assumeIsolated { self.stop() }
+        }
+
+        let routeChange = nc.addObserver(
+            forName: AVAudioSession.routeChangeNotification, object: session, queue: .main
+        ) { [weak self] note in
+            guard let self,
+                  let raw = note.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt,
+                  let reason = AVAudioSession.RouteChangeReason(rawValue: raw),
+                  reason == .oldDeviceUnavailable else { return }
+            MainActor.assumeIsolated { self.stop() }
+        }
+
+        audioObservers = [interruption, routeChange]
+    }
+
+    deinit {
+        audioObservers.forEach { NotificationCenter.default.removeObserver($0) }
+    }
+}
+
+// Plain reference holder for the realtime audio render thread. Only the audio
+// thread mutates `phase` after creation, so it never races with the main actor.
+private final class ToneState: @unchecked Sendable {
+    var phase: Double = 0
+    let phaseInc: Double
+    init(phaseInc: Double) { self.phaseInc = phaseInc }
 }
