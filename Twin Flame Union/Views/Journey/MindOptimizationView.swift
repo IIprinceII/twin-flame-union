@@ -114,7 +114,7 @@ private let practices: [MindPractice] = [
             "Feel for the astral linkage — the divine cord connecting you upward to the Most High",
             "Move your awareness around this darkness — feel the depth as the Most High expands your perception",
             "You may feel a 'deepening' sensation. This is your mind activating through the energy grid",
-            "If you feel trembling or intensity — the Most High is interfacing with your full energy grid. Breathe, calm yourself, keep going",
+            "Keep the practice gentle and calm. If you ever feel trembling, dizziness, or any distressing physical symptom, gently stop and rest — and seek medical care if it continues",
             "Explore the edges of your consciousness. The astral linkage stretches further than your mind alone can reach",
             "Hold this expanded state. This is the bridge between Apollux mind optimization and Energy Enhancement body work",
         ]
