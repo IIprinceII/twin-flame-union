@@ -10,11 +10,11 @@ import SwiftData
 
 @Model
 final class SynchronicityEntry {
-    var id: UUID
-    var type: String      // e.g. "Angel Number", "Thought of Them"
-    var detail: String    // e.g. "444", "Our Song", specific detail
-    var note: String      // optional free-text note
-    var createdAt: Date
+    var id: UUID = UUID()
+    var type: String = ""      // e.g. "Angel Number", "Thought of Them"
+    var detail: String = ""    // e.g. "444", "Our Song", specific detail
+    var note: String = ""      // optional free-text note
+    var createdAt: Date = Date()
 
     init(type: String, detail: String = "", note: String = "", createdAt: Date = Date()) {
         self.id = UUID()

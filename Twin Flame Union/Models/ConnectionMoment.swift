@@ -10,12 +10,12 @@ import SwiftData
 
 @Model
 final class ConnectionMoment {
-    var id: UUID
-    var title: String
-    var detail: String
-    var category: String   // "First Contact", "Separation", "Sign", etc.
-    var date: Date
-    var createdAt: Date
+    var id: UUID = UUID()
+    var title: String = ""
+    var detail: String = ""
+    var category: String = "Milestone"   // "First Contact", "Separation", "Sign", etc.
+    var date: Date = Date()
+    var createdAt: Date = Date()
 
     init(title: String = "", detail: String = "",
          category: String = "Milestone", date: Date = Date()) {

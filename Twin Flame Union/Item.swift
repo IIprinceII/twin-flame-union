@@ -10,12 +10,12 @@ import SwiftData
 
 @Model
 final class JournalEntry {
-    var id: UUID
-    var title: String
-    var content: String
-    var mood: String
-    var createdAt: Date
-    var updatedAt: Date
+    var id: UUID = UUID()
+    var title: String = ""
+    var content: String = ""
+    var mood: String = "Hopeful"
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
 
     init(title: String = "", content: String = "", mood: String = "Hopeful") {
         self.id = UUID()

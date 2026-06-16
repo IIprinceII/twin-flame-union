@@ -8,9 +8,9 @@ import SwiftData
 
 @Model
 final class GratitudeEntry {
-    var id: UUID
-    var date: Date
-    var items: String   // newline-separated gratitude items (up to 5)
+    var id: UUID = UUID()
+    var date: Date = Date()
+    var items: String = ""   // newline-separated gratitude items (up to 5)
 
     init(date: Date = Date(), items: String = "") {
         self.id    = UUID()

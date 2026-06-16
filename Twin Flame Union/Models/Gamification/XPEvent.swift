@@ -10,13 +10,13 @@ import SwiftData
 
 @Model
 final class XPEvent {
-    var id: UUID
-    var amount: Int
-    var source: String
-    var framework: String       // "vibrational", "energy", "apollux", "general"
-    var skillKey: String
-    var detail: String
-    var createdAt: Date
+    var id: UUID = UUID()
+    var amount: Int = 0
+    var source: String = ""
+    var framework: String = ""       // "vibrational", "energy", "apollux", "general"
+    var skillKey: String = ""
+    var detail: String = ""
+    var createdAt: Date = Date()
 
     init(amount: Int = 0, source: String = "", framework: String = "", skillKey: String = "", detail: String = "") {
         self.id = UUID()
