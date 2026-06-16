@@ -222,6 +222,8 @@ struct CordCuttingView: View {
                             .padding(.horizontal, 32)
                         }
 
+                        DisclaimerFooter()
+
                         Spacer().frame(height: 48)
                     }
                     .padding(.top, 8)

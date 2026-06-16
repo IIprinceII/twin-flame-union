@@ -224,6 +224,8 @@ struct RitualPlannerView: View {
                         }
                     }
 
+                    DisclaimerFooter()
+
                     Spacer().frame(height: 32)
                 }
             }

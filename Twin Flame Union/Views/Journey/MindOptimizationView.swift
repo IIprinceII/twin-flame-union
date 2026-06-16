@@ -327,6 +327,8 @@ private struct PracticeDetailSheet: View {
                         .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(practice.color.opacity(0.2), lineWidth: 1))
                         .padding(.horizontal, 20)
 
+                        DisclaimerFooter()
+
                         Spacer().frame(height: 40)
                     }
                 }
