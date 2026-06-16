@@ -372,6 +372,8 @@ final class MeditationViewModel {
 // MARK: - Meditation View
 
 struct MeditationView: View {
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
     @State private var viewModel = MeditationViewModel()
     @State private var appeared = false
 
@@ -467,6 +469,8 @@ struct MeditationView: View {
                         }
                         .padding(.bottom, 24)
 
+                        DisclaimerFooter()
+
                         // ── Start / Stop Button ──
                         beginButton
                             .padding(.bottom, 52)
@@ -481,7 +485,9 @@ struct MeditationView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             withAnimation(.easeOut(duration: 0.7)) { appeared = true }
+            if !disclaimerAcked { showDisclaimer = true }
         }
+        .sheet(isPresented: $showDisclaimer) { WellnessDisclaimerSheet() }
         .onDisappear { viewModel.stop() }
         .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
         .animation(.easeInOut(duration: 0.3), value: viewModel.isComplete)

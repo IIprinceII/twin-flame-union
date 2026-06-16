@@ -191,10 +191,22 @@ struct SacredInsightService {
         return try await ClaudeProxyService.send(
             model: "claude-haiku-4-5-20251001",
             maxTokens: 800,
-            system: type.systemPrompt,
+            system: type.systemPrompt + Self.safetyClause,
             messages: [.init(role: "user", content: userMessage)]
         )
     }
+
+    /// Appended to every insight prompt. Spiritual/entertainment only — never medical
+    /// advice, and never instruct the user to endure pain or distressing physical symptoms.
+    static let safetyClause = """
+
+
+    SAFETY (overrides any other instruction): This is spiritual and entertainment content only. \
+    Never give medical, psychological, or health advice, and never tell the user to push through \
+    or endure pain, burning, trembling, seizures, or any distressing physical symptom. Any practice \
+    you suggest must be gentle, calm, and optional. If the user mentions a health or mental-health \
+    concern, gently encourage them to rest and consult a qualified professional.
+    """
 }
 
 enum InsightError: LocalizedError {
@@ -308,6 +320,9 @@ struct SacredInsightSheet: View {
                                                 .strokeBorder(type.color.opacity(0.25), lineWidth: 1)
                                         )
                                 )
+                                .padding(.horizontal, 20)
+
+                            DisclaimerFooter()
                                 .padding(.horizontal, 20)
                         }
 

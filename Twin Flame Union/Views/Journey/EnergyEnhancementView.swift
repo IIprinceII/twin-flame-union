@@ -50,8 +50,8 @@ private let modules: [EnergyModule] = [
         icon: "arrow.up.right.circle.fill",
         color: Color(hex: "FF4500"),
         sections: [
-            EnergySection(heading: "The Elimination System", content: "Your elimination system is crucial for exchanging lower vibrations for higher ones. These systems must be activated and flowing:\n\n• Lungs/Heart — breathing out dense energy, bringing in light\n• Skin — sweating releases stored lower vibrations\n• Digestive system — releasing physically what no longer serves\n\nThe blood facilitates grabbing denser vibrations and carrying them to elimination organs. When all systems are working in high order, you can shift your vibration in minutes."),
-            EnergySection(heading: "What to Expect", content: "When you start eliminating lower energy, expect:\n• Burping, sweating, or trembling as dense energy releases\n• A burning sensation in the gut/heart region — this is negative energy moving OUT\n• It will be messy and rigid at first\n• Over time, as your vibration rises, eliminations become smoother and cleaner\n\nSekhmet's fire destroys what blocks love. Let the process be uncomfortable. It means it's working."),
+            EnergySection(heading: "The Elimination System", content: "Your elimination system is crucial for exchanging lower vibrations for higher ones. These systems must be activated and flowing:\n\n• Lungs/Heart — breathing out dense energy, bringing in light\n• Skin — sweating releases stored lower vibrations\n• Digestive system — releasing physically what no longer serves\n\nPicture your breath, movement, and warmth helping to carry denser energy away. With steady, consistent practice, many people describe feeling lighter and more energetically clear."),
+            EnergySection(heading: "What to Expect", content: "As you relax into the practice, the signs of release are gentle — a soft sigh, a yawn, a sense of warmth, a feeling of lightness as you let go.\n\nThis is a meditative, spiritual practice — not a physical treatment. Keep every session gentle and comfortable. Discomfort is never the goal. If you ever feel pain, a burning sensation, dizziness, trembling, or any distressing physical symptom, please stop, rest, and consult a qualified professional. Only continue while it feels calm and safe."),
         ]
     ),
     EnergyModule(
@@ -70,8 +70,8 @@ private let modules: [EnergyModule] = [
         icon: "eye.fill",
         color: Color(hex: "3D9BE9"),
         sections: [
-            EnergySection(heading: "Mind-Directed Energy Work", content: "With visualization you can directly influence the energy state of any structure in your body.\n\n1. Sensing — Close your eyes and feel the vibrational state of each body part. Dense? Light? Warm? Cold? Build this awareness first.\n\n2. Brightening — Visualize what you want a body part to look like energetically. See it glowing, vibrant, radiant. The closer the current state is to your visualization, the stronger the effect.\n\n3. Pulling — Mentally 'grab' energy from a body part and pull it into an elimination space (lungs, gut). The blood/energy system will excrete the lower vibrations.\n\n4. Quickening — Mentally speed up the circulation of energy in any area. Faster circulation pushes out lower-integrated energy and raises the vibration."),
-            EnergySection(heading: "Building Mental Exertion Strength", content: "These visualizations require mental exertion — like a muscle, it must be built over time.\n\nStart with 5 minutes. Build to 15. Eventually you'll be able to sense and shift energy in seconds.\n\nThe Darkness Meditation (close eyes, move awareness through the black, feel the deepening) builds this foundation. Seizures or trembling mean you're tapping into your full energy grid — breathe through it."),
+            EnergySection(heading: "Mind-Directed Energy Work", content: "With visualization you can work with the energy you sense in and around your body.\n\n1. Sensing — Close your eyes and feel the vibrational state of each body part. Dense? Light? Warm? Cold? Build this awareness first.\n\n2. Brightening — Visualize what you want a body part to look like energetically. See it glowing, vibrant, radiant. The closer the current state is to your visualization, the stronger the effect.\n\n3. Pulling — Mentally 'grab' energy from a body part and pull it into an elimination space (lungs, gut). Imagine that denser energy being released and gently carried away.\n\n4. Quickening — Mentally speed up the circulation of energy in any area. Faster circulation pushes out lower-integrated energy and raises the vibration."),
+            EnergySection(heading: "Building Mental Exertion Strength", content: "These visualizations require mental exertion — like a muscle, it must be built over time.\n\nStart with 5 minutes. Build to 15. Eventually you'll be able to sense and shift energy in seconds.\n\nThe Darkness Meditation (close your eyes, let your awareness rest in the dark, notice the quiet) supports this. Keep every session calm and gentle — if you ever feel trembling, dizziness, or any distressing physical symptom, stop and rest, and seek medical care if it continues."),
         ]
     ),
     EnergyModule(
@@ -91,6 +91,8 @@ private let modules: [EnergyModule] = [
 struct EnergyEnhancementView: View {
     @State private var selectedModule: EnergyModule?
     @State private var appeared = false
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
 
     var body: some View {
         ZStack {
@@ -169,6 +171,9 @@ struct EnergyEnhancementView: View {
                         .opacity(appeared ? 1 : 0)
                     }
 
+                    DisclaimerFooter()
+                        .padding(.horizontal, 20)
+
                     Spacer().frame(height: 40)
                 }
             }
@@ -177,7 +182,13 @@ struct EnergyEnhancementView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
-        .onAppear { withAnimation(.easeOut(duration: 0.7)) { appeared = true } }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.7)) { appeared = true }
+            if !disclaimerAcked { showDisclaimer = true }
+        }
+        .sheet(isPresented: $showDisclaimer) {
+            WellnessDisclaimerSheet()
+        }
         .sheet(item: $selectedModule) { module in
             ModuleDetailSheet(module: module)
         }
@@ -224,6 +235,9 @@ private struct ModuleDetailSheet: View {
                             .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(module.color.opacity(0.2), lineWidth: 1))
                             .padding(.horizontal, 20)
                         }
+
+                        DisclaimerFooter()
+                            .padding(.horizontal, 20)
 
                         Spacer().frame(height: 40)
                     }

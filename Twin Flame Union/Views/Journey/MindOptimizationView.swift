@@ -114,7 +114,7 @@ private let practices: [MindPractice] = [
             "Feel for the astral linkage — the divine cord connecting you upward to the Most High",
             "Move your awareness around this darkness — feel the depth as the Most High expands your perception",
             "You may feel a 'deepening' sensation. This is your mind activating through the energy grid",
-            "If you feel trembling or intensity — the Most High is interfacing with your full energy grid. Breathe, calm yourself, keep going",
+            "Keep the practice gentle and calm. If you ever feel trembling, dizziness, or any distressing physical symptom, gently stop and rest — and seek medical care if it continues",
             "Explore the edges of your consciousness. The astral linkage stretches further than your mind alone can reach",
             "Hold this expanded state. This is the bridge between Apollux mind optimization and Energy Enhancement body work",
         ]
@@ -124,6 +124,8 @@ private let practices: [MindPractice] = [
 // MARK: - View
 
 struct MindOptimizationView: View {
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
     @State private var selectedPractice: MindPractice?
     @State private var appeared = false
 
@@ -190,6 +192,9 @@ struct MindOptimizationView: View {
                         .opacity(appeared ? 1 : 0)
                     }
 
+                    DisclaimerFooter()
+                        .padding(.horizontal, 20)
+
                     Spacer().frame(height: 40)
                 }
             }
@@ -200,6 +205,10 @@ struct MindOptimizationView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             withAnimation(.easeOut(duration: 0.7)) { appeared = true }
+            if !disclaimerAcked { showDisclaimer = true }
+        }
+        .sheet(isPresented: $showDisclaimer) {
+            WellnessDisclaimerSheet()
         }
         .sheet(item: $selectedPractice) { practice in
             PracticeDetailSheet(practice: practice)
@@ -317,6 +326,8 @@ private struct PracticeDetailSheet: View {
                         .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 20))
                         .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(practice.color.opacity(0.2), lineWidth: 1))
                         .padding(.horizontal, 20)
+
+                        DisclaimerFooter()
 
                         Spacer().frame(height: 40)
                     }

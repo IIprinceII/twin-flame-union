@@ -82,6 +82,8 @@ struct ChakraCheckinView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \ChakraEntry.date, order: .reverse) private var entries: [ChakraEntry]
 
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
     @State private var ratings: [Int] = Array(repeating: 3, count: 7)
     @State private var note = ""
     @State private var isSaved = false
@@ -193,11 +195,8 @@ struct ChakraCheckinView: View {
                     }
                     .padding(.horizontal, 24)
 
-                    if !StoreService.shared.isPremium {
-                        Text("Premium feature")
-                            .font(AppFont.caption(11))
-                            .foregroundStyle(AppColors.lavender.opacity(0.5))
-                    }
+                    DisclaimerFooter()
+                        .padding(.horizontal, 24)
 
                     Spacer().frame(height: 32)
                 }
@@ -207,7 +206,13 @@ struct ChakraCheckinView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
-        .onAppear { loadTodayIfExists() }
+        .onAppear {
+            loadTodayIfExists()
+            if !disclaimerAcked { showDisclaimer = true }
+        }
+        .sheet(isPresented: $showDisclaimer) {
+            WellnessDisclaimerSheet()
+        }
         .sheet(isPresented: $showHealingPlan) {
             let chakraNames = ["Root", "Sacral", "Solar Plexus", "Heart", "Throat", "Third Eye", "Crown"]
             let summary = zip(chakraNames, ratings).map { "\($0): \($1)/5" }.joined(separator: "\n")

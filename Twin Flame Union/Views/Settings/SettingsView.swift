@@ -32,6 +32,7 @@ struct SettingsView: View {
     @State private var showDeleteAccount    = false
     @State private var showExporter   = false
     @State private var exportDocument: JSONDocument?
+    @State private var showWellnessDisclaimer = false
 
     var body: some View {
         ZStack {
@@ -68,6 +69,9 @@ struct SettingsView: View {
             contentType: .json,
             defaultFilename: "TwinFlameUnion-Backup-\(Self.exportDateString())"
         ) { _ in }
+        .sheet(isPresented: $showWellnessDisclaimer) {
+            WellnessDisclaimerDetail()
+        }
         .onAppear {
             var comps = DateComponents()
             comps.hour   = reminderHour
@@ -185,6 +189,14 @@ struct SettingsView: View {
                 }
             } label: {
                 SettingsRowButton(icon: "doc.text.fill", iconColor: AppColors.lavender, label: "Terms of Service", showChevron: true)
+            }
+
+            Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
+
+            Button {
+                showWellnessDisclaimer = true
+            } label: {
+                SettingsRowButton(icon: "heart.text.square.fill", iconColor: AppColors.sage, label: "Wellness Disclaimer", showChevron: true)
             }
         }
     }

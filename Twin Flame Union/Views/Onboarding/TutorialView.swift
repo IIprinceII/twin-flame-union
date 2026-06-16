@@ -206,7 +206,6 @@ struct TutorialView: View {
                 TutorialBullet(emoji: "☀️", text: "Your Sun, Moon, and Rising signs are calculated from your birth data"),
                 TutorialBullet(emoji: "💞", text: "Add your twin flame's name and sun sign to connect your charts"),
                 TutorialBullet(emoji: "🔔", text: "Enable daily reminders — set the time for your morning affirmation notification"),
-                TutorialBullet(emoji: "💎", text: "Upgrade to Premium for unlimited access to all features"),
                 TutorialBullet(emoji: "🔄", text: "Tap 'View Tutorial' anytime to come back to this walkthrough"),
             ]
         ),
