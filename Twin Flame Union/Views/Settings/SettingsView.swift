@@ -210,6 +210,8 @@ struct SettingsView: View {
                 .padding(.vertical, 14)
             }
 
+            Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
+
             Button(role: .destructive) {
                 showClearConfirm = true
             } label: {
