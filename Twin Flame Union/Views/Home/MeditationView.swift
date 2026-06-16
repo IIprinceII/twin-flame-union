@@ -10,6 +10,17 @@ import SwiftUI
 import ActivityKit
 import AVFoundation
 
+// MARK: - Meditation Clock
+
+/// Wall-clock source of truth for a meditation countdown. Pure and testable —
+/// computing remaining time from an absolute `endDate` means backgrounding never
+/// drifts the timer (a suspended Task-sleep loop would).
+struct MeditationClock {
+    let endDate: Date
+    func remaining(at now: Date) -> TimeInterval { max(0, endDate.timeIntervalSince(now)) }
+    func isComplete(at now: Date) -> Bool { now >= endDate }
+}
+
 // MARK: - Breath Phase
 
 enum BreathPhase: String, CaseIterable {
