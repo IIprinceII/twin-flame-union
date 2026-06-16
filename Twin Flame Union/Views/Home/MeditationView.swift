@@ -160,6 +160,8 @@ final class MeditationViewModel {
     @ObservationIgnored
     private var breathTask: Task<Void, Never>?
     @ObservationIgnored
+    private var clock: MeditationClock?
+    @ObservationIgnored
     private var liveActivity: Activity<MeditationActivityAttributes>?
     @ObservationIgnored
     private let soundPlayer = AmbientSoundPlayer()
@@ -296,8 +298,14 @@ final class MeditationViewModel {
     func start() {
         isComplete = false
         timeRemaining = selectedSession.duration
+        clock = MeditationClock(endDate: Date().addingTimeInterval(selectedSession.duration))
         currentPhase = .inhale
         isRunning = true
+        // Ask for Apple Health permission once, on the user's first meditation.
+        if !UserDefaults.standard.bool(forKey: "hasRequestedMeditationHealth") {
+            UserDefaults.standard.set(true, forKey: "hasRequestedMeditationHealth")
+            Task { try? await HealthService.shared.requestAuthorization() }
+        }
         showInvocation = false
         startBreathCycle()
         startCountdown()
@@ -321,16 +329,36 @@ final class MeditationViewModel {
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled, let self else { return }
-                timeRemaining -= 1
-                if timeRemaining <= 0 {
-                    isComplete = true
-                    stop()
-                    GamificationService.shared.awardXP(amount: 30, source: "meditation", framework: .apollux, skillKey: "ap_focus", detail: "Completed meditation: \(selectedSession.name)")
+                guard !Task.isCancelled, let self, let clock = self.clock else { return }
+                let now = Date()
+                timeRemaining = clock.remaining(at: now)
+                if clock.isComplete(at: now) {
+                    complete()
                     return
                 }
             }
         }
+    }
+
+    /// Full-completion path: stop, award XP, and log the mindful session to Apple Health.
+    /// Guarded by `isComplete` so it runs once per session.
+    private func complete() {
+        guard !isComplete else { return }
+        isComplete = true
+        timeRemaining = 0
+        let loggedDuration = selectedSession.duration
+        stop()
+        GamificationService.shared.awardXP(amount: 30, source: "meditation", framework: .apollux, skillKey: "ap_focus", detail: "Completed meditation: \(selectedSession.name)")
+        Task { try? await HealthService.shared.logMindfulSession(duration: loggedDuration) }
+    }
+
+    /// Re-evaluate the timer against the wall clock when the app returns to the foreground.
+    /// If the session finished while backgrounded, complete it now.
+    func syncToWallClock() {
+        guard isRunning, let clock else { return }
+        let now = Date()
+        timeRemaining = clock.remaining(at: now)
+        if clock.isComplete(at: now) { complete() }
     }
 
     private func startBreathCycle() {
@@ -387,6 +415,7 @@ struct MeditationView: View {
     @State private var showDisclaimer = false
     @State private var viewModel = MeditationViewModel()
     @State private var appeared = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
@@ -499,6 +528,9 @@ struct MeditationView: View {
             if !disclaimerAcked { showDisclaimer = true }
         }
         .sheet(isPresented: $showDisclaimer) { WellnessDisclaimerSheet() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { viewModel.syncToWallClock() }
+        }
         .onDisappear { viewModel.stop() }
         .animation(.easeInOut(duration: 0.3), value: viewModel.isRunning)
         .animation(.easeInOut(duration: 0.3), value: viewModel.isComplete)
