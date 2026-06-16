@@ -1,0 +1,4 @@
+# Supabase CLI local state — machine-specific, not source of truth
+.branches
+.temp
+.env
