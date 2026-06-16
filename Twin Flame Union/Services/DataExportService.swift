@@ -11,7 +11,7 @@ import SwiftData
 
 // MARK: - Snapshot DTOs (plain Codable mirrors of the @Model types)
 
-struct DataExportSnapshot: Codable {
+nonisolated struct DataExportSnapshot: Codable {
     var schemaVersion: String = "1.0.0"
     var exportedAt: Date = Date()
     var journalEntries: [JournalDTO] = []
@@ -28,18 +28,18 @@ struct DataExportSnapshot: Codable {
     var dailyChallenges: [DailyChallengeDTO] = []
 }
 
-struct JournalDTO: Codable { var id: UUID; var title: String; var content: String; var mood: String; var createdAt: Date; var updatedAt: Date }
-struct DreamDTO: Codable { var id: UUID; var title: String; var content: String; var people: String; var symbols: String; var wakeFeeling: String; var isLucid: Bool; var isTwinFlameDream: Bool; var createdAt: Date }
-struct SynchronicityDTO: Codable { var id: UUID; var type: String; var detail: String; var note: String; var createdAt: Date }
-struct ChakraDTO: Codable { var id: UUID; var date: Date; var root: Int; var sacral: Int; var solarPlexus: Int; var heart: Int; var throat: Int; var thirdEye: Int; var crown: Int; var note: String }
-struct ManifestationDTO: Codable { var id: UUID; var intention: String; var emoji: String; var isManifested: Bool; var createdAt: Date }
-struct ConnectionMomentDTO: Codable { var id: UUID; var title: String; var detail: String; var category: String; var date: Date; var createdAt: Date }
-struct PrayerDTO: Codable { var id: UUID; var petition: String; var detail: String; var isAnswered: Bool; var answeredNote: String; var createdAt: Date; var answeredAt: Date? }
-struct GratitudeDTO: Codable { var id: UUID; var date: Date; var items: String }
-struct SoulProfileDTO: Codable { var id: UUID; var totalXP: Int; var vibrationalScore: Double; var vibrationalGameXP: Int; var energyEnhancementXP: Int; var apolluxXP: Int; var constitutionRating: String; var createdAt: Date; var lastActivityAt: Date }
-struct XPEventDTO: Codable { var id: UUID; var amount: Int; var source: String; var framework: String; var skillKey: String; var detail: String; var createdAt: Date }
-struct AchievementDTO: Codable { var id: UUID; var key: String; var title: String; var detail: String; var icon: String; var rarity: String; var framework: String; var unlockedAt: Date; var xpReward: Int }
-struct DailyChallengeDTO: Codable { var id: UUID; var date: Date; var challengeKey: String; var title: String; var detail: String; var xpReward: Int; var isCompleted: Bool; var completedAt: Date? }
+nonisolated struct JournalDTO: Codable { var id: UUID; var title: String; var content: String; var mood: String; var createdAt: Date; var updatedAt: Date }
+nonisolated struct DreamDTO: Codable { var id: UUID; var title: String; var content: String; var people: String; var symbols: String; var wakeFeeling: String; var isLucid: Bool; var isTwinFlameDream: Bool; var createdAt: Date }
+nonisolated struct SynchronicityDTO: Codable { var id: UUID; var type: String; var detail: String; var note: String; var createdAt: Date }
+nonisolated struct ChakraDTO: Codable { var id: UUID; var date: Date; var root: Int; var sacral: Int; var solarPlexus: Int; var heart: Int; var throat: Int; var thirdEye: Int; var crown: Int; var note: String }
+nonisolated struct ManifestationDTO: Codable { var id: UUID; var intention: String; var emoji: String; var isManifested: Bool; var createdAt: Date }
+nonisolated struct ConnectionMomentDTO: Codable { var id: UUID; var title: String; var detail: String; var category: String; var date: Date; var createdAt: Date }
+nonisolated struct PrayerDTO: Codable { var id: UUID; var petition: String; var detail: String; var isAnswered: Bool; var answeredNote: String; var createdAt: Date; var answeredAt: Date? }
+nonisolated struct GratitudeDTO: Codable { var id: UUID; var date: Date; var items: String }
+nonisolated struct SoulProfileDTO: Codable { var id: UUID; var totalXP: Int; var vibrationalScore: Double; var vibrationalGameXP: Int; var energyEnhancementXP: Int; var apolluxXP: Int; var constitutionRating: String; var createdAt: Date; var lastActivityAt: Date }
+nonisolated struct XPEventDTO: Codable { var id: UUID; var amount: Int; var source: String; var framework: String; var skillKey: String; var detail: String; var createdAt: Date }
+nonisolated struct AchievementDTO: Codable { var id: UUID; var key: String; var title: String; var detail: String; var icon: String; var rarity: String; var framework: String; var unlockedAt: Date; var xpReward: Int }
+nonisolated struct DailyChallengeDTO: Codable { var id: UUID; var date: Date; var challengeKey: String; var title: String; var detail: String; var xpReward: Int; var isCompleted: Bool; var completedAt: Date? }
 
 // MARK: - Service
 
@@ -47,7 +47,6 @@ enum DataExportService {
 
     static func snapshot(from context: ModelContext) throws -> DataExportSnapshot {
         var snap = DataExportSnapshot()
-        snap.exportedAt = Date()
 
         snap.journalEntries = try context.fetch(FetchDescriptor<JournalEntry>()).map {
             JournalDTO(id: $0.id, title: $0.title, content: $0.content, mood: $0.mood, createdAt: $0.createdAt, updatedAt: $0.updatedAt)

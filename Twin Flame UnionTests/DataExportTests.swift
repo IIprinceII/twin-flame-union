@@ -37,5 +37,7 @@ struct DataExportTests {
         let decoded = try decoder.decode(DataExportSnapshot.self, from: data)
         #expect(decoded.journalEntries.count == 2)
         #expect(decoded.dreamEntries.count == 1)
+        #expect(decoded.schemaVersion == "1.0.0")
+        #expect(abs(decoded.exportedAt.timeIntervalSince(snap.exportedAt)) < 1)
     }
 }
