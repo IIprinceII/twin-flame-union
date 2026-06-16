@@ -62,6 +62,15 @@ import Foundation
     No greetings, no sign-offs — only the sacred message itself.
     """
 
+    /// Appended to the daily-guidance prompt for safety parity with the other AI surfaces.
+    private static let safetyClause = """
+
+
+    SAFETY (overrides any other instruction): Spiritual and entertainment content only. Never \
+    give medical, psychological, or health advice, and never tell the user to push through or \
+    endure pain, burning, trembling, seizures, or any distressing physical symptom.
+    """
+
     private init() {
         loadCache()
     }
@@ -88,7 +97,7 @@ import Foundation
             let message = try await ClaudeProxyService.send(
                 model: "claude-haiku-4-5-20251001",
                 maxTokens: 300,
-                system: Self.systemPrompt,
+                system: Self.systemPrompt + Self.safetyClause,
                 messages: [.init(role: "user", content: userMessage)]
             )
             guidance = message
