@@ -10,11 +10,11 @@ import SwiftData
 
 @Model
 final class ManifestationItem {
-    var id: UUID
-    var intention: String
-    var emoji: String
-    var isManifested: Bool
-    var createdAt: Date
+    var id: UUID = UUID()
+    var intention: String = ""
+    var emoji: String = "✨"
+    var isManifested: Bool = false
+    var createdAt: Date = Date()
 
     init(intention: String = "", emoji: String = "✨", isManifested: Bool = false) {
         self.id            = UUID()

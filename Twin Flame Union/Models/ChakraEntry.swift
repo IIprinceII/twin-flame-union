@@ -11,16 +11,16 @@ import SwiftData
 
 @Model
 final class ChakraEntry {
-    var id: UUID
-    var date: Date
-    var root: Int
-    var sacral: Int
-    var solarPlexus: Int
-    var heart: Int
-    var throat: Int
-    var thirdEye: Int
-    var crown: Int
-    var note: String
+    var id: UUID = UUID()
+    var date: Date = Date()
+    var root: Int = 3
+    var sacral: Int = 3
+    var solarPlexus: Int = 3
+    var heart: Int = 3
+    var throat: Int = 3
+    var thirdEye: Int = 3
+    var crown: Int = 3
+    var note: String = ""
 
     init(date: Date = Date(),
          root: Int = 3, sacral: Int = 3, solarPlexus: Int = 3,

@@ -10,15 +10,15 @@ import SwiftData
 
 @Model
 final class DreamEntry {
-    var id: UUID
-    var title: String
-    var content: String
-    var people: String       // who appeared, free text
-    var symbols: String      // comma-separated symbol tags
-    var wakeFeeling: String  // emoji + label e.g. "✨ Hopeful"
-    var isLucid: Bool
-    var isTwinFlameDream: Bool
-    var createdAt: Date
+    var id: UUID = UUID()
+    var title: String = ""
+    var content: String = ""
+    var people: String = ""       // who appeared, free text
+    var symbols: String = ""      // comma-separated symbol tags
+    var wakeFeeling: String = ""  // emoji + label e.g. "✨ Hopeful"
+    var isLucid: Bool = false
+    var isTwinFlameDream: Bool = false
+    var createdAt: Date = Date()
 
     init(title: String = "", content: String = "", people: String = "",
          symbols: String = "", wakeFeeling: String = "", isLucid: Bool = false,

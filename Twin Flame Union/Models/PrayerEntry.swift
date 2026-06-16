@@ -8,13 +8,13 @@ import SwiftData
 
 @Model
 final class PrayerEntry {
-    var id: UUID
-    var petition: String      // what you are praying for
-    var detail: String
-    var isAnswered: Bool
-    var answeredNote: String  // how it was answered
-    var createdAt: Date
-    var answeredAt: Date?
+    var id: UUID = UUID()
+    var petition: String = ""      // what you are praying for
+    var detail: String = ""
+    var isAnswered: Bool = false
+    var answeredNote: String = ""  // how it was answered
+    var createdAt: Date = Date()
+    var answeredAt: Date? = nil
 
     init(petition: String = "", detail: String = "") {
         self.id           = UUID()

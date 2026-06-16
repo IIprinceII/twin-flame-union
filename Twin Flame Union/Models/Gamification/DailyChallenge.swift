@@ -10,14 +10,14 @@ import SwiftData
 
 @Model
 final class DailyChallenge {
-    var id: UUID
-    var date: Date
-    var challengeKey: String
-    var title: String
-    var detail: String
-    var xpReward: Int
-    var isCompleted: Bool
-    var completedAt: Date?
+    var id: UUID = UUID()
+    var date: Date = Date()
+    var challengeKey: String = ""
+    var title: String = ""
+    var detail: String = ""
+    var xpReward: Int = 50
+    var isCompleted: Bool = false
+    var completedAt: Date? = nil
 
     init(date: Date = Date(), challengeKey: String = "", title: String = "", detail: String = "", xpReward: Int = 50) {
         self.id = UUID()

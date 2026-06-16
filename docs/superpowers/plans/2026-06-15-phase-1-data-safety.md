@@ -14,7 +14,7 @@
 - The Xcode project uses **`PBXFileSystemSynchronizedRootGroup`** — any new `.swift` file placed under `Twin Flame Union/` (app target) or `Twin Flame UnionTests/` (test target) is **auto-included** in the build. No `project.pbxproj` editing needed.
 - Tests use **Swift Testing**, not XCTest.
 - Run tests from Xcode with **Cmd+U** (primary), or headless:
-  `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests"`
+  `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests"`
   (adjust the simulator name to one shown by `xcrun simctl list devices available`).
 - Final functional verification is the **user building/running in Xcode** (Task 8).
 
@@ -46,7 +46,7 @@ Create `Twin Flame UnionTests/AppSchemaTests.swift`:
 ```swift
 import Testing
 import SwiftData
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct AppSchemaTests {
 
@@ -75,7 +75,7 @@ struct AppSchemaTests {
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/AppSchemaTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/AppSchemaTests"`
 Expected: FAIL — `cannot find 'AppSchemaV1' in scope`.
 
 - [ ] **Step 3: Create the schema file**
@@ -128,7 +128,7 @@ enum TFUMigrationPlan: SchemaMigrationPlan {
 
 - [ ] **Step 4: Run the test to verify it passes**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/AppSchemaTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/AppSchemaTests"`
 Expected: PASS (2 tests).
 
 - [ ] **Step 5: Commit**
@@ -161,7 +161,7 @@ Create `Twin Flame UnionTests/PersistenceRecoveryTests.swift`:
 import Testing
 import SwiftData
 import Foundation
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct PersistenceRecoveryTests {
 
@@ -214,7 +214,7 @@ struct PersistenceRecoveryTests {
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/PersistenceRecoveryTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/PersistenceRecoveryTests"`
 Expected: FAIL — `cannot find 'Persistence' in scope`.
 
 - [ ] **Step 3: Create the persistence controller**
@@ -325,7 +325,7 @@ enum Persistence {
 
 - [ ] **Step 4: Run the test to verify it passes**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/PersistenceRecoveryTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/PersistenceRecoveryTests"`
 Expected: PASS (2 tests).
 
 - [ ] **Step 5: Commit**
@@ -364,7 +364,7 @@ Create `Twin Flame UnionTests/ModelDefaultsTests.swift`:
 import Testing
 import SwiftData
 import Foundation
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct ModelDefaultsTests {
 
@@ -407,7 +407,7 @@ struct ModelDefaultsTests {
 
 - [ ] **Step 2: Run the test to verify it builds/passes against current code**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/ModelDefaultsTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/ModelDefaultsTests"`
 Expected: PASS already (defaults currently come from `init`). This test is the **regression guard** — it must still pass after Step 3 moves the defaults to the property declarations.
 
 - [ ] **Step 3: Add property-level defaults to each model**
@@ -549,7 +549,7 @@ Edit each file so every stored property declares its default. Apply exactly thes
 
 - [ ] **Step 4: Run the tests to verify they still pass**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/ModelDefaultsTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/ModelDefaultsTests"`
 Expected: PASS (2 tests) — behavior unchanged, defaults now at property level.
 
 - [ ] **Step 5: Commit**
@@ -578,7 +578,7 @@ Create `Twin Flame UnionTests/DataExportTests.swift`:
 import Testing
 import SwiftData
 import Foundation
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct DataExportTests {
 
@@ -620,7 +620,7 @@ struct DataExportTests {
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/DataExportTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/DataExportTests"`
 Expected: FAIL — `cannot find 'DataExportService' in scope`.
 
 - [ ] **Step 3: Create the export service**
@@ -762,7 +762,7 @@ struct JSONDocument: FileDocument {
 
 - [ ] **Step 5: Run the tests to verify they pass**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests/DataExportTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests/DataExportTests"`
 Expected: PASS (2 tests).
 
 - [ ] **Step 6: Commit**
@@ -814,7 +814,7 @@ In the same file, add an `.alert` to the `WindowGroup` content. Change the
 
 - [ ] **Step 3: Build to verify it compiles**
 
-Run: `xcodebuild build -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16'`
+Run: `xcodebuild build -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17'`
 Expected: `BUILD SUCCEEDED`.
 
 - [ ] **Step 4: Commit**
@@ -929,7 +929,7 @@ And add this helper to `SettingsView` (near the other `private func`s):
 
 - [ ] **Step 4: Build to verify it compiles**
 
-Run: `xcodebuild build -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16'`
+Run: `xcodebuild build -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17'`
 Expected: `BUILD SUCCEEDED`. If it fails on `AppColors.textPrimary`, swap to the
 matching token per the note in Step 2 and rebuild.
 
@@ -949,7 +949,7 @@ Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
 
 - [ ] **Step 1: Run the entire unit-test suite**
 
-Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:"Twin Flame UnionTests"`
+Run: `xcodebuild test -scheme "Twin Flame Union" -destination 'platform=iOS Simulator,name=iPhone 17' -only-testing:"Twin Flame UnionTests"`
 Expected: PASS — AppSchemaTests (2), PersistenceRecoveryTests (2), ModelDefaultsTests (2), DataExportTests (2).
 
 - [ ] **Step 2: Merge to main**

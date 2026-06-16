@@ -11,16 +11,16 @@ import SwiftData
 
 @Model
 final class SoulProfile {
-    var id: UUID
-    var totalXP: Int
-    var vibrationalScore: Double
-    var vibrationalGameXP: Int
-    var energyEnhancementXP: Int
-    var apolluxXP: Int
-    var skillLevelsData: Data
-    var constitutionRating: String
-    var createdAt: Date
-    var lastActivityAt: Date
+    var id: UUID = UUID()
+    var totalXP: Int = 0
+    var vibrationalScore: Double = 0.0
+    var vibrationalGameXP: Int = 0
+    var energyEnhancementXP: Int = 0
+    var apolluxXP: Int = 0
+    var skillLevelsData: Data = Data()
+    var constitutionRating: String = "A"
+    var createdAt: Date = Date()
+    var lastActivityAt: Date = Date()
 
     init() {
         self.id = UUID()

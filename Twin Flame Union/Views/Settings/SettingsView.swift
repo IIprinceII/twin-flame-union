@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import UserNotifications
 import StoreKit
+import UniformTypeIdentifiers
 
 // MARK: - Settings View
 
@@ -29,6 +30,8 @@ struct SettingsView: View {
     @State private var showPermissionAlert  = false
     @State private var showClearConfirm     = false
     @State private var showDeleteAccount    = false
+    @State private var showExporter   = false
+    @State private var exportDocument: JSONDocument?
 
     var body: some View {
         ZStack {
@@ -59,6 +62,12 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
+        .fileExporter(
+            isPresented: $showExporter,
+            document: exportDocument,
+            contentType: .json,
+            defaultFilename: "TwinFlameUnion-Backup-\(Self.exportDateString())"
+        ) { _ in }
         .onAppear {
             var comps = DateComponents()
             comps.hour   = reminderHour
@@ -184,6 +193,25 @@ struct SettingsView: View {
 
     private var dataSection: some View {
         SettingsCard(title: "Data") {
+            Button {
+                exportMyData()
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 14))
+                        .foregroundStyle(AppColors.purple)
+                        .frame(width: 28)
+                    Text("Export My Data")
+                        .font(AppFont.body(15))
+                        .foregroundStyle(AppColors.cream)
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 14)
+            }
+
+            Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
+
             Button(role: .destructive) {
                 showClearConfirm = true
             } label: {
@@ -205,6 +233,17 @@ struct SettingsView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
             }
+        }
+    }
+
+    private func exportMyData() {
+        do {
+            let snapshot = try DataExportService.snapshot(from: modelContext)
+            exportDocument = JSONDocument(data: try DataExportService.encode(snapshot))
+            showExporter = true
+        } catch {
+            // Export is best-effort; if the fetch/encode fails there is nothing to write.
+            exportDocument = nil
         }
     }
 
@@ -240,6 +279,12 @@ struct SettingsView: View {
     }
 
     // MARK: - Helpers
+
+    private static func exportDateString() -> String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: Date())
+    }
 
     private func clearJournal() {
         for entry in journalEntries {
