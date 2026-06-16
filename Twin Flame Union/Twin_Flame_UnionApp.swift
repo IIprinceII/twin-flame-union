@@ -17,63 +17,55 @@ struct Twin_Flame_UnionApp: App {
     @State private var toneGenerator   = ToneGenerator()
     @State private var gamification    = GamificationService.shared
 
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            JournalEntry.self,
-            DreamEntry.self,
-            SynchronicityEntry.self,
-            ChakraEntry.self,
-            ManifestationItem.self,
-            ConnectionMoment.self,
-            PrayerEntry.self,
-            GratitudeEntry.self,
-            SoulProfile.self,
-            XPEvent.self,
-            Achievement.self,
-            DailyChallenge.self,
-        ])
-        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        do {
-            return try ModelContainer(for: schema, configurations: [config])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    let sharedModelContainer: ModelContainer = Persistence.makeContainer()
+
+    @AppStorage(Persistence.didRecoverKey) private var didRecoverStore = false
+    @State private var showRecoveryNotice = false
 
     var body: some Scene {
         WindowGroup {
-            if showLaunch {
-                LaunchAnimationView {
-                    withAnimation(.easeInOut(duration: 0.5)) {
-                        showLaunch     = false
-                        showOnboarding = !hasCompletedOnboarding
-                        if hasCompletedOnboarding {
-                            showRitual = !ritualCompletedToday()
+            Group {
+                if showLaunch {
+                    LaunchAnimationView {
+                        withAnimation(.easeInOut(duration: 0.5)) {
+                            showLaunch     = false
+                            showOnboarding = !hasCompletedOnboarding
+                            if hasCompletedOnboarding {
+                                showRitual = !ritualCompletedToday()
+                            }
                         }
                     }
-                }
-                .transition(.opacity)
-            } else if showOnboarding {
-                OnboardingView {
-                    withAnimation(.easeInOut(duration: 0.6)) {
-                        showOnboarding = false
-                        showRitual     = !ritualCompletedToday()
-                    }
-                }
-                .transition(.opacity)
-            } else if showRitual {
-                DailyRitualLockView {
-                    withAnimation(.easeInOut(duration: 0.6)) {
-                        showRitual = false
-                    }
-                }
-                .transition(.opacity)
-            } else {
-                MainTabView()
                     .transition(.opacity)
-                    .onAppear {
-                        gamification.configure(with: sharedModelContainer.mainContext)
+                } else if showOnboarding {
+                    OnboardingView {
+                        withAnimation(.easeInOut(duration: 0.6)) {
+                            showOnboarding = false
+                            showRitual     = !ritualCompletedToday()
+                        }
                     }
+                    .transition(.opacity)
+                } else if showRitual {
+                    DailyRitualLockView {
+                        withAnimation(.easeInOut(duration: 0.6)) {
+                            showRitual = false
+                        }
+                    }
+                    .transition(.opacity)
+                } else {
+                    MainTabView()
+                        .transition(.opacity)
+                        .onAppear {
+                            gamification.configure(with: sharedModelContainer.mainContext)
+                        }
+                }
+            }
+            .alert("Your data was recovered", isPresented: $showRecoveryNotice) {
+                Button("OK") { didRecoverStore = false }
+            } message: {
+                Text("We had trouble opening your saved data, so we started fresh to keep the app working. Your previous data was safely backed up.")
+            }
+            .onAppear {
+                if didRecoverStore { showRecoveryNotice = true }
             }
         }
         .modelContainer(sharedModelContainer)
