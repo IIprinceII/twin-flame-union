@@ -46,7 +46,7 @@ Create `Twin Flame UnionTests/AppSchemaTests.swift`:
 ```swift
 import Testing
 import SwiftData
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct AppSchemaTests {
 
@@ -161,7 +161,7 @@ Create `Twin Flame UnionTests/PersistenceRecoveryTests.swift`:
 import Testing
 import SwiftData
 import Foundation
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct PersistenceRecoveryTests {
 
@@ -364,7 +364,7 @@ Create `Twin Flame UnionTests/ModelDefaultsTests.swift`:
 import Testing
 import SwiftData
 import Foundation
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct ModelDefaultsTests {
 
@@ -578,7 +578,7 @@ Create `Twin Flame UnionTests/DataExportTests.swift`:
 import Testing
 import SwiftData
 import Foundation
-@testable import Twin_Flame_Union
+@testable import The_Twin_Flame_Union_App
 
 struct DataExportTests {
 
