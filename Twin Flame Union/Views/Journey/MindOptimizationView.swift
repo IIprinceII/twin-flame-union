@@ -124,6 +124,8 @@ private let practices: [MindPractice] = [
 // MARK: - View
 
 struct MindOptimizationView: View {
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
     @State private var selectedPractice: MindPractice?
     @State private var appeared = false
 
@@ -190,6 +192,9 @@ struct MindOptimizationView: View {
                         .opacity(appeared ? 1 : 0)
                     }
 
+                    DisclaimerFooter()
+                        .padding(.horizontal, 20)
+
                     Spacer().frame(height: 40)
                 }
             }
@@ -200,6 +205,10 @@ struct MindOptimizationView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             withAnimation(.easeOut(duration: 0.7)) { appeared = true }
+            if !disclaimerAcked { showDisclaimer = true }
+        }
+        .sheet(isPresented: $showDisclaimer) {
+            WellnessDisclaimerSheet()
         }
         .sheet(item: $selectedPractice) { practice in
             PracticeDetailSheet(practice: practice)

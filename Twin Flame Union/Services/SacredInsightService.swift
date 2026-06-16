@@ -321,6 +321,9 @@ struct SacredInsightSheet: View {
                                         )
                                 )
                                 .padding(.horizontal, 20)
+
+                            DisclaimerFooter()
+                                .padding(.horizontal, 20)
                         }
 
                         Spacer().frame(height: 40)

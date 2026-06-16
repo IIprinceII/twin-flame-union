@@ -179,6 +179,11 @@ struct CoachView: View {
                     }
                 }
 
+                DisclaimerFooter()
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 6)
+                    .background(AppColors.deepViolet.opacity(0.95))
+
                 // Input Bar
                 CoachInputBar(
                     text: $viewModel.inputText,
