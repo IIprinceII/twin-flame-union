@@ -13,7 +13,7 @@ enum WellnessDisclaimer {
     static let ackKey = "hasAcknowledgedWellnessDisclaimer"
 
     /// Full disclaimer shown in the first-run sheet and Settings.
-    static let text = "Twin Flame Union is a spiritual and self-reflection app for entertainment and personal-growth purposes. It is not medical, psychological, or health advice and is not a substitute for professional care. Sound frequencies and energy practices are offered as meditative experiences, not treatments. If you have a health concern, please consult a qualified professional."
+    static let text = "Twin Flame Union is a spiritual and self-reflection app for entertainment and personal-growth purposes. It is not medical, psychological, or health advice and is not a substitute for professional medical or mental-health care. Sound frequencies and energy practices are offered as meditative experiences, not treatments. If you have a health or mental-health concern, please consult a qualified professional."
 
     /// One-line footer for feature screens.
     static let footerShort = "For spiritual & entertainment purposes only — not medical advice."
@@ -87,7 +87,7 @@ struct DisclaimerFooter: View {
         Text(WellnessDisclaimer.footerShort)
             .font(AppFont.caption(11))
             .italic()
-            .foregroundStyle(AppColors.lavender.opacity(0.6))
+            .foregroundStyle(AppColors.lavender.opacity(0.85))
             .multilineTextAlignment(.center)
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
