@@ -31,7 +31,26 @@ final class HealthService {
         #endif
     }
 
-    var isAuthorized: Bool = false
+    /// True only when the user has actually granted write access to mindful sessions.
+    /// Computed live from HealthKit, so it is correct after a denial and stable across launches.
+    var isAuthorized: Bool {
+        #if canImport(HealthKit)
+        guard isAvailable,
+              let mindfulType = HKObjectType.categoryType(forIdentifier: .mindfulSession)
+        else { return false }
+        return Self.isShareAuthorized(HKHealthStore().authorizationStatus(for: mindfulType))
+        #else
+        return false
+        #endif
+    }
+
+    #if canImport(HealthKit)
+    /// Pure mapping of a HealthKit share-authorization status to a usable bool.
+    /// `.sharingDenied` and `.notDetermined` are NOT authorized.
+    nonisolated static func isShareAuthorized(_ status: HKAuthorizationStatus) -> Bool {
+        status == .sharingAuthorized
+    }
+    #endif
 
     // MARK: - Authorization
 
@@ -46,7 +65,6 @@ final class HealthService {
         let typesToRead: Set<HKObjectType> = [mindfulType]
 
         try await store.requestAuthorization(toShare: typesToShare, read: typesToRead)
-        isAuthorized = true
         #endif
     }
 
