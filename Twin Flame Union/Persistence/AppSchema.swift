@@ -11,24 +11,22 @@ import Foundation
 import SwiftData
 
 enum AppSchemaV1: VersionedSchema {
-    static var versionIdentifier = Schema.Version(1, 0, 0)
+    static let versionIdentifier = Schema.Version(1, 0, 0)
 
-    static var models: [any PersistentModel.Type] {
-        [
-            JournalEntry.self,
-            DreamEntry.self,
-            SynchronicityEntry.self,
-            ChakraEntry.self,
-            ManifestationItem.self,
-            ConnectionMoment.self,
-            PrayerEntry.self,
-            GratitudeEntry.self,
-            SoulProfile.self,
-            XPEvent.self,
-            Achievement.self,
-            DailyChallenge.self,
-        ]
-    }
+    static let models: [any PersistentModel.Type] = [
+        JournalEntry.self,
+        DreamEntry.self,
+        SynchronicityEntry.self,
+        ChakraEntry.self,
+        ManifestationItem.self,
+        ConnectionMoment.self,
+        PrayerEntry.self,
+        GratitudeEntry.self,
+        SoulProfile.self,
+        XPEvent.self,
+        Achievement.self,
+        DailyChallenge.self,
+    ]
 }
 
 enum TFUMigrationPlan: SchemaMigrationPlan {
