@@ -26,7 +26,7 @@ private let frequencies: [SolfeggioFreq] = [
           color: Color(hex: "E53935"), icon: "mountain.2.fill",
           twinFlameBenefit: "Traditionally associated with feelings of safety and grounding as you release fear around reunion.",
           affirmation: "I am safe. I am grounded. Love is safe to receive."),
-    .init(hz: 285, name: "285 Hz", subtitle: "Cellular Restoration",
+    .init(hz: 285, name: "285 Hz", subtitle: "Energetic Renewal",
           color: Color(hex: "FF7043"), icon: "leaf.fill",
           twinFlameBenefit: "Often used in sound practice for a sense of renewal and energetic wholeness.",
           affirmation: "My energy field is restored and whole."),
@@ -69,6 +69,8 @@ private let frequencies: [SolfeggioFreq] = [
 struct SolfeggioView: View {
     @Environment(ToneGenerator.self) private var generator
     @State private var pulseAnim = false
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
 
     private var selected: SolfeggioFreq? {
         frequencies.first { $0.hz == generator.currentFrequency }
@@ -109,9 +111,18 @@ struct SolfeggioView: View {
                     }
                     .padding(.horizontal, 24)
 
+                    DisclaimerFooter()
+                        .padding(.horizontal, 24)
+
                     Spacer().frame(height: 32)
                 }
             }
+        }
+        .onAppear {
+            if !disclaimerAcked { showDisclaimer = true }
+        }
+        .sheet(isPresented: $showDisclaimer) {
+            WellnessDisclaimerSheet()
         }
         .navigationTitle("Frequencies")
         .navigationBarTitleDisplayMode(.large)
