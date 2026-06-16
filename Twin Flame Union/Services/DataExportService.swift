@@ -36,7 +36,7 @@ nonisolated struct ManifestationDTO: Codable { var id: UUID; var intention: Stri
 nonisolated struct ConnectionMomentDTO: Codable { var id: UUID; var title: String; var detail: String; var category: String; var date: Date; var createdAt: Date }
 nonisolated struct PrayerDTO: Codable { var id: UUID; var petition: String; var detail: String; var isAnswered: Bool; var answeredNote: String; var createdAt: Date; var answeredAt: Date? }
 nonisolated struct GratitudeDTO: Codable { var id: UUID; var date: Date; var items: String }
-nonisolated struct SoulProfileDTO: Codable { var id: UUID; var totalXP: Int; var vibrationalScore: Double; var vibrationalGameXP: Int; var energyEnhancementXP: Int; var apolluxXP: Int; var constitutionRating: String; var createdAt: Date; var lastActivityAt: Date }
+nonisolated struct SoulProfileDTO: Codable { var id: UUID; var totalXP: Int; var vibrationalScore: Double; var vibrationalGameXP: Int; var energyEnhancementXP: Int; var apolluxXP: Int; var constitutionRating: String; var createdAt: Date; var lastActivityAt: Date; var skillLevels: [String: Int] }
 nonisolated struct XPEventDTO: Codable { var id: UUID; var amount: Int; var source: String; var framework: String; var skillKey: String; var detail: String; var createdAt: Date }
 nonisolated struct AchievementDTO: Codable { var id: UUID; var key: String; var title: String; var detail: String; var icon: String; var rarity: String; var framework: String; var unlockedAt: Date; var xpReward: Int }
 nonisolated struct DailyChallengeDTO: Codable { var id: UUID; var date: Date; var challengeKey: String; var title: String; var detail: String; var xpReward: Int; var isCompleted: Bool; var completedAt: Date? }
@@ -73,7 +73,7 @@ enum DataExportService {
             GratitudeDTO(id: $0.id, date: $0.date, items: $0.items)
         }
         snap.soulProfiles = try context.fetch(FetchDescriptor<SoulProfile>()).map {
-            SoulProfileDTO(id: $0.id, totalXP: $0.totalXP, vibrationalScore: $0.vibrationalScore, vibrationalGameXP: $0.vibrationalGameXP, energyEnhancementXP: $0.energyEnhancementXP, apolluxXP: $0.apolluxXP, constitutionRating: $0.constitutionRating, createdAt: $0.createdAt, lastActivityAt: $0.lastActivityAt)
+            SoulProfileDTO(id: $0.id, totalXP: $0.totalXP, vibrationalScore: $0.vibrationalScore, vibrationalGameXP: $0.vibrationalGameXP, energyEnhancementXP: $0.energyEnhancementXP, apolluxXP: $0.apolluxXP, constitutionRating: $0.constitutionRating, createdAt: $0.createdAt, lastActivityAt: $0.lastActivityAt, skillLevels: $0.skillLevels)
         }
         snap.xpEvents = try context.fetch(FetchDescriptor<XPEvent>()).map {
             XPEventDTO(id: $0.id, amount: $0.amount, source: $0.source, framework: $0.framework, skillKey: $0.skillKey, detail: $0.detail, createdAt: $0.createdAt)

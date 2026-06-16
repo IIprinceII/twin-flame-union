@@ -56,6 +56,8 @@ struct Twin_Flame_UnionApp: App {
                         .transition(.opacity)
                         .onAppear {
                             gamification.configure(with: sharedModelContainer.mainContext)
+                            // Show the recovery notice once the main UI is up (not over the launch animation).
+                            if didRecoverStore { showRecoveryNotice = true }
                         }
                 }
             }
@@ -63,9 +65,6 @@ struct Twin_Flame_UnionApp: App {
                 Button("OK") { didRecoverStore = false }
             } message: {
                 Text("We had trouble opening your saved data, so we started fresh to keep the app working. Your previous data was safely backed up.")
-            }
-            .onAppear {
-                if didRecoverStore { showRecoveryNotice = true }
             }
         }
         .modelContainer(sharedModelContainer)
