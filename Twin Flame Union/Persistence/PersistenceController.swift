@@ -50,9 +50,7 @@ enum Persistence {
         }
 
         // 2. Preserve the unreadable store, then retry fresh.
-        if let storeURL = config.url as URL? {
-            preserveStore(at: storeURL)
-        }
+        preserveStore(at: config.url)
         do {
             let container = try ModelContainer(
                 for: schema, migrationPlan: TFUMigrationPlan.self, configurations: [config]
@@ -86,6 +84,8 @@ enum Persistence {
         let base = storeURL.deletingPathExtension().lastPathComponent  // "test" or "default"
         let ext = storeURL.pathExtension                               // "store"
 
+        // Move the trio together. If a sidecar (-shm/-wal) can't be moved, continue
+        // anyway — the .store file is the forensic payload; sidecars regenerate on open.
         for suffix in ["", "-shm", "-wal"] {
             let src = URL(fileURLWithPath: storeURL.path + suffix)
             guard fm.fileExists(atPath: src.path) else { continue }
