@@ -193,12 +193,6 @@ struct ChakraCheckinView: View {
                     }
                     .padding(.horizontal, 24)
 
-                    if !StoreService.shared.isPremium {
-                        Text("Premium feature")
-                            .font(AppFont.caption(11))
-                            .foregroundStyle(AppColors.lavender.opacity(0.5))
-                    }
-
                     Spacer().frame(height: 32)
                 }
             }
