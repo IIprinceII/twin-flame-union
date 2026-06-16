@@ -19,8 +19,9 @@ struct Twin_Flame_UnionApp: App {
 
     let sharedModelContainer: ModelContainer = Persistence.makeContainer()
 
-    @AppStorage(Persistence.didRecoverKey) private var didRecoverStore = false
-    @State private var showRecoveryNotice = false
+    @AppStorage(Persistence.recoveryModeKey) private var recoveryModeRaw = Persistence.RecoveryMode.normal.rawValue
+    @State private var showRecoveredAlert = false
+    @State private var showInMemoryWarning = false
 
     var body: some Scene {
         WindowGroup {
@@ -56,15 +57,28 @@ struct Twin_Flame_UnionApp: App {
                         .transition(.opacity)
                         .onAppear {
                             gamification.configure(with: sharedModelContainer.mainContext)
-                            // Show the recovery notice once the main UI is up (not over the launch animation).
-                            if didRecoverStore { showRecoveryNotice = true }
+                            // Surface the recovery state once the main UI is up (not over the launch animation).
+                            switch Persistence.RecoveryMode(rawValue: recoveryModeRaw) ?? .normal {
+                            case .normal:                  break
+                            case .recoveredFromCorruption: showRecoveredAlert = true
+                            case .temporaryInMemory:       showInMemoryWarning = true
+                            }
                         }
                 }
             }
-            .alert("Your data was recovered", isPresented: $showRecoveryNotice) {
-                Button("OK") { didRecoverStore = false }
+            // Corruption recovery: a one-time, honest notice. The mode naturally resets to
+            // `.normal` on the next clean launch, so this won't nag.
+            .alert("Your data space was reset", isPresented: $showRecoveredAlert) {
+                Button("OK") { recoveryModeRaw = Persistence.RecoveryMode.normal.rawValue }
             } message: {
-                Text("We had trouble opening your saved data, so we started fresh to keep the app working. Your previous data was safely backed up.")
+                Text("Your saved data couldn't be opened, so we set up a fresh space to keep the app working. Your previous data file was preserved on this device and was not deleted.")
+            }
+            // In-memory fallback: saving is genuinely unavailable. This recurs every launch
+            // until storage works again — we do NOT pretend anything was backed up.
+            .alert("Saving is unavailable", isPresented: $showInMemoryWarning) {
+                Button("OK") { }
+            } message: {
+                Text("We can't access storage on this device right now, so new entries won't be saved this session. Try restarting the app or freeing up space. Your existing data has not been deleted.")
             }
         }
         .modelContainer(sharedModelContainer)
