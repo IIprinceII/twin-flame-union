@@ -380,7 +380,8 @@ final class MeditationViewModel {
 
     private func startLiveActivity() {
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-        let endDate = Date().addingTimeInterval(selectedSession.duration)
+        // Use the same wall-clock end as the in-app timer so the Live Activity agrees with it.
+        let endDate = clock?.endDate ?? Date().addingTimeInterval(selectedSession.duration)
         let attrs = MeditationActivityAttributes(
             sessionName: selectedSession.name,
             totalDuration: selectedSession.duration
