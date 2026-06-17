@@ -661,7 +661,6 @@ struct LaunchAnimationView: View {
             withAnimation(.easeInOut(duration: 0.60)) { dissolve = 1 }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 6.00) {
-            hasSeenLaunch = true
             finish()
         }
     }
@@ -671,6 +670,7 @@ struct LaunchAnimationView: View {
     private func startLaunch() {
         switch LaunchPlan.mode(hasSeen: hasSeenLaunch, reduceMotion: reduceMotion) {
         case .full:
+            hasSeenLaunch = true
             runSequence()
         case .brief:
             withAnimation(.easeInOut(duration: 0.55)) { starsAlpha = 1; dissolve = 0 }
