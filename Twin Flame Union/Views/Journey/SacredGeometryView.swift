@@ -62,6 +62,7 @@ private enum GeometryPattern: String, CaseIterable, Identifiable {
 // MARK: - View
 
 struct SacredGeometryView: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selectedPattern = GeometryPattern.flowerOfLife
     @State private var isAnimating = false
     @State private var animationStartDate: Date? = nil
@@ -71,6 +72,7 @@ struct SacredGeometryView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // Pattern canvas
@@ -80,11 +82,13 @@ struct SacredGeometryView: View {
                         .stroke(selectedPattern.color.opacity(0.1), lineWidth: 1)
                         .frame(width: 280, height: 280)
                         .scaleEffect(pulse ? 1.15 : 1.0)
-                        .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: pulse)
+                        .animation(.calm(reduceMotion, .easeInOut(duration: 3).repeatForever(autoreverses: true)), value: pulse)
+                        .accessibilityHidden(true)
 
                     TimelineView(.animation) { timeline in
                         GeometryCanvas(pattern: selectedPattern, rotation: rotationAngle(at: timeline.date))
                             .frame(width: 260, height: 260)
+                            .accessibilityHidden(true)
                     }
                 }
                 .frame(height: 300)
@@ -93,6 +97,7 @@ struct SacredGeometryView: View {
                 // Controls
                 HStack(spacing: 16) {
                     Button {
+                        HapticManager.impact(.light)
                         if isAnimating {
                             // Capture current rotation before pausing
                             if let start = animationStartDate {
@@ -123,6 +128,7 @@ struct SacredGeometryView: View {
                     HStack(spacing: 12) {
                         ForEach(GeometryPattern.allCases) { pattern in
                             Button {
+                                HapticManager.impact(.light)
                                 withAnimation(.spring(response: 0.4)) {
                                     selectedPattern = pattern
                                     animationStartDate = nil

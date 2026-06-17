@@ -88,6 +88,7 @@ struct TFStagesView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -131,6 +132,7 @@ struct TFStagesView: View {
                                 isCurrent: stage.id == currentStageID,
                                 isExpanded: expandedID == stage.id,
                                 onSelect: {
+                                    HapticManager.impact(.light)
                                     currentStageID = stage.id
                                     withAnimation(.spring(response: 0.4)) {
                                         expandedID = expandedID == stage.id ? nil : stage.id
@@ -202,6 +204,7 @@ private struct StageCard: View {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(AppColors.lavender.opacity(0.5))
+                        .accessibilityHidden(true)
                 }
                 .padding(18)
 

@@ -251,6 +251,7 @@ private let oracleDeck: [OracleCard] = [
 
 struct TarotOracleView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @AppStorage("lastOraclePullDay")  private var lastPullDay  = 0
     @AppStorage("lastOracleCardID")  private var lastCardID   = -1
@@ -273,6 +274,7 @@ struct TarotOracleView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 28) {
@@ -295,9 +297,14 @@ struct TarotOracleView: View {
                             isFlipped: $isFlipped,
                             rotation: $rotation,
                             onFlip: {
-                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                if reduceMotion {
                                     rotation += 180
                                     isFlipped = true
+                                } else {
+                                    withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                        rotation += 180
+                                        isFlipped = true
+                                    }
                                 }
                             }
                         )
@@ -313,6 +320,7 @@ struct TarotOracleView: View {
                             HStack(spacing: 12) {
                                 // Journal button
                                 Button {
+                                    HapticManager.impact(.light)
                                     journalSavedCard = card
                                     showJournalSheet = true
                                 } label: {
@@ -347,6 +355,7 @@ struct TarotOracleView: View {
                             // Extra pull button
                             if !showExtraPull {
                                 Button {
+                                    HapticManager.impact(.medium)
                                     withAnimation(.spring(response: 0.5)) {
                                         showExtraPull = true
                                         pullExtraCard()
@@ -372,9 +381,14 @@ struct TarotOracleView: View {
                                         isFlipped: $isExtraFlipped,
                                         rotation: $extraRotation,
                                         onFlip: {
-                                            withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                            if reduceMotion {
                                                 extraRotation += 180
                                                 isExtraFlipped = true
+                                            } else {
+                                                withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+                                                    extraRotation += 180
+                                                    isExtraFlipped = true
+                                                }
                                             }
                                         }
                                     )
@@ -395,6 +409,7 @@ struct TarotOracleView: View {
                             Image(systemName: "rectangle.portrait.fill")
                                 .font(.system(size: 80))
                                 .foregroundStyle(AppColors.purple.opacity(0.5))
+                                .accessibilityHidden(true)
                             Text("Your oracle is ready")
                                 .font(AppFont.serifTitle(20))
                                 .foregroundStyle(AppColors.cream)
@@ -491,6 +506,7 @@ struct TarotOracleView: View {
                 .foregroundStyle(color)
                 .frame(width: 16)
                 .padding(.top, 3)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
                     .font(AppFont.caption(11, weight: .semibold))
@@ -522,6 +538,7 @@ struct TarotOracleView: View {
     }
 
     private func pullCard() {
+        HapticManager.impact(.medium)
         let today = todayDayNumber
         let cardID = today % oracleDeck.count
         lastPullDay = today
@@ -575,6 +592,7 @@ My reflection:
                             Circle().fill(card.color.opacity(0.2)).frame(width: 44, height: 44)
                             Image(systemName: card.symbol).font(.system(size: 20)).foregroundStyle(card.color)
                         }
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(card.name).font(AppFont.body(16, weight: .semibold)).foregroundStyle(AppColors.cream)
                             Text("Oracle Journal Entry").font(AppFont.caption(12)).foregroundStyle(AppColors.lavender)
@@ -603,6 +621,7 @@ My reflection:
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save to Journal") {
+                        HapticManager.notification(.success)
                         let entry = JournalEntry(
                             title: "Oracle: \(card.name)",
                             content: body_text
@@ -641,6 +660,8 @@ private struct CardView: View {
         }
         .frame(height: 260)
         .onTapGesture { if !isFlipped { onFlip() } }
+        .accessibilityLabel(isFlipped ? card.name : "Reveal oracle card")
+        .accessibilityAddTraits(isFlipped ? [] : .isButton)
     }
 
     private var cardBack: some View {
@@ -658,6 +679,7 @@ private struct CardView: View {
                 Image(systemName: "sparkles")
                     .font(.system(size: 40))
                     .foregroundStyle(AppColors.purple.opacity(0.7))
+                    .accessibilityHidden(true)
                 Text("Tap to reveal")
                     .font(AppFont.body(14))
                     .foregroundStyle(AppColors.lavender.opacity(0.6))
@@ -680,6 +702,7 @@ private struct CardView: View {
                 Image(systemName: card.symbol)
                     .font(.system(size: 44))
                     .foregroundStyle(card.color)
+                    .accessibilityHidden(true)
                 Text(card.name)
                     .font(AppFont.serifHeadline(22))
                     .foregroundStyle(AppColors.cream)

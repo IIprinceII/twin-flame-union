@@ -132,6 +132,7 @@ struct TransitTrackerView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -185,7 +186,10 @@ private struct TransitCard: View {
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
+        Button(action: {
+            HapticManager.impact(.light)
+            onTap()
+        }) {
             VStack(spacing: 0) {
 
                 HStack(spacing: 14) {
@@ -197,6 +201,7 @@ private struct TransitCard: View {
                         Text(transit.symbol)
                             .font(.system(size: 24))
                     }
+                    .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 3) {
                         HStack(spacing: 6) {
@@ -222,10 +227,12 @@ private struct TransitCard: View {
                                 .frame(width: 5, height: 5)
                         }
                     }
+                    .accessibilityHidden(true)
 
                     Image(systemName: isSelected ? "chevron.up" : "chevron.down")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(AppColors.lavender.opacity(0.4))
+                        .accessibilityHidden(true)
                 }
                 .padding(18)
 
@@ -268,6 +275,7 @@ private struct TransitCard: View {
                 .foregroundStyle(transit.color)
                 .frame(width: 14)
                 .padding(.top, 3)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
                     .font(AppFont.caption(11, weight: .semibold))

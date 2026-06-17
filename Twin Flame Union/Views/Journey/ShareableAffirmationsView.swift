@@ -62,6 +62,7 @@ struct ShareableAffirmationsView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // Category filter
@@ -69,6 +70,7 @@ struct ShareableAffirmationsView: View {
                     HStack(spacing: 10) {
                         ForEach(categories, id: \.self) { cat in
                             Button {
+                                HapticManager.impact(.light)
                                 withAnimation(.spring(response: 0.35)) { selectedCategory = cat }
                             } label: {
                                 Text(cat)
@@ -119,7 +121,10 @@ private struct AffirmationCard: View {
     let onShare: () -> Void
 
     var body: some View {
-        Button(action: onShare) {
+        Button(action: {
+            HapticManager.impact(.light)
+            onShare()
+        }) {
             VStack(alignment: .leading, spacing: 12) {
                 Text(affirmation.category)
                     .font(AppFont.caption(10, weight: .semibold))
@@ -141,6 +146,7 @@ private struct AffirmationCard: View {
                     Image(systemName: "square.and.arrow.up")
                         .font(.system(size: 13))
                         .foregroundStyle(AppColors.lavender.opacity(0.5))
+                        .accessibilityHidden(true)
                 }
             }
             .padding(14)
@@ -169,6 +175,7 @@ private struct AffirmationShareSheet: View {
                 Image(systemName: "sparkles")
                     .font(.system(size: 28))
                     .foregroundStyle(.white.opacity(0.8))
+                    .accessibilityHidden(true)
                 Text("\"\(affirmation.text)\"")
                     .font(.custom("Georgia", size: 18))
                     .foregroundStyle(.white)
