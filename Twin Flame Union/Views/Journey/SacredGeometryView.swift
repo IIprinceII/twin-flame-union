@@ -50,7 +50,7 @@ private enum GeometryPattern: String, CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .seedOfLife:    return Color(hex: "8B5CF6")
-        case .flowerOfLife:  return Color(hex: "CC88FF")
+        case .flowerOfLife:  return AppColors.coral
         case .sriYantra:     return Color(hex: "F0C040")
         case .metatronsCube: return Color(hex: "4A90D9")
         case .vesicaPiscis:  return Color(hex: "E74C8B")

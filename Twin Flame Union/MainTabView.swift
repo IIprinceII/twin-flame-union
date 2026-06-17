@@ -30,12 +30,12 @@ struct MainTabView: View {
             .font: UIFont.systemFont(ofSize: 10),
         ]
         // Sacred gold top line
-        appearance.shadowColor = UIColor(Color(hex: "F0C060")).withAlphaComponent(0.22)
+        appearance.shadowColor = UIColor(AppColors.gold).withAlphaComponent(0.22)
 
         // Selected — true gold
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(Color(hex: "F0C060"))
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(AppColors.gold)
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .foregroundColor: UIColor(Color(hex: "F0C060")),
+            .foregroundColor: UIColor(AppColors.gold),
             .font: UIFont.systemFont(ofSize: 10, weight: .semibold),
         ]
 
@@ -136,7 +136,6 @@ private struct MiniFrequencyPlayer: View {
             Spacer()
 
             Button {
-                HapticManager.impact(.light)
                 generator.stop()
             } label: {
                 Image(systemName: "stop.fill")
@@ -146,7 +145,7 @@ private struct MiniFrequencyPlayer: View {
                     .background(AppColors.purple.opacity(0.3), in: Circle())
             }
             .accessibilityLabel("Stop frequency")
-            .buttonStyle(.plain)
+            .buttonStyle(PressableButtonStyle())
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 10)

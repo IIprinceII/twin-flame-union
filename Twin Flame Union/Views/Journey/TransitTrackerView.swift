@@ -73,7 +73,7 @@ private func currentTransits() -> [PlanetaryTransit] {
               intensity: 5),
 
         .init(planet: "Mercury", symbol: "☿️", currentSign: mercurySign, signSymbol: mercurySymbol,
-              color: Color(hex: "7EC8A0"), theme: "Communication & Truth",
+              color: AppColors.sage, theme: "Communication & Truth",
               twinFlameEffect: "Mercury rules communication — including the telepathic communication between twin flames. In \(mercurySign), messages sent from the heart travel powerfully.",
               guidance: "Speak and write your truth. Journal your feelings to your twin. The energetic transmission of your words is heightened under this transit.",
               affirmation: "My words carry divine power. My twin hears my heart.",
@@ -101,7 +101,7 @@ private func currentTransits() -> [PlanetaryTransit] {
               intensity: 3),
 
         .init(planet: "Uranus", symbol: "⛢", currentSign: "Taurus", signSymbol: "♉",
-              color: Color(hex: "CC88FF"), theme: "Sudden Change & Awakening",
+              color: AppColors.coral, theme: "Sudden Change & Awakening",
               twinFlameEffect: "Uranus in Taurus is revolutionizing values, physical reality, and the material world. Twin flames under this transit often experience sudden, unexpected breakthroughs and rapid shifts toward union.",
               guidance: "Stay open to the unexpected. Uranus specializes in plot twists. The reunion you've been praying for may arrive in a form you didn't predict.",
               affirmation: "I welcome the unexpected. My breakthrough arrives in divine surprise.",

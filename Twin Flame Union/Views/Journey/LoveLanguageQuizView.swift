@@ -35,7 +35,7 @@ private enum LoveLanguage: String, CaseIterable {
         case .physicalTouch:      return Color(hex: "E74C8B")
         case .actsOfService:      return Color(hex: "43A047")
         case .gifts:              return Color(hex: "F0C040")
-        case .energetic:          return Color(hex: "CC88FF")
+        case .energetic:          return AppColors.coral
         }
     }
 

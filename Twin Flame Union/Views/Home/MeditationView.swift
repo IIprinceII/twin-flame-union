@@ -172,15 +172,15 @@ final class MeditationViewModel {
             name: "Ground & Center",        subtitle: "5 min",  duration:  5 * 60,
             icon: "leaf.fill",              color: Color(hex: "4CAF82"),
             deity: "Persephone",            deitySymbol: "leaf.fill",
-            deityColor: Color(hex: "7EC8A0"),
+            deityColor: AppColors.sage,
             invocation: "The descent was never punishment. It was preparation for your crown."
         ),
         // ── Heart Opening ──
         MeditationSession(
             name: "Heart Opening",          subtitle: "10 min", duration: 10 * 60,
-            icon: "heart.fill",             color: Color(hex: "E8739A"),
+            icon: "heart.fill",             color: AppColors.rose,
             deity: "Aphrodite",             deitySymbol: "heart.fill",
-            deityColor: Color(hex: "E8739A"),
+            deityColor: AppColors.rose,
             invocation: "Let love flow through you without condition or fear."
         ),
         // ── Isis Healing ──
@@ -276,7 +276,7 @@ final class MeditationViewModel {
             name: "Heart Healing",          subtitle: "15 min", duration: 15 * 60,
             icon: "heart.circle.fill",      color: Color(hex: "43A047"),
             deity: "Panacea",               deitySymbol: "cross.circle.fill",
-            deityColor: Color(hex: "7EC8A0"),
+            deityColor: AppColors.sage,
             invocation: "There is a remedy for every wound. The healing is already underway."
         ),
         // ── Inner Child ──
@@ -284,7 +284,7 @@ final class MeditationViewModel {
             name: "Inner Child Reunion",    subtitle: "18 min", duration: 18 * 60,
             icon: "figure.and.child.holdinghands", color: Color(hex: "FF7043"),
             deity: "Hestia",                deitySymbol: "flame.fill",
-            deityColor: Color(hex: "FF9A6C"),
+            deityColor: AppColors.ember,
             invocation: "Your heart is a sacred hearth. Tend it. Keep it burning."
         ),
     ]
@@ -775,6 +775,7 @@ struct MeditationView: View {
             )
             .shadow(color: viewModel.selectedSession.deityColor.opacity(viewModel.isRunning ? 0 : 0.3), radius: 14, y: 4)
         }
+        .buttonStyle(PressableButtonStyle(haptic: false))
     }
 }
 

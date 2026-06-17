@@ -223,7 +223,7 @@ struct CordCuttingView: View {
                                 )
                                 .shadow(color: step.deityColor.opacity(0.25), radius: 12, y: 4)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(PressableButtonStyle(haptic: false))
                             .padding(.horizontal, 32)
                         }
 
@@ -532,12 +532,12 @@ struct CordCuttingView: View {
                     .font(.system(size: 56))
                     .foregroundStyle(
                         LinearGradient(
-                            colors: [Color(hex: "FFD700"), Color(hex: "F0C060")],
+                            colors: [Color(hex: "FFD700"), AppColors.gold],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .shadow(color: Color(hex: "F0C060").opacity(lightFill ? 0.7 : 0.2), radius: lightFill ? 28 : 8)
+                    .shadow(color: AppColors.gold.opacity(lightFill ? 0.7 : 0.2), radius: lightFill ? 28 : 8)
                     .scaleEffect(lightFill ? 1.2 : 0.85)
                     .animation(.spring(response: 0.7), value: lightFill)
 

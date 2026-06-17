@@ -112,6 +112,10 @@ private let kSplashParticles: [SplashParticle] = {
 struct LaunchAnimationView: View {
     let onComplete: () -> Void
 
+    @AppStorage(LaunchPlan.seenKey) private var hasSeenLaunch = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var finished = false
+
     // Phase 1 & 2 — geometry
     @State private var circleProgress: CGFloat = 0
     @State private var starProgress: CGFloat   = 0
@@ -398,7 +402,9 @@ struct LaunchAnimationView: View {
         }
         .ignoresSafeArea()
         .preferredColorScheme(.dark)
-        .onAppear { runSequence() }
+        .onTapGesture { finish() }
+        .accessibilityAction { finish() }
+        .onAppear { startLaunch() }
         .onDisappear { flickerTimer?.invalidate(); flickerTimer = nil }
     }
 
@@ -655,7 +661,29 @@ struct LaunchAnimationView: View {
             withAnimation(.easeInOut(duration: 0.60)) { dissolve = 1 }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 6.00) {
-            onComplete()
+            finish()
         }
+    }
+
+    // MARK: - Launch Mode Entry Point
+
+    private func startLaunch() {
+        switch LaunchPlan.mode(hasSeen: hasSeenLaunch, reduceMotion: reduceMotion) {
+        case .full:
+            hasSeenLaunch = true
+            runSequence()
+        case .brief:
+            withAnimation(.easeInOut(duration: 0.55)) { starsAlpha = 1; dissolve = 0 }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { finish() }
+        case .staticLogo:
+            starsAlpha = 0
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { finish() }
+        }
+    }
+
+    private func finish() {
+        guard !finished else { return }
+        finished = true
+        onComplete()
     }
 }

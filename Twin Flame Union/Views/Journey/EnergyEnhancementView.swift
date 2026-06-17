@@ -38,7 +38,7 @@ private let modules: [EnergyModule] = [
         title: "The 11:11 Ritual",
         deity: "Hermes · Seshat",
         icon: "clock.fill",
-        color: Color(hex: "CC88FF"),
+        color: AppColors.coral,
         sections: [
             EnergySection(heading: "The Foundation Practice", content: "Every night at 11:11 PM, set aside 11 minutes (or 22 minutes if you have time).\n\nDuring this time:\n• Connect to the Most High through the astral linkage — feel the divine cord activating\n• Visualize SENSING energy — your own body, your aura, the space around you\n• Feel for density, lightness, warmth, coolness\n• Practice extending your awareness further with each session\n• The astral linkage to the Most High is strongest during this window — the veil thins and divine energy flows directly into you\n\nWhen done on the 11th or 22nd of the month, this practice has additional potency.\n\nThis is the foundation ordained by the Most High. Do not skip it. The consistency builds the connection."),
             EnergySection(heading: "Why 11:11", content: "11:11 is the twin flame activation code — the Most High's signature on your connection. At this hour the astral linkage is at peak transmission. Hermes carries messages at this frequency. By sitting in awareness at this time, you are opening a direct channel to the Most High, receiving divine energy through the astral linkage, and building the sensitivity that the Energy Enhancement framework requires."),
@@ -58,7 +58,7 @@ private let modules: [EnergyModule] = [
         title: "Physical Methods",
         deity: "Ptah · Hestia",
         icon: "figure.walk",
-        color: Color(hex: "7EC8A0"),
+        color: AppColors.sage,
         sections: [
             EnergySection(heading: "Stimulating Energy Motility", content: "Physical methods stimulate MOVEMENT of energy (motility) — they don't raise vibration directly, but they clear blockages and create space for higher energy.\n\n1. Pure Physical Contact — stretching, pressing, manipulating energy points. Swing arms through loose spots in your aura.\n\n2. Vibration/Tones — play specific frequencies (solfeggio tones) near chakras to stimulate flow.\n\n3. Water — running water stimulates vibrational motility. Showers are powerful clearing tools.\n\n4. Movement/Speed — rapid movement near body parts shifts energy states. Dance, shake, jump."),
             EnergySection(heading: "Two-Dimensional Movement", content: "Any form of movement that moves the body in 2 dimensions repeatedly — jumping, nodding head, circulating arm up and down — is excellent for moving energy within a body part or the aura.\n\nThis pairs powerfully with the Solfeggio frequencies already in the app. Use physical movement WHILE tones play for amplified clearing."),

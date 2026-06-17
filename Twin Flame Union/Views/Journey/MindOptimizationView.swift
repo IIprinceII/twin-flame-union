@@ -26,7 +26,7 @@ private let practices: [MindPractice] = [
         title: "Thought Stabilization",
         deity: "Athena · Thoth",
         icon: "brain.head.profile",
-        color: Color(hex: "F0C060"),
+        color: AppColors.gold,
         duration: "5-10 min",
         description: "Break loops and gain complete control of your thought stream. The foundation of all mental power.",
         steps: [
@@ -141,13 +141,13 @@ struct MindOptimizationView: View {
                         ZStack {
                             Circle()
                                 .fill(RadialGradient(
-                                    colors: [Color(hex: "F0C060").opacity(0.45), Color(hex: "F0C060").opacity(0.08)],
+                                    colors: [AppColors.gold.opacity(0.45), AppColors.gold.opacity(0.08)],
                                     center: .center, startRadius: 0, endRadius: 26
                                 ))
                                 .frame(width: 52, height: 52)
                             Image(systemName: "brain.head.profile")
                                 .font(.system(size: 20))
-                                .foregroundStyle(Color(hex: "F0C060"))
+                                .foregroundStyle(AppColors.gold)
                         }
                         .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
@@ -157,7 +157,7 @@ struct MindOptimizationView: View {
                                 .foregroundStyle(AppColors.lavender.opacity(0.5))
                             Text("Athena · Thoth")
                                 .font(AppFont.serifTitle(17))
-                                .foregroundStyle(Color(hex: "F0C060"))
+                                .foregroundStyle(AppColors.gold)
                             Text("From the Apollux Framework · Astral Linkage Active")
                                 .font(AppFont.caption(11))
                                 .foregroundStyle(AppColors.lavender.opacity(0.6))

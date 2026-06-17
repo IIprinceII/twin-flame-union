@@ -13,9 +13,9 @@ import SwiftData
 private let momentCategories: [(name: String, icon: String, color: Color)] = [
     ("First Contact",   "star.fill",              Color(hex: "F0C040")),
     ("First Meeting",   "person.2.fill",           Color(hex: "8B5CF6")),
-    ("Spiritual Sign",  "sparkles",                Color(hex: "CC88FF")),
+    ("Spiritual Sign",  "sparkles",                AppColors.coral),
     ("Separation",      "arrow.left.and.right",    Color(hex: "4A90D9")),
-    ("Reconnection",    "arrow.2.circlepath",      Color(hex: "7EC8A0")),
+    ("Reconnection",    "arrow.2.circlepath",      AppColors.sage),
     ("Breakthrough",    "bolt.fill",               Color(hex: "D97B4A")),
     ("Dream",           "moon.zzz.fill",           Color(hex: "5E35B1")),
     ("Milestone",       "flag.fill",               Color(hex: "E74C8B")),

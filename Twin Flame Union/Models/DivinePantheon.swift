@@ -24,13 +24,13 @@ enum DivinePantheon {
         Deity(name: "Aphrodite", culture: "Greek",
               domain: "Love · Beauty · Grace · Sacred Harmony",
               symbol: "heart.fill",
-              color: Color(hex: "E8739A"),
+              color: AppColors.rose,
               invocation: "Let love flow through you without condition or fear."),
 
         Deity(name: "Athena", culture: "Greek",
               domain: "Wisdom · Clarity · Sacred Craft",
               symbol: "lightbulb.fill",
-              color: Color(hex: "F0C060"),
+              color: AppColors.gold,
               invocation: "Wisdom speaks before the mouth opens. Listen inward."),
 
         Deity(name: "Eros", culture: "Greek",
@@ -72,7 +72,7 @@ enum DivinePantheon {
         Deity(name: "Persephone", culture: "Greek",
               domain: "Seasons · Shadow Work · Soul Evolution",
               symbol: "leaf.fill",
-              color: Color(hex: "7EC8A0"),
+              color: AppColors.sage,
               invocation: "The descent was never punishment. It was preparation for your crown."),
 
         Deity(name: "Morpheus", culture: "Greek",
@@ -138,13 +138,13 @@ enum DivinePantheon {
         Deity(name: "Hestia", culture: "Greek",
               domain: "Hearth · Home · Sacred Sanctuary",
               symbol: "flame.fill",
-              color: Color(hex: "FF9A6C"),
+              color: AppColors.ember,
               invocation: "Your heart is a sacred hearth. Tend it. Keep it burning."),
 
         Deity(name: "Panacea", culture: "Greek",
               domain: "Universal Healing · Wholeness · Restoration",
               symbol: "cross.circle.fill",
-              color: Color(hex: "7EC8A0"),
+              color: AppColors.sage,
               invocation: "There is a remedy for every wound. The healing is already underway."),
 
         Deity(name: "Hygieia", culture: "Greek",

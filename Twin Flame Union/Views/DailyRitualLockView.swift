@@ -615,7 +615,7 @@ private struct SeraphinaStepView: View {
                     VStack(spacing: 16) {
                         Text("Could not reach Seraphina")
                             .font(AppFont.body(15))
-                            .foregroundStyle(Color(hex: "E8739A"))
+                            .foregroundStyle(AppColors.rose)
                         Button("Try Again") {
                             Task { await fetchQuestion() }
                         }

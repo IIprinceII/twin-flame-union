@@ -130,8 +130,8 @@ struct JourneyView: View {
                 JourneyItem(icon: "book.fill",             title: "Soul Journal",        deity: "Thoth · Psyche",      color: AppColors.purple,       accent: Color(hex: "9B59B6"), destination: AnyView(SoulJournalView())),
                 JourneyItem(icon: "moon.zzz.fill",          title: "Dream Journal",       deity: "Morpheus · Hypnos",   color: Color(hex: "4A90D9"),   accent: Color(hex: "7BB8F0"), destination: AnyView(DreamJournalView())),
                 JourneyItem(icon: "sparkles",               title: "Synchronicity Log",   deity: "Iris · Hermes",       color: Color(hex: "9B59B6"),   accent: Color(hex: "C39BD3"), destination: AnyView(SynchronicityLogView())),
-                JourneyItem(icon: "hand.thumbsup.fill",     title: "Gratitude Log",       deity: "Hathor · Renenutet",  color: Color(hex: "F0C060"),   accent: Color(hex: "FFE082"), destination: AnyView(GratitudeLogView())),
-                JourneyItem(icon: "hands.sparkles.fill",    title: "Prayer Journal",      deity: "Ra · Amun",           color: Color(hex: "CC88FF"),   accent: Color(hex: "E0B3FF"), destination: AnyView(PrayerJournalView())),
+                JourneyItem(icon: "hand.thumbsup.fill",     title: "Gratitude Log",       deity: "Hathor · Renenutet",  color: AppColors.gold,   accent: Color(hex: "FFE082"), destination: AnyView(GratitudeLogView())),
+                JourneyItem(icon: "hands.sparkles.fill",    title: "Prayer Journal",      deity: "Ra · Amun",           color: AppColors.coral,   accent: Color(hex: "E0B3FF"), destination: AnyView(PrayerJournalView())),
                 JourneyItem(icon: "timeline.selection",     title: "Connection Timeline", deity: "Clotho · Lachesis",   color: Color(hex: "E74C8B"),   accent: Color(hex: "F48FB1"), destination: AnyView(ConnectionTimelineView())),
             ]
 
@@ -139,19 +139,19 @@ struct JourneyView: View {
             return [
                 JourneyItem(icon: "bolt.fill",              title: "Energy Enhancement",   deity: "Sekhmet · Hygieia",   color: Color(hex: "FF4500"),   accent: Color(hex: "FF7043"), destination: AnyView(EnergyEnhancementView())),
                 JourneyItem(icon: "scissors",               title: "Cord Cutting",        deity: "Atropos · Hecate",    color: Color(hex: "1E88E5"),   accent: Color(hex: "64B5F6"), destination: AnyView(CordCuttingView())),
-                JourneyItem(icon: "rays",                   title: "Chakra Check-in",     deity: "Sekhmet · Imhotep",   color: Color(hex: "43A047"),   accent: Color(hex: "7EC8A0"), destination: AnyView(ChakraCheckinView())),
-                JourneyItem(icon: "waveform",               title: "Solfeggio",            deity: "Apollo · Hygieia",    color: Color(hex: "43A047"),   accent: Color(hex: "7EC8A0"), destination: AnyView(SolfeggioView())),
-                JourneyItem(icon: "star.fill",              title: "Sacred Geometry",      deity: "Ptah · Athena",       color: Color(hex: "CC88FF"),   accent: Color(hex: "E0B3FF"), destination: AnyView(SacredGeometryView())),
+                JourneyItem(icon: "rays",                   title: "Chakra Check-in",     deity: "Sekhmet · Imhotep",   color: Color(hex: "43A047"),   accent: AppColors.sage, destination: AnyView(ChakraCheckinView())),
+                JourneyItem(icon: "waveform",               title: "Solfeggio",            deity: "Apollo · Hygieia",    color: Color(hex: "43A047"),   accent: AppColors.sage, destination: AnyView(SolfeggioView())),
+                JourneyItem(icon: "star.fill",              title: "Sacred Geometry",      deity: "Ptah · Athena",       color: AppColors.coral,   accent: Color(hex: "E0B3FF"), destination: AnyView(SacredGeometryView())),
                 JourneyItem(icon: "moon.fill",              title: "Ritual Planner",       deity: "Hecate · Isis",       color: Color(hex: "5E35B1"),   accent: Color(hex: "9575CD"), destination: AnyView(RitualPlannerView())),
-                JourneyItem(icon: "sparkles.rectangle.stack.fill", title: "Manifestation Board", deity: "Hathor · Aphrodite", color: Color(hex: "F0C060"), accent: Color(hex: "FFE082"), destination: AnyView(ManifestationBoardView())),
+                JourneyItem(icon: "sparkles.rectangle.stack.fill", title: "Manifestation Board", deity: "Hathor · Aphrodite", color: AppColors.gold, accent: Color(hex: "FFE082"), destination: AnyView(ManifestationBoardView())),
             ]
 
         case .guidance:
             return [
-                JourneyItem(icon: "brain.head.profile",     title: "Mind Optimization",    deity: "Athena · Thoth",      color: Color(hex: "F0C060"),   accent: Color(hex: "FFE082"), destination: AnyView(MindOptimizationView())),
-                JourneyItem(icon: "waveform.path",          title: "Vibrational Energy",   deity: "Hermes · Harmonia",   color: Color(hex: "CC88FF"),   accent: Color(hex: "E0B3FF"), destination: AnyView(VibrationalEnergyView())),
+                JourneyItem(icon: "brain.head.profile",     title: "Mind Optimization",    deity: "Athena · Thoth",      color: AppColors.gold,   accent: Color(hex: "FFE082"), destination: AnyView(MindOptimizationView())),
+                JourneyItem(icon: "waveform.path",          title: "Vibrational Energy",   deity: "Hermes · Harmonia",   color: AppColors.coral,   accent: Color(hex: "E0B3FF"), destination: AnyView(VibrationalEnergyView())),
                 JourneyItem(icon: "sparkles",               title: "TF Reading",           deity: "Seraphina · Thoth",   color: Color(hex: "7B3F9E"),   accent: Color(hex: "B06CE6"), destination: AnyView(TFReadingView())),
-                JourneyItem(icon: "rectangle.portrait.fill",title: "Daily Oracle",          deity: "Apollo · Hecate",     color: Color(hex: "CC88FF"),   accent: Color(hex: "E0B3FF"), destination: AnyView(TarotOracleView())),
+                JourneyItem(icon: "rectangle.portrait.fill",title: "Daily Oracle",          deity: "Apollo · Hecate",     color: AppColors.coral,   accent: Color(hex: "E0B3FF"), destination: AnyView(TarotOracleView())),
                 JourneyItem(icon: "questionmark.circle.fill",title: "Soul Archetype Quiz",  deity: "Psyche · Seshat",     color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(QuizView())),
                 JourneyItem(icon: "arrow.up.forward.circle.fill", title: "TF Stages",       deity: "Persephone · Osiris", color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(TFStagesView())),
                 JourneyItem(icon: "moon.stars.fill",        title: "Moon Phases",            deity: "Selene · Khonsu",     color: Color(hex: "3D2060"),   accent: Color(hex: "B57BFF"), destination: AnyView(MoonPhaseView())),

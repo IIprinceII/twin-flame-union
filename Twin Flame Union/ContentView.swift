@@ -274,10 +274,10 @@ private struct DeityOfDayCard: View {
 
     private var cultureColor: Color {
         switch deity.culture {
-        case "Egyptian": return Color(hex: "F0C060")
+        case "Egyptian": return AppColors.gold
         case "Greek":    return Color(hex: "A8DAFF")
         case "Mexica":   return Color(hex: "00CED1")
-        default:         return Color(hex: "CC88FF")
+        default:         return AppColors.coral
         }
     }
 
@@ -438,7 +438,7 @@ private struct StreakCard: View {
     private var flameColor: Color {
         streak == 0 ? AppColors.lavender.opacity(0.3) :
         streak < 7  ? AppColors.gold :
-        streak < 14 ? Color(hex: "FF9A6C") :
+        streak < 14 ? AppColors.ember :
                       Color(hex: "FF6B3D")
     }
 
@@ -840,7 +840,7 @@ private struct TFStageMiniCard: View {
                                "Surrender","Illumination","Radiance","Harmonizing Union"]
     private let stageColors: [Color] = [
         Color(hex: "8B5CF6"), Color(hex: "9B59B6"), Color(hex: "D97B4A"), Color(hex: "E74C8B"),
-        Color(hex: "4A90D9"), Color(hex: "F0C040"), Color(hex: "7EC8A0"), Color(hex: "CC88FF"),
+        Color(hex: "4A90D9"), Color(hex: "F0C040"), AppColors.sage, AppColors.coral,
     ]
 
     var body: some View {

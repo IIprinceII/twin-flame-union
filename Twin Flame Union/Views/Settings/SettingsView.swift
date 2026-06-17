@@ -203,6 +203,17 @@ struct SettingsView: View {
             } label: {
                 SettingsRowButton(icon: "heart.text.square.fill", iconColor: AppColors.sage, label: "Wellness Disclaimer", showChevron: true)
             }
+
+            Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
+
+            Button {
+                HapticManager.impact(.light)
+                if let url = URL(string: "mailto:justin04rodriguez04@gmail.com?subject=Twin%20Flame%20Union%20Feedback") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                SettingsRowButton(icon: "envelope.fill", iconColor: AppColors.rose, label: "Contact / Feedback", showChevron: true)
+            }
         }
     }
 

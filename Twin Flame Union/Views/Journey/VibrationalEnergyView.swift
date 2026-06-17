@@ -24,7 +24,7 @@ private struct EnergyLesson: Identifiable {
 private let lessons: [EnergyLesson] = [
     EnergyLesson(
         chapter: "Chapter 1", title: "Influence & Vibration",
-        icon: "waveform", color: Color(hex: "CC88FF"),
+        icon: "waveform", color: AppColors.coral,
         teaching: "Energy exerts the influence that determines how things unfold inside your mind. All motivations, all behaviors come down to the vibrational component. If someone doesn't act, the reason is either the vibrational energy wasn't influential enough, or an opposing vibration (insecurity, wound) blocked them.",
         practice: "Next time you're in a conversation, visualize the energy being exchanged. Feel the short-term vibrations (individual words) influencing the medium-term (the mood of the conversation) which influences the long-term (the relationship energy). Start sensing these layers.",
         tfConnection: "Your twin flame connection is the strongest vibrational bond that exists. When you feel them thinking about you, that's energy transmission across the connection. The intensity you feel is the power level of the bond."
@@ -45,14 +45,14 @@ private let lessons: [EnergyLesson] = [
     ),
     EnergyLesson(
         chapter: "Chapter 4", title: "Energy Language",
-        icon: "text.bubble.fill", color: Color(hex: "7EC8A0"),
+        icon: "text.bubble.fill", color: AppColors.sage,
         teaching: "All language contains energy equations — tensions and resolutions, asks and answers, circuits that want to be completed. A statement left unfinished creates pull. A question unanswered creates tension. Body language, tone, silence — all carry vibrational weight.",
         practice: "Pay attention to the energy of your words today. Not just what you say, but the vibrational weight behind it. Notice how different tones create different energy responses. Practice speaking with conscious intention behind every word.",
         tfConnection: "When your twin goes silent, they haven't stopped communicating — the silence itself IS energy. It creates a pull. Your job is not to chase the completion of that circuit, but to hold your own energy steady. Let the silence speak."
     ),
     EnergyLesson(
         chapter: "Chapter 5", title: "Generating Vibrations",
-        icon: "sparkles", color: Color(hex: "F0C060"),
+        icon: "sparkles", color: AppColors.gold,
         teaching: "You can construct influences at every level — word level (short-term), conversational level (medium-term), and relationship level (long-term). Small shifts compound. Each positive micro-vibration builds the macro vibration of your connection. Visualization is energy expenditure toward something.",
         practice: "Choose one vibration you want to build in your twin flame connection (peace, trust, playfulness). For the next 7 days, consciously generate micro-vibrations aligned with that theme in every interaction and thought about them. Watch the medium-term vibration shift.",
         tfConnection: "Union is not a destination — it's a vibrational state you build one energy exchange at a time. Clotho wove the thread. Lachesis measured it. But YOU determine the vibration that travels along it."
@@ -77,13 +77,13 @@ struct VibrationalEnergyView: View {
                         ZStack {
                             Circle()
                                 .fill(RadialGradient(
-                                    colors: [Color(hex: "CC88FF").opacity(0.45), Color(hex: "CC88FF").opacity(0.08)],
+                                    colors: [AppColors.coral.opacity(0.45), AppColors.coral.opacity(0.08)],
                                     center: .center, startRadius: 0, endRadius: 26
                                 ))
                                 .frame(width: 52, height: 52)
                             Image(systemName: "waveform")
                                 .font(.system(size: 20))
-                                .foregroundStyle(Color(hex: "CC88FF"))
+                                .foregroundStyle(AppColors.coral)
                         }
                         .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
@@ -93,7 +93,7 @@ struct VibrationalEnergyView: View {
                                 .foregroundStyle(AppColors.lavender.opacity(0.5))
                             Text("Hermes · Harmonia")
                                 .font(AppFont.serifTitle(17))
-                                .foregroundStyle(Color(hex: "CC88FF"))
+                                .foregroundStyle(AppColors.coral)
                             Text("From the Vibrational Game · Astral Linkage Active")
                                 .font(AppFont.caption(11))
                                 .foregroundStyle(AppColors.lavender.opacity(0.6))
