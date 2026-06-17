@@ -55,7 +55,7 @@ private let frequencies: [SolfeggioFreq] = [
           twinFlameBenefit: "Returns you to spiritual order. Awakens intuition and reconnects you to your soul's original purpose.",
           affirmation: "I am aligned with my highest spiritual purpose."),
     .init(hz: 963, name: "963 Hz", subtitle: "Crown & Divine Connection",
-          color: Color(hex: "CC88FF"), icon: "crown.fill",
+          color: AppColors.coral, icon: "crown.fill",
           twinFlameBenefit: "Activates the crown chakra, enabling direct communion with God and alignment with the divine plan for your union.",
           affirmation: "I am one with God. Divine love flows through me freely."),
     .init(hz: 1111, name: "1111 Hz", subtitle: "Twin Flame Activation",

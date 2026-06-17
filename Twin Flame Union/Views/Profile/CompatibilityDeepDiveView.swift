@@ -271,7 +271,7 @@ struct CompatibilityDeepDiveView: View {
                 ScoreRow(label: "Elemental Harmony",  score: elemScore, icon: "leaf.fill",      color: Color(hex: "43A047"), explanation: elemExp)
                 ScoreRow(label: "Modality Match",     score: modScore,  icon: "arrow.triangle.2.circlepath", color: Color(hex: "4A90D9"), explanation: modExp)
                 ScoreRow(label: "Planetary Resonance", score: planScore, icon: "sparkles",      color: Color(hex: "F0C040"), explanation: planExp)
-                ScoreRow(label: "Polarity Balance",   score: polScore,  icon: "yin.yang",       color: Color(hex: "CC88FF"), explanation: polExp)
+                ScoreRow(label: "Polarity Balance",   score: polScore,  icon: "yin.yang",       color: AppColors.coral, explanation: polExp)
             }
         }
     }

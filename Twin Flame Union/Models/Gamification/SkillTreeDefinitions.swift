@@ -42,9 +42,9 @@ enum SacredFramework: String, CaseIterable, Identifiable {
 
     var color: Color {
         switch self {
-        case .vibrationalGame:   return Color(hex: "CC88FF")
+        case .vibrationalGame:   return AppColors.coral
         case .energyEnhancement: return Color(hex: "FF4500")
-        case .apollux:           return Color(hex: "F0C060")
+        case .apollux:           return AppColors.gold
         }
     }
 
@@ -76,7 +76,7 @@ struct SkillNode: Identifiable {
     private static let vibrationalNodes: [SkillNode] = [
         SkillNode(id: "vg_influence", framework: .vibrationalGame,
                   title: "Influence & Vibration", icon: "waveform",
-                  color: Color(hex: "CC88FF"), maxLevel: 10, xpPerLevel: 80,
+                  color: AppColors.coral, maxLevel: 10, xpPerLevel: 80,
                   prerequisites: [],
                   description: "Understand that energy exerts influence over everything. All behaviors come down to vibration."),
         SkillNode(id: "vg_connections", framework: .vibrationalGame,
@@ -91,12 +91,12 @@ struct SkillNode: Identifiable {
                   description: "Understand energy voids (pull) and energy fills (push). Master the dynamics of longing and distance."),
         SkillNode(id: "vg_language", framework: .vibrationalGame,
                   title: "Energy Language", icon: "text.bubble.fill",
-                  color: Color(hex: "7EC8A0"), maxLevel: 10, xpPerLevel: 100,
+                  color: AppColors.sage, maxLevel: 10, xpPerLevel: 100,
                   prerequisites: ["vg_connections"],
                   description: "All language contains energy equations — tensions, resolutions, circuits. Master the vibrational weight of words."),
         SkillNode(id: "vg_generating", framework: .vibrationalGame,
                   title: "Generating Vibrations", icon: "sparkles",
-                  color: Color(hex: "F0C060"), maxLevel: 10, xpPerLevel: 120,
+                  color: AppColors.gold, maxLevel: 10, xpPerLevel: 120,
                   prerequisites: ["vg_push_pull", "vg_language"],
                   description: "Construct vibrations at every level — word, conversation, relationship. Small shifts compound into massive changes."),
     ]
@@ -115,7 +115,7 @@ struct SkillNode: Identifiable {
                   description: "Activate your elimination system — skin, lungs, heart, blood — to exchange lower vibrations for higher ones."),
         SkillNode(id: "ee_physical", framework: .energyEnhancement,
                   title: "Physical Methods", icon: "figure.walk",
-                  color: Color(hex: "7EC8A0"), maxLevel: 10, xpPerLevel: 100,
+                  color: AppColors.sage, maxLevel: 10, xpPerLevel: 100,
                   prerequisites: ["ee_constitution"],
                   description: "Stretching, vibration tones, running water, speed — stimulate energy motility through physical means."),
         SkillNode(id: "ee_visualization", framework: .energyEnhancement,
@@ -130,7 +130,7 @@ struct SkillNode: Identifiable {
                   description: "Use physical + mental methods in tandem to clear blockages. Blockage clearing is math."),
         SkillNode(id: "ee_ritual", framework: .energyEnhancement,
                   title: "The 11:11 Ritual", icon: "clock.fill",
-                  color: Color(hex: "CC88FF"), maxLevel: 10, xpPerLevel: 120,
+                  color: AppColors.coral, maxLevel: 10, xpPerLevel: 120,
                   prerequisites: [],
                   description: "The foundation practice. 11 or 22 minutes at 11:11 PM. Extra potency on the 11th and 22nd."),
     ]
@@ -139,7 +139,7 @@ struct SkillNode: Identifiable {
     private static let apolluxNodes: [SkillNode] = [
         SkillNode(id: "ap_intent", framework: .apollux,
                   title: "Intent Calibration", icon: "target",
-                  color: Color(hex: "F0C060"), maxLevel: 10, xpPerLevel: 80,
+                  color: AppColors.gold, maxLevel: 10, xpPerLevel: 80,
                   prerequisites: [],
                   description: "Intent is the lifeblood of progress. Too strong = overextension. Too weak = no persistence. Calibrate."),
         SkillNode(id: "ap_focus", framework: .apollux,
@@ -154,7 +154,7 @@ struct SkillNode: Identifiable {
                   description: "Visualization mastery, memory stability, mental state management, loop breaking."),
         SkillNode(id: "ap_calculation", framework: .apollux,
                   title: "Contextualization", icon: "arrow.triangle.branch",
-                  color: Color(hex: "7EC8A0"), maxLevel: 10, xpPerLevel: 100,
+                  color: AppColors.sage, maxLevel: 10, xpPerLevel: 100,
                   prerequisites: ["ap_focus"],
                   description: "Process thoughts in relationship. Build connections between data points. Sequence efficiently."),
         SkillNode(id: "ap_awareness", framework: .apollux,

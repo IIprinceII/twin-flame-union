@@ -323,7 +323,7 @@ private struct CoachIntroCard: View {
                         .font(.system(size: 28))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [AppColors.gold, Color(hex: "CC88FF")],
+                                colors: [AppColors.gold, AppColors.coral],
                                 startPoint: .topLeading, endPoint: .bottomTrailing
                             )
                         )
@@ -443,7 +443,7 @@ private struct CoachMessageBubble: View {
                         .font(.system(size: 13))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [AppColors.gold, Color(hex: "CC88FF")],
+                                colors: [AppColors.gold, AppColors.coral],
                                 startPoint: .topLeading, endPoint: .bottomTrailing
                             )
                         )

@@ -14,7 +14,7 @@ struct VibrationalScoreCard: View {
     private var scoreColor: Color {
         switch profile.constitutionRating {
         case "C": return Color(hex: "43A047")
-        case "B": return Color(hex: "F0C060")
+        case "B": return AppColors.gold
         default:  return Color(hex: "E53935")
         }
     }
@@ -22,7 +22,7 @@ struct VibrationalScoreCard: View {
     private var gradientColors: [Color] {
         switch profile.constitutionRating {
         case "C": return [Color(hex: "43A047"), Color(hex: "A5D6A7")]
-        case "B": return [Color(hex: "F0C060"), Color(hex: "FFE082")]
+        case "B": return [AppColors.gold, Color(hex: "FFE082")]
         default:  return [Color(hex: "E53935"), Color(hex: "EF9A9A")]
         }
     }
