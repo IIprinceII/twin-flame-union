@@ -97,14 +97,16 @@ enum AppGradients {
 // MARK: - Typography
 
 enum AppFont {
-    // Serif headlines — Georgia with New York as preferred option
-    static func serifHeadline(_ size: CGFloat) -> Font {
-        .custom("NewYork-Bold", size: size, relativeTo: .largeTitle)
+    // System serif (New York), scaled with Dynamic Type. The old .custom("NewYork-…") name
+    // never resolved and fell back to SF — this renders the actual serif.
+    private static func scaledSerif(_ size: CGFloat, weight: UIFont.Weight, textStyle: UIFont.TextStyle) -> Font {
+        let sys = UIFont.systemFont(ofSize: size, weight: weight)
+        let serif = sys.fontDescriptor.withDesign(.serif).map { UIFont(descriptor: $0, size: size) } ?? sys
+        return Font(UIFontMetrics(forTextStyle: textStyle).scaledFont(for: serif))
     }
 
-    static func serifTitle(_ size: CGFloat) -> Font {
-        .custom("NewYork-Regular", size: size, relativeTo: .title)
-    }
+    static func serifHeadline(_ size: CGFloat) -> Font { scaledSerif(size, weight: .bold, textStyle: .largeTitle) }
+    static func serifTitle(_ size: CGFloat) -> Font { scaledSerif(size, weight: .regular, textStyle: .title1) }
 
     // Fallback-safe serif using Georgia (always available on iOS)
     static func headline(_ size: CGFloat) -> Font {
