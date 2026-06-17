@@ -37,6 +37,7 @@ struct SettingsView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -164,6 +165,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
+                HapticManager.impact(.light)
                 if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
                     SKStoreReviewController.requestReview(in: scene)
                 }
@@ -174,6 +176,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
+                HapticManager.impact(.light)
                 if let url = URL(string: "https://iiprinceii.github.io/twin-flame-union-privacy/") {
                     UIApplication.shared.open(url)
                 }
@@ -184,6 +187,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
+                HapticManager.impact(.light)
                 if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
                     UIApplication.shared.open(url)
                 }
@@ -194,6 +198,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
+                HapticManager.impact(.light)
                 showWellnessDisclaimer = true
             } label: {
                 SettingsRowButton(icon: "heart.text.square.fill", iconColor: AppColors.sage, label: "Wellness Disclaimer", showChevron: true)
@@ -206,6 +211,7 @@ struct SettingsView: View {
     private var dataSection: some View {
         SettingsCard(title: "Data") {
             Button {
+                HapticManager.impact(.light)
                 exportMyData()
             } label: {
                 HStack(spacing: 12) {
@@ -213,6 +219,7 @@ struct SettingsView: View {
                         .font(.system(size: 14))
                         .foregroundStyle(AppColors.purple)
                         .frame(width: 28)
+                        .accessibilityHidden(true)
                     Text("Export My Data")
                         .font(AppFont.body(15))
                         .foregroundStyle(AppColors.cream)
@@ -225,6 +232,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button(role: .destructive) {
+                HapticManager.impact(.medium)
                 showClearConfirm = true
             } label: {
                 HStack(spacing: 12) {
@@ -265,6 +273,7 @@ struct SettingsView: View {
         SettingsCard(title: "Account") {
             VStack(alignment: .leading, spacing: 0) {
                 Button(role: .destructive) {
+                    HapticManager.impact(.medium)
                     showDeleteAccount = true
                 } label: {
                     HStack(spacing: 12) {
@@ -272,6 +281,7 @@ struct SettingsView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(AppColors.coral)
                             .frame(width: 28)
+                            .accessibilityHidden(true)
                         Text("Delete Account")
                             .font(AppFont.body(15))
                             .foregroundStyle(AppColors.coral)
@@ -440,6 +450,7 @@ private struct SettingsRow: View {
                 .font(.system(size: 14))
                 .foregroundStyle(iconColor)
                 .frame(width: 28)
+                .accessibilityHidden(true)
             Text(label)
                 .font(AppFont.body(15))
                 .foregroundStyle(AppColors.cream)
@@ -462,6 +473,7 @@ private struct SettingsRowButton: View {
                 .font(.system(size: 14))
                 .foregroundStyle(iconColor)
                 .frame(width: 28)
+                .accessibilityHidden(true)
             Text(label)
                 .font(AppFont.body(15))
                 .foregroundStyle(AppColors.cream)
@@ -475,6 +487,7 @@ private struct SettingsRowButton: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(AppColors.lavender.opacity(0.5))
+                    .accessibilityHidden(true)
             }
         }
         .padding(.horizontal, 16)

@@ -189,6 +189,7 @@ struct ProfileView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             // Seshat golden-blue atmospheric glow
             RadialGradient(
@@ -198,6 +199,7 @@ struct ProfileView: View {
                 endRadius: 300
             )
             .ignoresSafeArea()
+            .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -260,6 +262,7 @@ struct ProfileView: View {
                         .font(.system(size: 16))
                         .foregroundStyle(AppColors.lavender)
                 }
+                .accessibilityLabel("Settings")
             }
         }
         .onAppear {
@@ -328,6 +331,7 @@ struct ProfileView: View {
                     Circle()
                         .stroke(AppColors.gold.opacity(0.08 - Double(i) * 0.03), lineWidth: 1)
                         .frame(width: CGFloat(104 + i * 18), height: CGFloat(104 + i * 18))
+                        .accessibilityHidden(true)
                 }
                 Circle()
                     .fill(
@@ -369,6 +373,7 @@ struct ProfileView: View {
                         )
 
                     Button {
+                        HapticManager.notification(.success)
                         userName = nameInput.trimmingCharacters(in: .whitespaces)
                         editingName = false
                     } label: {
@@ -380,6 +385,7 @@ struct ProfileView: View {
                 .padding(.horizontal, 40)
             } else {
                 Button {
+                    HapticManager.impact(.light)
                     nameInput = userName
                     editingName = true
                 } label: {
@@ -477,12 +483,14 @@ struct ProfileView: View {
                 ProfileSectionHeader(title: "Partner's Chart")
                 Spacer()
                 Button {
+                    HapticManager.impact(.light)
                     withAnimation { showPartnerChart.toggle() }
                 } label: {
                     Image(systemName: showPartnerChart ? "chevron.up" : "chevron.down")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(AppColors.lavender)
                 }
+                .accessibilityLabel(showPartnerChart ? "Collapse partner chart" : "Expand partner chart")
                 .padding(.trailing, 4)
             }
 
@@ -705,6 +713,7 @@ struct ProfileView: View {
                 )
                 Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                 Button {
+                    HapticManager.impact(.light)
                     showTutorial = true
                 } label: {
                     HStack(spacing: 14) {
@@ -712,6 +721,7 @@ struct ProfileView: View {
                             .font(.system(size: 18))
                             .foregroundStyle(AppColors.gold)
                             .frame(width: 28)
+                            .accessibilityHidden(true)
                         Text("View Tutorial")
                             .font(AppFont.body(15))
                             .foregroundStyle(AppColors.cream)
@@ -719,6 +729,7 @@ struct ProfileView: View {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(AppColors.lavender.opacity(0.4))
+                            .accessibilityHidden(true)
                     }
                     .padding(.horizontal, 18)
                     .padding(.vertical, 14)
@@ -977,6 +988,7 @@ private struct ProfileInfoRow: View {
                 .font(.system(size: 14))
                 .foregroundStyle(AppColors.gold)
                 .frame(width: 28)
+                .accessibilityHidden(true)
             Text(text)
                 .font(AppFont.body(15))
                 .foregroundStyle(AppColors.cream)

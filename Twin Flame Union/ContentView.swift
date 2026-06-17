@@ -47,6 +47,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -70,6 +71,7 @@ struct ContentView: View {
                                 Image(systemName: greetingIcon)
                                     .font(.system(size: 11))
                                     .foregroundStyle(AppColors.gold)
+                                    .accessibilityHidden(true)
                                 Text(greeting.uppercased())
                                     .font(.system(size: 11, weight: .semibold, design: .rounded))
                                     .tracking(2.5)
@@ -87,10 +89,14 @@ struct ContentView: View {
                         .offset(y: appeared ? 0 : 12)
                         Spacer()
                         // Moon phase pill
-                        Button { showMoonSheet = true } label: {
+                        Button {
+                            HapticManager.impact(.light)
+                            showMoonSheet = true
+                        } label: {
                             VStack(spacing: 3) {
                                 Text(moon.emoji)
                                     .font(.system(size: 28))
+                                    .accessibilityHidden(true)
                                 Text(moon.name)
                                     .font(AppFont.caption(10, weight: .semibold))
                                     .foregroundStyle(AppColors.lavender)
@@ -104,6 +110,7 @@ struct ContentView: View {
                                     .strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1)
                             )
                         }
+                        .accessibilityLabel("View \(moon.name) moon phase details")
                         .buttonStyle(.plain)
                         .sheet(isPresented: $showMoonSheet) {
                             MoonPhaseSheet(moon: moon)
@@ -119,6 +126,7 @@ struct ContentView: View {
                         Image(systemName: "sparkles")
                             .font(.system(size: 12))
                             .foregroundStyle(AppColors.gold)
+                            .accessibilityHidden(true)
                         Text(moon.meaning)
                             .font(AppFont.body(13))
                             .foregroundStyle(AppColors.cream)
@@ -262,6 +270,7 @@ private struct DeityOfDayCard: View {
     @State private var haloScale: CGFloat = 1.0
     @State private var haloOpacity: Double = 0.5
     @State private var shimmer: Bool = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var cultureColor: Color {
         switch deity.culture {
@@ -315,11 +324,13 @@ private struct DeityOfDayCard: View {
                         .fill(deity.color.opacity(haloOpacity * 0.18))
                         .frame(width: 76, height: 76)
                         .scaleEffect(haloScale)
+                        .accessibilityHidden(true)
 
                     // Mid ring
                     Circle()
                         .stroke(deity.color.opacity(0.25), lineWidth: 1)
                         .frame(width: 64, height: 64)
+                        .accessibilityHidden(true)
 
                     // Inner filled orb
                     Circle()
@@ -332,6 +343,7 @@ private struct DeityOfDayCard: View {
                             )
                         )
                         .frame(width: 56, height: 56)
+                        .accessibilityHidden(true)
 
                     // Symbol
                     Image(systemName: deity.symbol)
@@ -343,6 +355,7 @@ private struct DeityOfDayCard: View {
                                 endPoint: .bottom
                             )
                         )
+                        .accessibilityHidden(true)
                 }
                 .frame(width: 76)
                 .fixedSize()
@@ -395,6 +408,7 @@ private struct DeityOfDayCard: View {
         )
         .shadow(color: deity.color.opacity(0.12), radius: 20, y: 6)
         .onAppear {
+            guard !reduceMotion else { return }
             withAnimation(.easeInOut(duration: 2.6).repeatForever(autoreverses: true)) {
                 haloScale   = 1.12
                 haloOpacity = 1.0
@@ -408,6 +422,7 @@ private struct DeityOfDayCard: View {
 private struct StreakCard: View {
     let streak: Int
     @State private var flamePulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var streakMessage: String {
         switch streak {
@@ -434,10 +449,12 @@ private struct StreakCard: View {
                 Circle()
                     .fill(flameColor.opacity(flamePulse ? 0.22 : 0.10))
                     .frame(width: 68, height: 68)
-                    .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: flamePulse)
+                    .animation(Animation.calm(reduceMotion, .easeInOut(duration: 2.0).repeatForever(autoreverses: true)), value: flamePulse)
+                    .accessibilityHidden(true)
                 Circle()
                     .strokeBorder(flameColor.opacity(streak > 0 ? 0.45 : 0.12), lineWidth: 1.2)
                     .frame(width: 64, height: 64)
+                    .accessibilityHidden(true)
                 VStack(spacing: 1) {
                     Text("\(streak)")
                         .font(AppFont.serifHeadline(24))
@@ -471,8 +488,9 @@ private struct StreakCard: View {
                         : LinearGradient(colors: [AppColors.lavender.opacity(0.3)],
                                          startPoint: .top, endPoint: .bottom)
                 )
-                .scaleEffect(flamePulse && streak > 0 ? 1.08 : 1.0)
-                .animation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true), value: flamePulse)
+                .scaleEffect(flamePulse && streak > 0 && !reduceMotion ? 1.08 : 1.0)
+                .animation(Animation.calm(reduceMotion, .easeInOut(duration: 1.6).repeatForever(autoreverses: true)), value: flamePulse)
+                .accessibilityHidden(true)
         }
         .padding(20)
         .background(
@@ -489,7 +507,7 @@ private struct StreakCard: View {
             RoundedRectangle(cornerRadius: 20)
                 .strokeBorder(flameColor.opacity(streak > 0 ? 0.28 : 0.12), lineWidth: 1)
         )
-        .onAppear { flamePulse = true }
+        .onAppear { if !reduceMotion { flamePulse = true } }
     }
 }
 
@@ -531,6 +549,7 @@ private struct DailyGuidanceCard: View {
                         .foregroundStyle(AppColors.lavender.opacity(0.8))
                         .fixedSize(horizontal: false, vertical: true)
                     Button {
+                        HapticManager.impact(.light)
                         let sign = mySunSign.isEmpty ? "Unknown" : mySunSign
                         Task { await guidance.retry(sunSign: sign, moonPhase: moon.name) }
                     } label: {
@@ -575,11 +594,13 @@ private struct DailyGuidanceCard: View {
                     }
 
                     Button {
+                        HapticManager.impact(.light)
                         withAnimation(.easeInOut(duration: 0.25)) { expanded.toggle() }
                     } label: {
                         HStack(spacing: 4) {
                             Text(expanded ? "Show less" : "Read more")
                             Image(systemName: expanded ? "chevron.up" : "chevron.down")
+                                .accessibilityHidden(true)
                         }
                         .font(AppFont.caption(12, weight: .semibold))
                         .foregroundStyle(AppColors.lavender)
@@ -659,6 +680,7 @@ private struct AngelNumberCard: View {
 
 private struct AffirmationCard: View {
     @State private var glow = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let affirmations = [
         // Core Sacred
@@ -802,6 +824,7 @@ private struct AffirmationCard: View {
         )
         .shadow(color: AppColors.purple.opacity(0.18), radius: 16, y: 6)
         .onAppear {
+            guard !reduceMotion else { return }
             withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
                 glow = true
             }
@@ -865,6 +888,7 @@ private struct TFStageMiniCard: View {
 
 private struct ChakraOfDayCard: View {
     @State private var ringPulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let chakras: [(name: String, symbol: String, color: Color, keyword: String, affirmation: String)] = [
         ("Root",        "🌿", Color(hex: "C62828"), "Safety · Grounding · Stability",
@@ -895,12 +919,15 @@ private struct ChakraOfDayCard: View {
                 Circle()
                     .fill(c.color.opacity(ringPulse ? 0.28 : 0.14))
                     .frame(width: 58, height: 58)
-                    .animation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true), value: ringPulse)
+                    .animation(Animation.calm(reduceMotion, .easeInOut(duration: 2.2).repeatForever(autoreverses: true)), value: ringPulse)
+                    .accessibilityHidden(true)
                 Circle()
                     .stroke(c.color.opacity(0.4), lineWidth: 1)
                     .frame(width: 54, height: 54)
+                    .accessibilityHidden(true)
                 Text(c.symbol)
                     .font(.system(size: 26))
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -908,6 +935,7 @@ private struct ChakraOfDayCard: View {
                     Image(systemName: "rays")
                         .font(.system(size: 10))
                         .foregroundStyle(AppColors.lavender)
+                        .accessibilityHidden(true)
                     Text("CHAKRA FOCUS")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .tracking(1.8)
@@ -938,7 +966,7 @@ private struct ChakraOfDayCard: View {
             RoundedRectangle(cornerRadius: 20)
                 .strokeBorder(c.color.opacity(0.30), lineWidth: 1)
         )
-        .onAppear { ringPulse = true }
+        .onAppear { if !reduceMotion { ringPulse = true } }
     }
 }
 

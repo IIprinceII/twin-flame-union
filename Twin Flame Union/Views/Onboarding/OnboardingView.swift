@@ -58,6 +58,7 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
 
@@ -66,6 +67,7 @@ struct OnboardingView: View {
                     progressDots
                         .padding(.top, 56)
                         .padding(.bottom, 8)
+                        .accessibilityHidden(true)
                 }
 
                 // Step content with slide transition
@@ -237,6 +239,7 @@ enum BirthCalculator {
 private struct WelcomeStep: View {
     let onNext: () -> Void
     @State private var appeared = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 0) {
@@ -248,8 +251,9 @@ private struct WelcomeStep: View {
                     .fill(AppGradients.warm.opacity(0.15))
                     .frame(width: 180, height: 180)
                     .blur(radius: 30)
-                    .scaleEffect(appeared ? 1.1 : 0.8)
-                    .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: appeared)
+                    .scaleEffect(appeared ? (reduceMotion ? 1.0 : 1.1) : 0.8)
+                    .animation(Animation.calm(reduceMotion, .easeInOut(duration: 2.5).repeatForever(autoreverses: true)), value: appeared)
+                    .accessibilityHidden(true)
 
                 Image(systemName: "flame.fill")
                     .font(.system(size: 64))
@@ -257,6 +261,7 @@ private struct WelcomeStep: View {
                     .scaleEffect(appeared ? 1.0 : 0.7)
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.8, dampingFraction: 0.6).delay(0.2), value: appeared)
+                    .accessibilityHidden(true)
             }
             .padding(.bottom, 36)
 
@@ -281,7 +286,10 @@ private struct WelcomeStep: View {
 
             Spacer()
 
-            Button(action: onNext) {
+            Button {
+                HapticManager.impact(.medium)
+                onNext()
+            } label: {
                 Text("Begin Your Journey")
                     .warmButtonStyle()
             }
@@ -310,6 +318,7 @@ private struct NameStep: View {
                     Image(systemName: "sparkles")
                         .font(.system(size: 36))
                         .foregroundStyle(AppColors.gold)
+                        .accessibilityHidden(true)
 
                     Text("What is your name,\nbeautiful soul?")
                         .font(AppFont.serifHeadline(28))
@@ -344,7 +353,10 @@ private struct NameStep: View {
 
             Spacer()
 
-            Button(action: onNext) {
+            Button {
+                HapticManager.impact(.medium)
+                onNext()
+            } label: {
                 Text("Continue")
                     .warmButtonStyle()
             }
@@ -439,7 +451,10 @@ private struct BirthdayStep: View {
                 // Calculated signs preview
                 SignPreviewRow(birthDate: birthDate, birthTime: birthTime)
 
-                Button(action: onNext) {
+                Button {
+                    HapticManager.impact(.medium)
+                    onNext()
+                } label: {
                     Text("Continue")
                         .warmButtonStyle()
                 }
@@ -461,6 +476,7 @@ private struct OnboardingCard<Content: View>: View {
                 Image(systemName: icon)
                     .font(.system(size: 13))
                     .foregroundStyle(AppColors.gold)
+                    .accessibilityHidden(true)
                 Text(label)
                     .font(AppFont.body(13, weight: .semibold))
                     .foregroundStyle(AppColors.lavender)
@@ -553,6 +569,7 @@ private struct PartnerStep: View {
 
                 // Toggle
                 Button {
+                    HapticManager.impact(.light)
                     withAnimation(.spring(response: 0.4)) { include.toggle() }
                 } label: {
                     HStack(spacing: 14) {
@@ -614,7 +631,10 @@ private struct PartnerStep: View {
                 }
 
                 VStack(spacing: 12) {
-                    Button(action: onNext) {
+                    Button {
+                        HapticManager.impact(.medium)
+                        onNext()
+                    } label: {
                         Text(include ? "Continue" : "Add Later")
                             .warmButtonStyle()
                     }
@@ -651,9 +671,11 @@ private struct NotificationsStep: View {
                         .fill(AppColors.purple.opacity(0.15))
                         .frame(width: 120, height: 120)
                         .blur(radius: 20)
+                        .accessibilityHidden(true)
                     Image(systemName: "bell.badge.fill")
                         .font(.system(size: 48))
                         .foregroundStyle(AppColors.gold)
+                        .accessibilityHidden(true)
                 }
 
                 VStack(spacing: 12) {
@@ -684,6 +706,7 @@ private struct NotificationsStep: View {
 
             VStack(spacing: 12) {
                 Button {
+                    HapticManager.impact(.medium)
                     UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in
                         DispatchQueue.main.async { onNext() }
                     }
@@ -732,6 +755,7 @@ private struct CompleteStep: View {
     let onFinish: () -> Void
 
     @State private var appeared = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var displayName: String {
         name.trimmingCharacters(in: .whitespaces).isEmpty ? "Beautiful Soul" : name
@@ -748,13 +772,15 @@ private struct CompleteStep: View {
                         .fill(AppGradients.warm.opacity(0.2))
                         .frame(width: 160, height: 160)
                         .blur(radius: 28)
-                        .scaleEffect(appeared ? 1.15 : 0.85)
-                        .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: appeared)
+                        .scaleEffect(appeared ? (reduceMotion ? 1.0 : 1.15) : 0.85)
+                        .animation(Animation.calm(reduceMotion, .easeInOut(duration: 2).repeatForever(autoreverses: true)), value: appeared)
+                        .accessibilityHidden(true)
                     Text("✨")
                         .font(.system(size: 64))
                         .scaleEffect(appeared ? 1 : 0.5)
                         .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.7, dampingFraction: 0.55).delay(0.1), value: appeared)
+                        .accessibilityHidden(true)
                 }
 
                 VStack(spacing: 12) {
@@ -800,7 +826,10 @@ private struct CompleteStep: View {
 
             Spacer()
 
-            Button(action: onFinish) {
+            Button {
+                HapticManager.notification(.success)
+                onFinish()
+            } label: {
                 Text("Enter the Portal")
                     .warmButtonStyle()
             }

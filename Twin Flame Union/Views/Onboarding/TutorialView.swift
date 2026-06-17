@@ -214,6 +214,7 @@ struct TutorialView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
 
@@ -226,6 +227,7 @@ struct TutorialView: View {
                             .animation(.spring(response: 0.3), value: currentPage)
                     }
                 }
+                .accessibilityHidden(true)
                 .padding(.top, 20)
                 .padding(.bottom, 8)
 
@@ -243,6 +245,7 @@ struct TutorialView: View {
                 HStack(spacing: 16) {
                     if currentPage > 0 {
                         Button {
+                            HapticManager.impact(.light)
                             withAnimation { currentPage -= 1 }
                         } label: {
                             Image(systemName: "chevron.left")
@@ -252,6 +255,7 @@ struct TutorialView: View {
                                 .background(AppColors.deepViolet.opacity(0.7), in: Circle())
                                 .overlay(Circle().strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1))
                         }
+                        .accessibilityLabel("Previous page")
                     } else {
                         Spacer().frame(width: 48)
                     }
@@ -260,6 +264,7 @@ struct TutorialView: View {
 
                     if currentPage < pages.count - 1 {
                         Button {
+                            HapticManager.impact(.light)
                             withAnimation { currentPage += 1 }
                         } label: {
                             HStack(spacing: 8) {
@@ -267,6 +272,7 @@ struct TutorialView: View {
                                     .font(AppFont.body(16, weight: .semibold))
                                 Image(systemName: "chevron.right")
                                     .font(.system(size: 14, weight: .semibold))
+                                    .accessibilityHidden(true)
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 28)
@@ -275,6 +281,7 @@ struct TutorialView: View {
                         }
                     } else {
                         Button {
+                            HapticManager.impact(.medium)
                             dismiss()
                         } label: {
                             HStack(spacing: 8) {
@@ -282,6 +289,7 @@ struct TutorialView: View {
                                     .font(AppFont.body(16, weight: .semibold))
                                 Image(systemName: "flame.fill")
                                     .font(.system(size: 14))
+                                    .accessibilityHidden(true)
                             }
                             .foregroundStyle(.white)
                             .padding(.horizontal, 24)
@@ -294,6 +302,7 @@ struct TutorialView: View {
 
                     // Skip button (placeholder for spacing)
                     Button {
+                        HapticManager.impact(.light)
                         dismiss()
                     } label: {
                         Text("Skip")
@@ -332,6 +341,7 @@ private struct PageView: View {
                         .font(.system(size: 40))
                         .foregroundStyle(page.iconColor)
                 }
+                .accessibilityHidden(true)
                 .padding(.top, 20)
                 .padding(.bottom, 24)
 
