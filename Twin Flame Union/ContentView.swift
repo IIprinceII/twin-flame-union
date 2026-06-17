@@ -13,6 +13,8 @@ struct ContentView: View {
     @State private var streak = StreakTracker.current
     @State private var showMoonSheet = false
     @State private var appeared = false
+    @State private var showRitualCard = false
+    @State private var showRitualSheet = false
     private let moon = MoonPhase.current()
     private let guidance = DailyGuidanceService.shared
 
@@ -48,6 +50,18 @@ struct ContentView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
+
+                    // MARK: Optional daily-ritual prompt (replaces the old hard gate)
+                    if showRitualCard {
+                        RitualPromptCard(
+                            onBegin: { showRitualSheet = true },
+                            onDismiss: {
+                                UserDefaults.standard.set(Date(), forKey: RitualPrompt.dismissedKey)
+                                refreshRitualCard()
+                            }
+                        )
+                        .padding(.horizontal, 20)
+                    }
 
                     // MARK: Header
                     HStack(alignment: .top) {
@@ -223,7 +237,21 @@ struct ContentView: View {
             withAnimation(.spring(response: 0.65, dampingFraction: 0.80).delay(0.12)) {
                 appeared = true
             }
+            refreshRitualCard()
         }
+        .sheet(isPresented: $showRitualSheet, onDismiss: { refreshRitualCard() }) {
+            DailyRitualLockView { showRitualSheet = false }
+        }
+    }
+
+    /// The card shows unless today's ritual was already completed or dismissed. Recomputed on
+    /// appear, after dismissal, and after the ritual sheet closes (which may have completed it).
+    private func refreshRitualCard() {
+        showRitualCard = RitualPrompt.shouldShow(
+            completedAt: UserDefaults.standard.object(forKey: RitualPrompt.completedKey) as? Date,
+            dismissedAt: UserDefaults.standard.object(forKey: RitualPrompt.dismissedKey) as? Date,
+            now: Date(), calendar: .current
+        )
     }
 }
 
