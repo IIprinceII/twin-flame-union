@@ -4,6 +4,12 @@
 //
 //  Centralised haptic feedback. Call from any @MainActor context.
 //
+//  Conventions (apply consistently across the app):
+//   • impact(.light)         — selection / navigation (tab, row, segment, picker)
+//   • impact(.medium)        — primary actions (Begin, Submit, Save, Send)
+//   • notification(.success) — completions (ritual / meditation done, XP, achievement, save success)
+//   • notification(.error)   — failures (request / save failed)
+//
 
 import UIKit
 
