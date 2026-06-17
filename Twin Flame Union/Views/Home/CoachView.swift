@@ -19,6 +19,7 @@ final class CoachViewModel {
     var errorMessage: String?
     var showError: Bool = false
     var limitReached: Bool = false
+    var canRetry: Bool = false
 
     var context: CoachContext? = nil
 
@@ -78,7 +79,19 @@ final class CoachViewModel {
         inputText = ""
         messages.append(ChatMessage(role: .user, content: text))
         incrementCount()
+        await streamReply()
+    }
 
+    /// Re-send after a failure WITHOUT making the user retype — and WITHOUT charging the
+    /// daily message cap again (it was already counted when they first sent).
+    func retry() async {
+        guard canRetry, !isStreaming else { return }
+        if messages.last?.role == .assistant { messages.removeLast() }
+        await streamReply()
+    }
+
+    private func streamReply() async {
+        canRetry = false
         let placeholder = ChatMessage(role: .assistant, content: "")
         messages.append(placeholder)
         let idx = messages.count - 1
@@ -93,9 +106,10 @@ final class CoachViewModel {
                 messages[idx].content += chunk
             }
         } catch {
-            messages[idx].content = "The divine channel is momentarily disrupted. Please try again, dear soul. \u{2728}"
+            messages[idx].content = "The divine channel is momentarily disrupted. Tap to retry, dear soul. \u{2728}"
             errorMessage = error.localizedDescription
             showError = true
+            canRetry = true
         }
 
         isStreaming = false
@@ -183,6 +197,19 @@ struct CoachView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
                     .background(AppColors.deepViolet.opacity(0.95))
+
+                if viewModel.canRetry && !viewModel.isStreaming {
+                    Button {
+                        HapticManager.impact(.medium)
+                        Task { await viewModel.retry() }
+                    } label: {
+                        Label("Tap to retry", systemImage: "arrow.clockwise")
+                            .font(AppFont.body(14, weight: .semibold))
+                            .foregroundStyle(AppColors.gold)
+                    }
+                    .accessibilityLabel("Retry sending your message")
+                    .padding(.bottom, 8)
+                }
 
                 // Input Bar
                 CoachInputBar(

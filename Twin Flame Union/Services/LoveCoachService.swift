@@ -438,3 +438,14 @@ enum LoveCoachError: LocalizedError {
         }
     }
 }
+
+/// Minimal streaming interface so the chat view model can be tested with a fake.
+protocol ChatStreaming {
+    func streamMessage(history: [ChatMessage]) -> AsyncThrowingStream<String, Error>
+}
+
+extension LoveCoachService: ChatStreaming {
+    func streamMessage(history: [ChatMessage]) -> AsyncThrowingStream<String, Error> {
+        streamMessage(history: history, context: nil)
+    }
+}
