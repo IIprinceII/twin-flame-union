@@ -207,6 +207,7 @@ struct SettingsView: View {
             Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
 
             Button {
+                HapticManager.impact(.light)
                 if let url = URL(string: "mailto:justin04rodriguez04@gmail.com?subject=Twin%20Flame%20Union%20Feedback") {
                     UIApplication.shared.open(url)
                 }
