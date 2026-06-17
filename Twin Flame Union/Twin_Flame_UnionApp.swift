@@ -80,6 +80,7 @@ struct Twin_Flame_UnionApp: App {
             } message: {
                 Text("We can't access storage on this device right now, so new entries won't be saved this session. Try restarting the app or freeing up space. Your existing data has not been deleted.")
             }
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         }
         .modelContainer(sharedModelContainer)
         .environment(toneGenerator)
