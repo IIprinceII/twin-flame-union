@@ -775,7 +775,7 @@ struct MeditationView: View {
             )
             .shadow(color: viewModel.selectedSession.deityColor.opacity(viewModel.isRunning ? 0 : 0.3), radius: 14, y: 4)
         }
-        .buttonStyle(PressableButtonStyle())
+        .buttonStyle(PressableButtonStyle(haptic: false))
     }
 }
 

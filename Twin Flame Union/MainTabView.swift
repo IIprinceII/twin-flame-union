@@ -136,7 +136,6 @@ private struct MiniFrequencyPlayer: View {
             Spacer()
 
             Button {
-                HapticManager.impact(.light)
                 generator.stop()
             } label: {
                 Image(systemName: "stop.fill")
