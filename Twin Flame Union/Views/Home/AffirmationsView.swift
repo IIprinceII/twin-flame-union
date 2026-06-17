@@ -172,6 +172,7 @@ struct AffirmationsView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 Spacer(minLength: 16)
@@ -203,6 +204,7 @@ struct AffirmationsView: View {
                     Image(systemName: "heart.fill")
                         .foregroundStyle(AppColors.coral)
                 }
+                .accessibilityLabel("View saved affirmations")
             }
         }
         .preferredColorScheme(.dark)
@@ -262,6 +264,7 @@ struct AffirmationsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                 .padding(.leading, 20)
                 .allowsHitTesting(false)
+                .accessibilityHidden(true)
 
             // Left swipe → X
             Image(systemName: "xmark.circle.fill")
@@ -272,6 +275,7 @@ struct AffirmationsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
                 .padding(.trailing, 20)
                 .allowsHitTesting(false)
+                .accessibilityHidden(true)
         }
     }
 
@@ -302,6 +306,7 @@ struct AffirmationsView: View {
                             .foregroundStyle(AppColors.lavender)
                     }
                 }
+                .accessibilityLabel("Skip affirmation")
 
                 // Save/Favorite button
                 Button {
@@ -319,6 +324,7 @@ struct AffirmationsView: View {
                             .foregroundStyle(AppColors.coral)
                     }
                 }
+                .accessibilityLabel("Save affirmation to favorites")
             }
         }
     }
@@ -445,6 +451,7 @@ private struct AffirmationCard: View {
                 Image(systemName: "quote.opening")
                     .font(.system(size: 32))
                     .foregroundStyle(.white.opacity(0.4))
+                    .accessibilityHidden(true)
 
                 Text(affirmation.text)
                     .font(AppFont.serifTitle(26))
@@ -516,6 +523,7 @@ private struct FavoritesSheet: View {
                             Image(systemName: "heart.slash")
                                 .font(.system(size: 44))
                                 .foregroundStyle(AppColors.lavender.opacity(0.5))
+                                .accessibilityHidden(true)
                             Text("No saved affirmations yet")
                                 .font(AppFont.serifTitle(20))
                                 .foregroundStyle(AppColors.cream)
@@ -557,6 +565,7 @@ private struct FavoritesSheet: View {
                                                 .font(.body)
                                                 .foregroundStyle(AppColors.coral)
                                         }
+                                        .accessibilityLabel("Remove from saved affirmations")
                                     }
                                     .padding(16)
                                     .background(AppColors.deepViolet.opacity(0.6), in: RoundedRectangle(cornerRadius: 16))

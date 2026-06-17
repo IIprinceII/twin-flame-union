@@ -68,6 +68,7 @@ struct JournalView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // Search bar
@@ -118,6 +119,7 @@ struct JournalView: View {
                             .background(AppGradients.warm, in: Circle())
                             .shadow(color: AppColors.coral.opacity(0.5), radius: 12, y: 4)
                     }
+                    .accessibilityLabel("New journal entry")
                     .padding(.trailing, 24)
                     .padding(.bottom, 28)
                 }
@@ -194,6 +196,7 @@ private struct SearchBar: View {
                         .font(.system(size: 15))
                         .foregroundStyle(AppColors.lavender.opacity(0.6))
                 }
+                .accessibilityLabel("Clear search")
             }
         }
         .padding(.horizontal, 14)
@@ -437,6 +440,7 @@ struct JournalEditorView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        HapticManager.impact(.medium)
                         onSave(title, content, selectedMood.rawValue)
                         if logMindfulSession {
                             Task {

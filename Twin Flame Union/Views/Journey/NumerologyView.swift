@@ -124,6 +124,7 @@ struct NumerologyView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -136,9 +137,9 @@ struct NumerologyView: View {
                     if hasCalculated {
                         // Three numbers row
                         HStack(spacing: 14) {
-                            NumberPill(label: "Life Path",   number: lifePathNum,   color: Color(hex: "8B5CF6")) { selectedNumber = lifePathNum }
-                            NumberPill(label: "Soul Urge",   number: soulUrgeNum,   color: Color(hex: "4A90D9")) { selectedNumber = soulUrgeNum }
-                            NumberPill(label: "Expression",  number: expressionNum, color: Color(hex: "D97B4A")) { selectedNumber = expressionNum }
+                            NumberPill(label: "Life Path",   number: lifePathNum,   color: Color(hex: "8B5CF6")) { HapticManager.impact(.light); selectedNumber = lifePathNum }
+                            NumberPill(label: "Soul Urge",   number: soulUrgeNum,   color: Color(hex: "4A90D9")) { HapticManager.impact(.light); selectedNumber = soulUrgeNum }
+                            NumberPill(label: "Expression",  number: expressionNum, color: Color(hex: "D97B4A")) { HapticManager.impact(.light); selectedNumber = expressionNum }
                         }
                         .padding(.horizontal, 24)
 
@@ -262,6 +263,7 @@ struct NumerologyView: View {
     // MARK: Calculate
 
     private func calculate() {
+        HapticManager.impact(.medium)
         let name = inputName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
         birthdateDouble   = inputDate.timeIntervalSince1970

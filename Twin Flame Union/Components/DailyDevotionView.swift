@@ -36,6 +36,7 @@ struct DailyDevotionView: View {
                     Image(systemName: "sparkle")
                         .font(.system(size: 9))
                         .foregroundStyle(AppColors.gold)
+                        .accessibilityHidden(true)
                     Text("DAILY DEVOTION")
                         .font(.system(size: 9, weight: .semibold, design: .rounded))
                         .tracking(2.2)
@@ -60,6 +61,7 @@ struct DailyDevotionView: View {
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                         .foregroundStyle(AppColors.gold)
                 }
+                .accessibilityHidden(true)
             }
 
             // Progress message

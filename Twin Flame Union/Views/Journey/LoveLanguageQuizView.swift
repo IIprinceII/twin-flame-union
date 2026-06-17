@@ -129,6 +129,7 @@ struct LoveLanguageQuizView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             if let res = result {
                 resultView(language: res)
@@ -165,6 +166,7 @@ struct LoveLanguageQuizView: View {
                     }
                 }
                 .frame(height: 4)
+                .accessibilityHidden(true)
             }
             .padding(.horizontal, 24)
             .padding(.top, 20)
@@ -175,6 +177,7 @@ struct LoveLanguageQuizView: View {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 32))
                     .foregroundStyle(AppGradients.warm)
+                    .accessibilityHidden(true)
 
                 Text(q.text)
                     .font(AppFont.serifTitle(20))
@@ -202,6 +205,7 @@ struct LoveLanguageQuizView: View {
 
     private func answerButton(text: String, language: LoveLanguage) -> some View {
         Button {
+            HapticManager.impact(.light)
             scores[language, default: 0] += 1
             withAnimation(.easeInOut(duration: 0.3)) {
                 if currentQ + 1 < questions.count {
@@ -244,6 +248,7 @@ struct LoveLanguageQuizView: View {
                             .font(.system(size: 44))
                             .foregroundStyle(language.color)
                     }
+                    .accessibilityHidden(true)
                     .padding(.top, 28)
                     Text("Your Love Language")
                         .font(AppFont.body(13, weight: .semibold))
@@ -285,6 +290,7 @@ struct LoveLanguageQuizView: View {
                 .padding(.horizontal, 24)
 
                 Button {
+                    HapticManager.impact(.medium)
                     withAnimation(.spring(response: 0.4)) {
                         result = nil
                         currentQ = 0

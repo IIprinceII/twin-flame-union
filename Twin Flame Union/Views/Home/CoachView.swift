@@ -19,6 +19,7 @@ final class CoachViewModel {
     var errorMessage: String?
     var showError: Bool = false
     var limitReached: Bool = false
+    var canRetry: Bool = false
 
     var context: CoachContext? = nil
 
@@ -78,7 +79,19 @@ final class CoachViewModel {
         inputText = ""
         messages.append(ChatMessage(role: .user, content: text))
         incrementCount()
+        await streamReply()
+    }
 
+    /// Re-send after a failure WITHOUT making the user retype — and WITHOUT charging the
+    /// daily message cap again (it was already counted when they first sent).
+    func retry() async {
+        guard canRetry, !isStreaming else { return }
+        if messages.last?.role == .assistant { messages.removeLast() }
+        await streamReply()
+    }
+
+    private func streamReply() async {
+        canRetry = false
         let placeholder = ChatMessage(role: .assistant, content: "")
         messages.append(placeholder)
         let idx = messages.count - 1
@@ -93,9 +106,10 @@ final class CoachViewModel {
                 messages[idx].content += chunk
             }
         } catch {
-            messages[idx].content = "The divine channel is momentarily disrupted. Please try again, dear soul. \u{2728}"
+            messages[idx].content = "The divine channel is momentarily disrupted. Tap to retry, dear soul. \u{2728}"
             errorMessage = error.localizedDescription
             showError = true
+            canRetry = true
         }
 
         isStreaming = false
@@ -132,6 +146,7 @@ struct CoachView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // Daily limit banner
@@ -184,6 +199,19 @@ struct CoachView: View {
                     .padding(.vertical, 6)
                     .background(AppColors.deepViolet.opacity(0.95))
 
+                if viewModel.canRetry && !viewModel.isStreaming {
+                    Button {
+                        HapticManager.impact(.medium)
+                        Task { await viewModel.retry() }
+                    } label: {
+                        Label("Tap to retry", systemImage: "arrow.clockwise")
+                            .font(AppFont.body(14, weight: .semibold))
+                            .foregroundStyle(AppColors.gold)
+                    }
+                    .accessibilityLabel("Retry sending your message")
+                    .padding(.bottom, 8)
+                }
+
                 // Input Bar
                 CoachInputBar(
                     text: $viewModel.inputText,
@@ -219,6 +247,7 @@ struct CoachView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(AppColors.lavender.opacity(0.6))
                     }
+                    .accessibilityLabel("Clear conversation history")
                 }
             }
         }
@@ -241,6 +270,7 @@ private struct CoachIntroCard: View {
     @State private var ring2: Bool = false
     @State private var ring3: Bool = false
     private let todayDeity = DivinePantheon.today
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 20) {
@@ -252,13 +282,15 @@ private struct CoachIntroCard: View {
                     .stroke(AppColors.gold.opacity(ring3 ? 0.08 : 0.22), lineWidth: 1)
                     .frame(width: 112, height: 112)
                     .scaleEffect(ring3 ? 1.08 : 1.0)
-                    .animation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true), value: ring3)
+                    .animation(.calm(reduceMotion, .easeInOut(duration: 3.2).repeatForever(autoreverses: true)), value: ring3)
+                    .accessibilityHidden(true)
 
                 Circle()
                     .stroke(AppColors.gold.opacity(ring2 ? 0.15 : 0.35), lineWidth: 1)
                     .frame(width: 92, height: 92)
                     .scaleEffect(ring2 ? 1.06 : 1.0)
-                    .animation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true).delay(0.4), value: ring2)
+                    .animation(.calm(reduceMotion, .easeInOut(duration: 2.4).repeatForever(autoreverses: true).delay(0.4)), value: ring2)
+                    .accessibilityHidden(true)
 
                 // Avatar orb
                 Circle()
@@ -301,7 +333,8 @@ private struct CoachIntroCard: View {
                         .foregroundStyle(AppColors.gold)
                         .offset(x: 16, y: -16)
                         .opacity(ring1 ? 1.0 : 0.3)
-                        .animation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true).delay(0.2), value: ring1)
+                        .animation(.calm(reduceMotion, .easeInOut(duration: 1.6).repeatForever(autoreverses: true).delay(0.2)), value: ring1)
+                        .accessibilityHidden(true)
                 }
             }
 
@@ -452,6 +485,7 @@ private struct CoachMessageBubble: View {
 
 private struct CoachTypingIndicator: View {
     @State private var phase = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 10) {
@@ -459,9 +493,11 @@ private struct CoachTypingIndicator: View {
                 Circle()
                     .fill(AppColors.purple.opacity(0.3))
                     .frame(width: 32, height: 32)
+                    .accessibilityHidden(true)
                 Image(systemName: "sparkles")
                     .font(.system(size: 14))
                     .foregroundStyle(AppColors.gold)
+                    .accessibilityHidden(true)
             }
 
             HStack(spacing: 5) {
@@ -471,11 +507,12 @@ private struct CoachTypingIndicator: View {
                         .frame(width: 7, height: 7)
                         .scaleEffect(phase == i ? 1.3 : 0.8)
                         .animation(
-                            .easeInOut(duration: 0.4).repeatForever().delay(Double(i) * 0.15),
+                            .calm(reduceMotion, .easeInOut(duration: 0.4).repeatForever().delay(Double(i) * 0.15)),
                             value: phase
                         )
                 }
             }
+            .accessibilityLabel("Seraphina is typing")
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(AppColors.deepViolet.opacity(0.8), in: RoundedRectangle(cornerRadius: 18))
@@ -521,6 +558,7 @@ private struct CoachInputBar: View {
                     )
             }
             .disabled(isSendDisabled)
+            .accessibilityLabel(isStreaming ? "Sending" : "Send message")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

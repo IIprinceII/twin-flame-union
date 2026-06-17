@@ -12,7 +12,6 @@ import SwiftData
 struct Twin_Flame_UnionApp: App {
     @State private var showLaunch      = true
     @State private var showOnboarding  = false
-    @State private var showRitual      = false
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var toneGenerator   = ToneGenerator()
     @State private var gamification    = GamificationService.shared
@@ -31,9 +30,6 @@ struct Twin_Flame_UnionApp: App {
                         withAnimation(.easeInOut(duration: 0.5)) {
                             showLaunch     = false
                             showOnboarding = !hasCompletedOnboarding
-                            if hasCompletedOnboarding {
-                                showRitual = !ritualCompletedToday()
-                            }
                         }
                     }
                     .transition(.opacity)
@@ -41,14 +37,6 @@ struct Twin_Flame_UnionApp: App {
                     OnboardingView {
                         withAnimation(.easeInOut(duration: 0.6)) {
                             showOnboarding = false
-                            showRitual     = !ritualCompletedToday()
-                        }
-                    }
-                    .transition(.opacity)
-                } else if showRitual {
-                    DailyRitualLockView {
-                        withAnimation(.easeInOut(duration: 0.6)) {
-                            showRitual = false
                         }
                     }
                     .transition(.opacity)
@@ -80,6 +68,7 @@ struct Twin_Flame_UnionApp: App {
             } message: {
                 Text("We can't access storage on this device right now, so new entries won't be saved this session. Try restarting the app or freeing up space. Your existing data has not been deleted.")
             }
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         }
         .modelContainer(sharedModelContainer)
         .environment(toneGenerator)
@@ -88,17 +77,9 @@ struct Twin_Flame_UnionApp: App {
             // Account deletion resets this flag to false — return to onboarding live.
             if !completed && !showLaunch {
                 withAnimation(.easeInOut(duration: 0.5)) {
-                    showRitual     = false
                     showOnboarding = true
                 }
             }
         }
-    }
-
-    private func ritualCompletedToday() -> Bool {
-        guard let date = UserDefaults.standard.object(forKey: "dailyRitualCompletedDate") as? Date else {
-            return false
-        }
-        return Calendar.current.isDateInToday(date)
     }
 }

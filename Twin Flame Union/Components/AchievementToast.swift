@@ -26,9 +26,11 @@ struct AchievementToast: View {
                 Circle()
                     .fill(rarityColor.opacity(0.2))
                     .frame(width: 44, height: 44)
+                    .accessibilityHidden(true)
                 Image(systemName: achievement.icon)
                     .font(.system(size: 18))
                     .foregroundStyle(rarityColor)
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 2) {

@@ -52,6 +52,7 @@ struct SynchronicityLogView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -91,6 +92,7 @@ struct SynchronicityLogView: View {
             Image(systemName: "sparkles")
                 .font(.system(size: 28))
                 .foregroundStyle(AppColors.gold)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("\(weekCount) synchronicities this week")
@@ -158,6 +160,7 @@ struct SynchronicityLogView: View {
 
                         ForEach(dayEntries) { entry in
                             SyncEntryRow(entry: entry, onDecode: {
+                                HapticManager.impact(.light)
                                 if StoreService.shared.isPremium {
                                     insightEntry = entry
                                 } else {
@@ -203,6 +206,7 @@ struct SynchronicityLogView: View {
     // MARK: - Helpers
 
     private func logEntry(type: String, detail: String) {
+        HapticManager.notification(.success)
         let entry = SynchronicityEntry(type: type, detail: detail)
         modelContext.insert(entry)
         GamificationService.shared.awardXP(amount: 15, source: "synchronicity", framework: .vibrationalGame, skillKey: "vg_influence", detail: "Logged synchronicity: \(type)")
@@ -289,10 +293,14 @@ private struct SyncTypeButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.impact(.light)
+            action()
+        }) {
             VStack(spacing: 6) {
                 Text(syncType.icon)
                     .font(.system(size: 28))
+                    .accessibilityHidden(true)
                 Text(syncType.label)
                     .font(AppFont.body(10))
                     .foregroundStyle(AppColors.cream)
@@ -349,6 +357,7 @@ private struct SyncEntryRow: View {
             HStack(alignment: .center, spacing: 12) {
                 Text(typeEmoji)
                     .font(.system(size: 22))
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(entry.type)
@@ -428,6 +437,7 @@ private struct AngelNumberInputSheet: View {
 
                 Button {
                     let trimmed = numberInput.trimmingCharacters(in: .whitespaces)
+                    HapticManager.impact(.medium)
                     onConfirm(trimmed)
                     dismiss()
                 } label: {

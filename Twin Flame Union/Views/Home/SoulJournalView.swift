@@ -58,6 +58,7 @@ struct SoulJournalView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             Group {
                 if entries.isEmpty {
@@ -143,6 +144,7 @@ struct SoulJournalView: View {
                                 .foregroundStyle(.white)
                         }
                     }
+                    .accessibilityLabel("New soul journal entry")
                     .padding(.trailing, 24)
                     .padding(.bottom, 28)
                 }
@@ -231,6 +233,7 @@ struct SoulJournalView: View {
                     .foregroundStyle(Color(hex: "5B8CFF").opacity(0.7))
                 Spacer()
                 Button {
+                    HapticManager.impact(.medium)
                     selectedEntry = nil
                     showEditor = true
                 } label: {
@@ -288,6 +291,7 @@ private struct JournalEntryRow: View {
     let entry: JournalEntry
     let onAnalyze: () -> Void
     @State private var glow = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var mood: JournalMood {
         JournalMood(rawValue: entry.mood) ?? .hopeful
@@ -352,7 +356,8 @@ private struct JournalEntryRow: View {
             Rectangle()
                 .fill(Color(hex: "5B8CFF").opacity(glow ? 0.18 : 0.08))
                 .frame(height: 1)
-                .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: glow)
+                .animation(.calm(reduceMotion, .easeInOut(duration: 2.5).repeatForever(autoreverses: true)), value: glow)
+                .accessibilityHidden(true)
         }
         .padding(16)
         .background(
@@ -382,6 +387,7 @@ private struct JournalEntryRow: View {
 private struct EmptyJournalView: View {
     let onNew: () -> Void
     @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 28) {
@@ -394,7 +400,8 @@ private struct EmptyJournalView: View {
                         .stroke(Color(hex: "5B8CFF").opacity(0.12 - Double(i) * 0.03), lineWidth: 1)
                         .frame(width: CGFloat(90 + i * 28), height: CGFloat(90 + i * 28))
                         .scaleEffect(pulse ? 1.07 : 0.96)
-                        .animation(.easeInOut(duration: 2.5 + Double(i) * 0.4).repeatForever(autoreverses: true).delay(Double(i) * 0.3), value: pulse)
+                        .animation(.calm(reduceMotion, .easeInOut(duration: 2.5 + Double(i) * 0.4).repeatForever(autoreverses: true).delay(Double(i) * 0.3)), value: pulse)
+                        .accessibilityHidden(true)
                 }
                 ZStack {
                     Circle()

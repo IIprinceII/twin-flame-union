@@ -292,6 +292,7 @@ struct QuizView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             Group {
                 switch viewModel.phase {
@@ -364,7 +365,10 @@ private struct QuizIntroView: View {
             }
             .padding(.horizontal, 32)
 
-            Button(action: onBegin) {
+            Button {
+                HapticManager.impact(.medium)
+                onBegin()
+            } label: {
                 Text("Begin Your Reading")
                     .warmButtonStyle()
             }
@@ -526,9 +530,11 @@ private struct QuizResultView: View {
                             .fill(resultType.color.opacity(0.2))
                             .frame(width: 100, height: 100)
                             .blur(radius: 16)
+                            .accessibilityHidden(true)
                         Image(systemName: resultType.icon)
                             .font(.system(size: 44))
                             .foregroundStyle(resultType.color)
+                            .accessibilityHidden(true)
                     }
 
                     VStack(spacing: 6) {
@@ -607,7 +613,10 @@ private struct QuizResultView: View {
                 .padding(.horizontal, 24)
 
                 // Retake button
-                Button(action: onRetake) {
+                Button {
+                    HapticManager.impact(.light)
+                    onRetake()
+                } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.counterclockwise")
                         Text("Retake Reading")

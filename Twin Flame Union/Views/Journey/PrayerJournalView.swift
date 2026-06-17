@@ -23,6 +23,7 @@ struct PrayerJournalView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // Filter toggle
@@ -46,6 +47,7 @@ struct PrayerJournalView: View {
                                 PrayerCard(
                                     entry: entry,
                                     onMarkAnswered: {
+                                        HapticManager.notification(.success)
                                         withAnimation(.spring(response: 0.4)) {
                                             entry.isAnswered = true
                                             entry.answeredAt = Date()
@@ -79,6 +81,7 @@ struct PrayerJournalView: View {
                                 .foregroundStyle(.white)
                         }
                     }
+                    .accessibilityLabel("Add prayer")
                     .padding(.trailing, 28)
                     .padding(.bottom, 16)
                 }
@@ -108,6 +111,7 @@ struct PrayerJournalView: View {
             Image(systemName: "hands.sparkles.fill")
                 .font(.system(size: 52))
                 .foregroundStyle(AppColors.purple.opacity(0.5))
+                .accessibilityHidden(true)
             Text("No prayers logged yet")
                 .font(AppFont.serifTitle(20))
                 .foregroundStyle(AppColors.cream)
@@ -119,7 +123,10 @@ struct PrayerJournalView: View {
     }
 
     private func filterPill(_ label: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.impact(.light)
+            action()
+        }) {
             Text(label)
                 .font(AppFont.caption(12, weight: .semibold))
                 .foregroundStyle(isSelected ? AppColors.cream : AppColors.lavender)
@@ -189,6 +196,7 @@ private struct PrayerCard: View {
                         .font(.system(size: 16))
                         .foregroundStyle(AppColors.lavender.opacity(0.4))
                         .padding(8)
+                        .accessibilityLabel("More options")
                 }
             }
 
@@ -206,6 +214,7 @@ private struct PrayerCard: View {
                         .font(.system(size: 10))
                         .foregroundStyle(AppColors.gold)
                         .padding(.top, 3)
+                        .accessibilityHidden(true)
                     Text("Answer: \(entry.answeredNote)")
                         .font(AppFont.body(13))
                         .foregroundStyle(AppColors.gold.opacity(0.85))
@@ -252,6 +261,7 @@ private struct AnswerSheet: View {
                     .font(.system(size: 44))
                     .foregroundStyle(AppColors.gold)
                     .padding(.top, 36)
+                    .accessibilityHidden(true)
                 Text("God Answered!")
                     .font(AppFont.serifHeadline(26))
                     .foregroundStyle(AppColors.cream)
@@ -270,6 +280,7 @@ private struct AnswerSheet: View {
                     .padding(.horizontal, 24)
                 Spacer()
                 Button {
+                    HapticManager.notification(.success)
                     onSave(note)
                     dismiss()
                 } label: {
@@ -336,6 +347,7 @@ private struct PrayerEditorSheet: View {
                 Button {
                     let p = petition.trimmingCharacters(in: .whitespaces)
                     guard !p.isEmpty else { return }
+                    HapticManager.impact(.medium)
                     onSave(p, detail)
                     dismiss()
                 } label: {

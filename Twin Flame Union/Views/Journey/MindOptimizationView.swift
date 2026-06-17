@@ -132,6 +132,7 @@ struct MindOptimizationView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -148,6 +149,7 @@ struct MindOptimizationView: View {
                                 .font(.system(size: 20))
                                 .foregroundStyle(Color(hex: "F0C060"))
                         }
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("CHANNELLING")
                                 .font(.system(size: 9, weight: .semibold, design: .rounded))
@@ -183,6 +185,7 @@ struct MindOptimizationView: View {
                     // Practice cards
                     ForEach(practices) { practice in
                         Button {
+                            HapticManager.impact(.light)
                             selectedPractice = practice
                         } label: {
                             PracticeCard(practice: practice)
@@ -230,6 +233,7 @@ private struct PracticeCard: View {
                 Image(systemName: practice.icon)
                     .font(.system(size: 20))
                     .foregroundStyle(practice.color)
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -249,6 +253,7 @@ private struct PracticeCard: View {
             Image(systemName: "chevron.right")
                 .font(.system(size: 13))
                 .foregroundStyle(AppColors.lavender.opacity(0.4))
+                .accessibilityHidden(true)
         }
         .padding(18)
         .background(AppColors.deepViolet.opacity(0.75), in: RoundedRectangle(cornerRadius: 20))
@@ -282,6 +287,7 @@ private struct PracticeDetailSheet: View {
                                 .font(.system(size: 32))
                                 .foregroundStyle(practice.color)
                         }
+                        .accessibilityHidden(true)
                         .padding(.top, 20)
 
                         Text(practice.title)
@@ -318,6 +324,7 @@ private struct PracticeDetailSheet: View {
                                         .lineSpacing(4)
                                 }
                                 .onTapGesture {
+                                    HapticManager.selection()
                                     withAnimation(.easeInOut(duration: 0.2)) { currentStep = index }
                                 }
                             }
@@ -341,6 +348,7 @@ private struct PracticeDetailSheet: View {
                             .font(.system(size: 24))
                             .foregroundStyle(AppColors.lavender.opacity(0.6))
                     }
+                    .accessibilityLabel("Close")
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)

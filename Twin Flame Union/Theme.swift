@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // MARK: - Color Extension for Hex Support
 
@@ -116,11 +117,13 @@ enum AppFont {
 
     // System font for body text
     static func body(_ size: CGFloat = 16, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
+        let base = UIFont.systemFont(ofSize: size, weight: weight.uiWeight)
+        return Font(UIFontMetrics(forTextStyle: .body).scaledFont(for: base))
     }
 
     static func caption(_ size: CGFloat = 13, weight: Font.Weight = .regular) -> Font {
-        .system(size: size, weight: weight, design: .default)
+        let base = UIFont.systemFont(ofSize: size, weight: weight.uiWeight)
+        return Font(UIFontMetrics(forTextStyle: .caption1).scaledFont(for: base))
     }
 }
 

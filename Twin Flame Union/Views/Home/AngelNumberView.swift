@@ -400,6 +400,7 @@ struct AngelNumberView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -410,6 +411,7 @@ struct AngelNumberView: View {
                             Image(systemName: "sparkles")
                                 .font(.system(size: 15))
                                 .foregroundStyle(AppColors.gold)
+                                .accessibilityHidden(true)
 
                             TextField("Enter a number (e.g. 444)", text: $viewModel.inputNumber)
                                 .font(AppFont.body(17))
@@ -424,6 +426,7 @@ struct AngelNumberView: View {
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundStyle(AppColors.lavender.opacity(0.6))
                                 }
+                                .accessibilityLabel("Clear search")
                             }
                         }
                         .padding(.horizontal, 16)
@@ -551,9 +554,11 @@ private struct ReadingCard: View {
                         .fill(reading.color.opacity(0.18))
                         .frame(width: 100, height: 100)
                         .blur(radius: 16)
+                        .accessibilityHidden(true)
                     Image(systemName: reading.icon)
                         .font(.system(size: 40))
                         .foregroundStyle(reading.color)
+                        .accessibilityHidden(true)
                 }
 
                 Text(reading.number)

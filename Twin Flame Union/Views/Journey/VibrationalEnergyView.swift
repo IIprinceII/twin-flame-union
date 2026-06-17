@@ -68,6 +68,7 @@ struct VibrationalEnergyView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -84,6 +85,7 @@ struct VibrationalEnergyView: View {
                                 .font(.system(size: 20))
                                 .foregroundStyle(Color(hex: "CC88FF"))
                         }
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("CHANNELLING")
                                 .font(.system(size: 9, weight: .semibold, design: .rounded))
@@ -118,7 +120,10 @@ struct VibrationalEnergyView: View {
 
                     // Lesson cards
                     ForEach(lessons) { lesson in
-                        Button { selectedLesson = lesson } label: {
+                        Button {
+                            HapticManager.impact(.light)
+                            selectedLesson = lesson
+                        } label: {
                             LessonCard(lesson: lesson)
                         }
                         .buttonStyle(.plain)
@@ -163,6 +168,7 @@ private struct LessonCard: View {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 13))
                     .foregroundStyle(AppColors.lavender.opacity(0.4))
+                    .accessibilityHidden(true)
             }
             Text(lesson.teaching.prefix(120) + "...")
                 .font(AppFont.body(13))
@@ -190,6 +196,7 @@ private struct LessonDetailSheet: View {
                             Circle().fill(lesson.color.opacity(0.2)).frame(width: 80, height: 80)
                             Image(systemName: lesson.icon).font(.system(size: 32)).foregroundStyle(lesson.color)
                         }
+                        .accessibilityHidden(true)
                         .padding(.top, 20)
 
                         Text(lesson.title)
@@ -213,6 +220,7 @@ private struct LessonDetailSheet: View {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill").font(.system(size: 24)).foregroundStyle(AppColors.lavender.opacity(0.6))
                     }
+                    .accessibilityLabel("Close")
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)

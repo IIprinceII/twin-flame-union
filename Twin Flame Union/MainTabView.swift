@@ -89,6 +89,9 @@ struct MainTabView: View {
         }
         .animation(.spring(response: 0.4), value: toneGenerator.isPlaying)
         .onAppear { StreakTracker.checkIn() }
+        .onChange(of: selectedTab) {
+            HapticManager.impact(.light)
+        }
         .overlay { GamificationOverlay() }
     }
 }
@@ -98,6 +101,7 @@ struct MainTabView: View {
 private struct MiniFrequencyPlayer: View {
     let generator: ToneGenerator
     @State private var pulse = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private func formatTime(_ s: Int) -> String {
         String(format: "%d:%02d", s / 60, s % 60)
@@ -110,12 +114,14 @@ private struct MiniFrequencyPlayer: View {
                 Circle()
                     .fill(generator.currentFrequencyColor.opacity(0.25))
                     .frame(width: 36, height: 36)
-                    .scaleEffect(pulse ? 1.2 : 1.0)
-                    .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: pulse)
+                    .scaleEffect(pulse ? (reduceMotion ? 1.0 : 1.2) : 1.0)
+                    .animation(Animation.calm(reduceMotion, .easeInOut(duration: 1.2).repeatForever(autoreverses: true)), value: pulse)
+                    .accessibilityHidden(true)
                 Image(systemName: "waveform")
                     .font(.system(size: 14))
                     .foregroundStyle(generator.currentFrequencyColor)
                     .symbolEffect(.variableColor)
+                    .accessibilityHidden(true)
             }
 
             VStack(alignment: .leading, spacing: 1) {
@@ -130,6 +136,7 @@ private struct MiniFrequencyPlayer: View {
             Spacer()
 
             Button {
+                HapticManager.impact(.light)
                 generator.stop()
             } label: {
                 Image(systemName: "stop.fill")
@@ -138,6 +145,7 @@ private struct MiniFrequencyPlayer: View {
                     .frame(width: 36, height: 36)
                     .background(AppColors.purple.opacity(0.3), in: Circle())
             }
+            .accessibilityLabel("Stop frequency")
             .buttonStyle(.plain)
         }
         .padding(.horizontal, 20)
@@ -214,12 +222,14 @@ private struct GamificationOverlay: View {
 private struct LevelUpBanner: View {
     let level: Int
     @State private var appear = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 10) {
             Image(systemName: "sparkles")
                 .font(.system(size: 40))
                 .foregroundStyle(AppColors.gold)
+                .accessibilityHidden(true)
             Text("LEVEL UP")
                 .font(.system(size: 12, weight: .heavy, design: .rounded))
                 .tracking(4)
@@ -239,8 +249,14 @@ private struct LevelUpBanner: View {
                 )
                 .shadow(color: AppColors.gold.opacity(0.35), radius: 20)
         )
-        .scaleEffect(appear ? 1 : 0.7)
+        .scaleEffect(appear ? 1 : (reduceMotion ? 1 : 0.7))
         .opacity(appear ? 1 : 0)
-        .onAppear { withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { appear = true } }
+        .onAppear {
+            if reduceMotion {
+                appear = true
+            } else {
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { appear = true }
+            }
+        }
     }
 }

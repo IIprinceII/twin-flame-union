@@ -421,6 +421,7 @@ struct MeditationView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             GeometryReader { geo in
                 ScrollView(showsIndicators: false) {
@@ -442,6 +443,7 @@ struct MeditationView: View {
                                         isSelected: viewModel.selectedSession.id == session.id
                                     ) {
                                         guard !viewModel.isRunning else { return }
+                                        HapticManager.selection()
                                         withAnimation(.easeInOut(duration: 0.2)) {
                                             viewModel.selectedSession = session
                                         }
@@ -470,6 +472,7 @@ struct MeditationView: View {
                                             isSelected: viewModel.selectedSound == sound
                                         ) {
                                             guard !viewModel.isRunning else { return }
+                                            HapticManager.selection()
                                             viewModel.selectedSound = sound
                                         }
                                     }
@@ -627,6 +630,7 @@ struct MeditationView: View {
                 .scaleEffect(viewModel.orbScale * 1.2)
                 .blur(radius: 30)
                 .animation(.easeInOut(duration: viewModel.currentPhase.duration), value: viewModel.orbScale)
+                .accessibilityHidden(true)
 
             // Deity energy ring
             Circle()

@@ -68,6 +68,7 @@ private let frequencies: [SolfeggioFreq] = [
 
 struct SolfeggioView: View {
     @Environment(ToneGenerator.self) private var generator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var pulseAnim = false
     @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
     @State private var showDisclaimer = false
@@ -79,6 +80,7 @@ struct SolfeggioView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -141,9 +143,10 @@ struct SolfeggioView: View {
                         .frame(width: CGFloat(100 + i * 36), height: CGFloat(100 + i * 36))
                         .scaleEffect(pulseAnim ? 1.12 : 0.92)
                         .animation(
-                            .easeInOut(duration: 1.8).repeatForever(autoreverses: true).delay(Double(i) * 0.3),
+                            .calm(reduceMotion, .easeInOut(duration: 1.8).repeatForever(autoreverses: true).delay(Double(i) * 0.3)),
                             value: pulseAnim
                         )
+                        .accessibilityHidden(true)
                 }
                 Circle()
                     .fill(freq.color.opacity(0.35))
@@ -163,6 +166,7 @@ struct SolfeggioView: View {
                 .foregroundStyle(AppColors.cream)
 
             Button {
+                HapticManager.impact(.medium)
                 generator.stop()
             } label: {
                 Label("Stop", systemImage: "stop.fill")
@@ -203,6 +207,7 @@ private struct FrequencyRow: View {
 
     var body: some View {
         Button {
+            HapticManager.impact(.medium)
             if isPlaying {
                 withAnimation(.spring(response: 0.35)) { isExpanded.toggle() }
             } else {
@@ -221,6 +226,7 @@ private struct FrequencyRow: View {
                             .foregroundStyle(freq.color)
                             .symbolEffect(.variableColor, isActive: isPlaying)
                     }
+                    .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text(freq.name)
@@ -244,6 +250,7 @@ private struct FrequencyRow: View {
                         Image(systemName: "play.fill")
                             .font(.system(size: 13))
                             .foregroundStyle(AppColors.lavender.opacity(0.5))
+                            .accessibilityHidden(true)
                     }
                 }
                 .padding(16)

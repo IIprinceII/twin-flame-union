@@ -113,10 +113,12 @@ struct CordCuttingView: View {
     @State private var hasSwiped   = false
     @State private var pulse       = false
     @State private var appeared    = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             // Subtle colored fog for current step
             RadialGradient(
@@ -127,6 +129,7 @@ struct CordCuttingView: View {
             )
             .ignoresSafeArea()
             .animation(.easeInOut(duration: 0.8), value: step)
+            .accessibilityHidden(true)
 
             VStack(spacing: 0) {
 
@@ -148,6 +151,7 @@ struct CordCuttingView: View {
                     }
                 }
                 .padding(.vertical, 10)
+                .accessibilityHidden(true)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 28) {
@@ -157,6 +161,7 @@ struct CordCuttingView: View {
                             .frame(height: 200)
                             .transition(.opacity.combined(with: .scale(scale: 0.92)))
                             .id(step)
+                            .accessibilityHidden(true)
 
                         // ── Title & Instruction ──
                         VStack(spacing: 14) {
@@ -235,7 +240,7 @@ struct CordCuttingView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
         .onAppear {
-            pulse = true
+            if !reduceMotion { pulse = true }
             withAnimation(.easeOut(duration: 0.6)) { appeared = true }
         }
         .animation(.easeInOut(duration: 0.4), value: step)
@@ -248,6 +253,7 @@ struct CordCuttingView: View {
             Image(systemName: step.deitySymbol)
                 .font(.system(size: 14))
                 .foregroundStyle(step.deityColor)
+                .accessibilityHidden(true)
             Text(step.deity)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .tracking(1.0)
@@ -492,6 +498,7 @@ struct CordCuttingView: View {
                             )
                             .transition(.opacity.combined(with: .scale))
                     }
+                    .accessibilityHidden(true)
                 }
             }
             .gesture(
@@ -638,9 +645,9 @@ struct CordCuttingView: View {
                     .frame(width: sz, height: sz)
                     .scaleEffect(scale)
                     .animation(
-                        .easeInOut(duration: 2.2 + Double(i) * 0.3)
-                        .repeatForever(autoreverses: true)
-                        .delay(Double(i) * 0.25),
+                        .calm(reduceMotion, .easeInOut(duration: 2.2 + Double(i) * 0.3)
+                            .repeatForever(autoreverses: true)
+                            .delay(Double(i) * 0.25)),
                         value: shieldGlow
                     )
             }
@@ -650,6 +657,7 @@ struct CordCuttingView: View {
     // MARK: - Logic
 
     private func advance() {
+        HapticManager.impact(.medium)
         let next = step.rawValue + 1
         if let nextStep = CeremonyStep(rawValue: next) {
             withAnimation(.easeInOut(duration: 0.4)) {

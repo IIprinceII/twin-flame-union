@@ -179,6 +179,7 @@ struct RitualPlannerView: View {
     }
 
     private func toggle(_ ritual: Ritual) {
+        HapticManager.selection()
         let key = todayKey(for: ritual)
         var keys = completedKeys
         if keys.contains(key) { keys.remove(key) } else { keys.insert(key) }
@@ -188,6 +189,7 @@ struct RitualPlannerView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -195,6 +197,7 @@ struct RitualPlannerView: View {
                     // Moon header
                     VStack(spacing: 6) {
                         Text(moon.emoji)
+                            .accessibilityHidden(true)
                             .font(.system(size: 56))
                         Text(moon.name)
                             .font(AppFont.serifHeadline(24))
@@ -269,6 +272,7 @@ private struct RitualCard: View {
                         HStack(spacing: 6) {
                             Image(systemName: "clock")
                                 .font(.system(size: 10))
+                                .accessibilityHidden(true)
                             Text(ritual.duration)
                                 .font(AppFont.caption(12))
                         }
@@ -282,6 +286,7 @@ private struct RitualCard: View {
                             .font(.system(size: 24))
                             .foregroundStyle(isCompleted ? AppColors.gold : AppColors.lavender.opacity(0.4))
                     }
+                    .accessibilityLabel(isCompleted ? "Mark incomplete" : "Mark complete")
                     .buttonStyle(.plain)
                 }
                 .padding(18)

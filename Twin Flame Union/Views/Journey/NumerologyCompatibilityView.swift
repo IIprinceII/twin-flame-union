@@ -129,6 +129,7 @@ struct NumerologyCompatibilityView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -145,6 +146,7 @@ struct NumerologyCompatibilityView: View {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 22))
                                 .foregroundStyle(Color(hex: "E74C8B"))
+                                .accessibilityHidden(true)
                             Spacer()
                             lpCircle(number: tfLP, label: tfNameInput.isEmpty ? "Twin" : tfNameInput, color: Color(hex: "E74C8B"))
                         }
@@ -246,11 +248,13 @@ struct NumerologyCompatibilityView: View {
                     Circle()
                         .stroke(AppColors.purple.opacity(0.2), lineWidth: 8)
                         .frame(width: 88, height: 88)
+                        .accessibilityHidden(true)
                     Circle()
                         .trim(from: 0, to: CGFloat(pair.score) / 100)
                         .stroke(AppGradients.warm, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                         .frame(width: 88, height: 88)
                         .rotationEffect(.degrees(-90))
+                        .accessibilityHidden(true)
                     VStack(spacing: 1) {
                         Text("\(pair.score)%")
                             .font(AppFont.serifHeadline(22))
@@ -286,6 +290,7 @@ struct NumerologyCompatibilityView: View {
                 .foregroundStyle(color)
                 .frame(width: 14)
                 .padding(.top, 3)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
                     .font(AppFont.caption(11, weight: .semibold))
@@ -300,6 +305,7 @@ struct NumerologyCompatibilityView: View {
     }
 
     private func calculate() {
+        HapticManager.impact(.medium)
         myBD = myDate.timeIntervalSince1970
         tfBD = tfDate.timeIntervalSince1970
         myLP = NumCalc.lifePath(from: myDate)

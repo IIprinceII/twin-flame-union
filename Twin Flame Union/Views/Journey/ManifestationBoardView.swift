@@ -35,6 +35,7 @@ struct ManifestationBoardView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
 
@@ -42,6 +43,7 @@ struct ManifestationBoardView: View {
                 HStack(spacing: 10) {
                     ForEach(FilterMode.allCases, id: \.self) { mode in
                         Button {
+                            HapticManager.impact(.light)
                             withAnimation(.spring(response: 0.35)) { filterMode = mode }
                         } label: {
                             Text(mode.rawValue)
@@ -69,9 +71,11 @@ struct ManifestationBoardView: View {
                         LazyVGrid(columns: columns, spacing: 14) {
                             ForEach(filtered) { item in
                                 IntentionCard(item: item) {
+                                    HapticManager.impact(.medium)
                                     withAnimation(.spring(response: 0.4)) {
                                         item.isManifested.toggle()
                                         if item.isManifested {
+                                            HapticManager.notification(.success)
                                             GamificationService.shared.awardXP(amount: 50, source: "manifestation_fulfilled", framework: .vibrationalGame, skillKey: "vg_generating", detail: "Manifestation fulfilled!")
                                         }
                                     }
@@ -92,6 +96,7 @@ struct ManifestationBoardView: View {
                 HStack {
                     Spacer()
                     Button {
+                        HapticManager.impact(.medium)
                         showAddSheet = true
                     } label: {
                         ZStack {
@@ -104,6 +109,7 @@ struct ManifestationBoardView: View {
                                 .foregroundStyle(.white)
                         }
                     }
+                    .accessibilityLabel("Add intention")
                     .padding(.trailing, 28)
                     .padding(.bottom, 16)
                 }
@@ -192,13 +198,17 @@ private struct IntentionCard: View {
             )
 
             // Delete button
-            Button(action: onDelete) {
+            Button {
+                HapticManager.impact(.light)
+                onDelete()
+            } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 18))
                     .foregroundStyle(AppColors.lavender.opacity(0.4))
                     .background(AppColors.deepViolet, in: Circle())
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("Delete intention")
             .offset(x: 6, y: -6)
         }
     }
@@ -234,6 +244,7 @@ private struct AddIntentionSheet: View {
                         HStack(spacing: 12) {
                             ForEach(emojiOptions, id: \.self) { e in
                                 Button {
+                                    HapticManager.selection()
                                     emoji = e
                                 } label: {
                                     Text(e)
@@ -276,6 +287,7 @@ private struct AddIntentionSheet: View {
                 Button {
                     let text = intention.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !text.isEmpty else { return }
+                    HapticManager.impact(.medium)
                     onAdd(text, emoji)
                     dismiss()
                 } label: {
