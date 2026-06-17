@@ -24,6 +24,7 @@ struct DreamJournalView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             // Morpheus dream-blue atmospheric glow
             RadialGradient(
@@ -33,6 +34,7 @@ struct DreamJournalView: View {
                 endRadius: 320
             )
             .ignoresSafeArea()
+            .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -53,6 +55,7 @@ struct DreamJournalView: View {
                                 .font(.system(size: 20))
                                 .foregroundStyle(Color(hex: "4A90D9"))
                         }
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("CHANNELLING")
                                 .font(.system(size: 9, weight: .semibold, design: .rounded))
@@ -95,6 +98,7 @@ struct DreamJournalView: View {
                                 }
                             }
                             .frame(height: 150)
+                            .accessibilityHidden(true)
                             .padding(.top, 48)
 
                             VStack(spacing: 8) {
@@ -115,6 +119,7 @@ struct DreamJournalView: View {
                         LazyVStack(spacing: 12) {
                             ForEach(entries) { entry in
                                 DreamEntryRow(entry: entry, onTap: {
+                                    HapticManager.impact(.light)
                                     entryToEdit = entry
                                     showEditor = true
                                 }, onInterpret: {
@@ -149,6 +154,7 @@ struct DreamJournalView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
+                    HapticManager.impact(.medium)
                     entryToEdit = nil
                     showEditor = true
                 } label: {
@@ -156,6 +162,7 @@ struct DreamJournalView: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(AppColors.gold)
                 }
+                .accessibilityLabel("New dream entry")
             }
         }
         .sheet(isPresented: $showEditor) {
@@ -226,6 +233,7 @@ private struct DreamEntryRow: View {
                     Image(systemName: "moon.zzz.fill")
                         .font(.system(size: 14))
                         .foregroundStyle(Color(hex: "4A90D9").opacity(0.5))
+                        .accessibilityHidden(true)
                 }
 
                 // Content preview
@@ -249,7 +257,10 @@ private struct DreamEntryRow: View {
                     Spacer()
 
                     // Interpret button
-                    Button(action: onInterpret) {
+                    Button(action: {
+                        HapticManager.impact(.light)
+                        onInterpret()
+                    }) {
                         HStack(spacing: 5) {
                             Image(systemName: "sparkles")
                                 .font(.system(size: 11))
@@ -475,7 +486,10 @@ private struct DreamEntryEditor: View {
                         }
 
                         // Save button
-                        Button(action: save) {
+                        Button(action: {
+                            HapticManager.impact(.medium)
+                            save()
+                        }) {
                             Text("Save Dream")
                                 .warmButtonStyle()
                         }
@@ -499,6 +513,7 @@ private struct DreamEntryEditor: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
+                        HapticManager.impact(.medium)
                         save()
                     }
                     .font(AppFont.body(15, weight: .semibold))
@@ -691,6 +706,7 @@ struct DreamInterpretationView: View {
                                         )
                                     )
                             }
+                            .accessibilityHidden(true)
 
                             Text("Dream Interpretation")
                                 .font(AppFont.serifHeadline(22))
@@ -740,6 +756,7 @@ struct DreamInterpretationView: View {
                                     .foregroundStyle(AppColors.lavender.opacity(0.8))
                                     .multilineTextAlignment(.center)
                                 Button {
+                                    HapticManager.impact(.medium)
                                     Task { await fetchInterpretation() }
                                 } label: {
                                     Label("Try Again", systemImage: "arrow.clockwise")
@@ -784,6 +801,7 @@ struct DreamInterpretationView: View {
                             .font(.system(size: 24))
                             .foregroundStyle(AppColors.lavender.opacity(0.6))
                     }
+                    .accessibilityLabel("Dismiss")
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)

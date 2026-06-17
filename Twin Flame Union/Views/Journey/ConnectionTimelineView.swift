@@ -41,6 +41,7 @@ struct ConnectionTimelineView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             if moments.isEmpty {
                 emptyState
@@ -67,7 +68,10 @@ struct ConnectionTimelineView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    Button { showAddSheet = true } label: {
+                    Button {
+                        HapticManager.impact(.medium)
+                        showAddSheet = true
+                    } label: {
                         ZStack {
                             Circle()
                                 .fill(AppGradients.warm)
@@ -78,6 +82,7 @@ struct ConnectionTimelineView: View {
                                 .foregroundStyle(.white)
                         }
                     }
+                    .accessibilityLabel("Add connection moment")
                     .padding(.trailing, 28)
                     .padding(.bottom, 16)
                 }
@@ -90,6 +95,7 @@ struct ConnectionTimelineView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 if moments.count >= 3 {
                     Button {
+                        HapticManager.impact(.light)
                         if StoreService.shared.isPremium {
                             showPatternAnalysis = true
                         } else {
@@ -182,6 +188,7 @@ private struct TimelineRow: View {
                         .font(.system(size: 16))
                         .foregroundStyle(info.color)
                 }
+                .accessibilityHidden(true)
                 if !isLast {
                     Rectangle()
                         .fill(AppColors.purple.opacity(0.3))
@@ -222,6 +229,7 @@ private struct TimelineRow: View {
                             .foregroundStyle(AppColors.lavender.opacity(0.5))
                             .padding(8)
                     }
+                    .accessibilityLabel("More options")
                 }
 
                 if !moment.detail.isEmpty {
@@ -278,6 +286,7 @@ private struct MomentEditorSheet: View {
                             HStack(spacing: 10) {
                                 ForEach(momentCategories, id: \.name) { cat in
                                     Button {
+                                        HapticManager.selection()
                                         category = cat.name
                                     } label: {
                                         HStack(spacing: 6) {
@@ -325,6 +334,7 @@ private struct MomentEditorSheet: View {
                     Button {
                         let t = title.trimmingCharacters(in: .whitespaces)
                         guard !t.isEmpty else { return }
+                        HapticManager.impact(.medium)
                         onSave(t, detail, category, date)
                         dismiss()
                     } label: {

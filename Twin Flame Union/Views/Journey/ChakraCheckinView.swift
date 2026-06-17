@@ -99,6 +99,7 @@ struct ChakraCheckinView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -126,6 +127,7 @@ struct ChakraCheckinView: View {
                                 rating: $ratings[chakra.id],
                                 isSelected: selectedChakra == chakra.id,
                                 onTap: {
+                                    HapticManager.impact(.light)
                                     withAnimation(.spring(response: 0.4)) {
                                         selectedChakra = selectedChakra == chakra.id ? nil : chakra.id
                                     }
@@ -172,6 +174,7 @@ struct ChakraCheckinView: View {
 
                     // Healing Plan button (premium)
                     Button {
+                        HapticManager.impact(.medium)
                         if StoreService.shared.isPremium {
                             showHealingPlan = true
                         } else {
@@ -268,6 +271,7 @@ struct ChakraCheckinView: View {
                 .foregroundStyle(color)
                 .frame(width: 18)
                 .padding(.top, 2)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {
                 Text(label)
                     .font(AppFont.caption(11, weight: .semibold))
@@ -292,6 +296,7 @@ struct ChakraCheckinView: View {
     }
 
     private func saveCheckin() {
+        HapticManager.impact(.medium)
         if let existing = todayEntry {
             existing.root = ratings[0]; existing.sacral = ratings[1]
             existing.solarPlexus = ratings[2]; existing.heart = ratings[3]
@@ -307,6 +312,7 @@ struct ChakraCheckinView: View {
             GamificationService.shared.awardXP(amount: 25, source: "chakra", framework: .energyEnhancement, skillKey: "ee_constitution", detail: "Chakra check-in")
         }
         withAnimation { isSaved = true }
+        HapticManager.notification(.success)
     }
 }
 
@@ -356,6 +362,7 @@ private struct ChakraRow: View {
                 HStack(spacing: 8) {
                     ForEach(1...5, id: \.self) { i in
                         Button {
+                            HapticManager.selection()
                             withAnimation(.spring(response: 0.3)) { rating = i }
                         } label: {
                             Circle()

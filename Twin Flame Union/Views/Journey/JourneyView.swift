@@ -45,6 +45,7 @@ struct JourneyView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
                 // Category pill bar
@@ -85,6 +86,7 @@ struct JourneyView: View {
             HStack(spacing: 10) {
                 ForEach(JourneyCategory.allCases, id: \.self) { cat in
                     Button {
+                        HapticManager.impact(.light)
                         withAnimation(.easeInOut(duration: 0.2)) {
                             selectedCategory = cat
                         }
@@ -173,6 +175,7 @@ struct JourneyView: View {
 private struct JourneyTile: View {
     let item: JourneyItem
     @State private var glow = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(spacing: 10) {
@@ -181,13 +184,14 @@ private struct JourneyTile: View {
                 RoundedRectangle(cornerRadius: 18)
                     .fill(item.color.opacity(glow ? 0.24 : 0.14))
                     .frame(width: 60, height: 60)
-                    .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: glow)
+                    .animation(.calm(reduceMotion, .easeInOut(duration: 2.5).repeatForever(autoreverses: true)), value: glow)
                 RoundedRectangle(cornerRadius: 18)
                     .stroke(item.color.opacity(0.30), lineWidth: 1)
                     .frame(width: 60, height: 60)
                 Image(systemName: item.icon)
                     .font(.system(size: 24))
                     .foregroundStyle(item.accent)
+                    .accessibilityHidden(true)
             }
 
             Text(item.title)
@@ -215,7 +219,7 @@ private struct JourneyTile: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(item.color.opacity(glow ? 0.30 : 0.18), lineWidth: 1)
-                        .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: glow)
+                        .animation(.calm(reduceMotion, .easeInOut(duration: 2.5).repeatForever(autoreverses: true)), value: glow)
                 )
         )
         .onAppear { glow = true }

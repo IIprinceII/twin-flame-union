@@ -28,6 +28,7 @@ struct GratitudeLogView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             // Hathor golden warm glow
             RadialGradient(
@@ -37,6 +38,7 @@ struct GratitudeLogView: View {
                 endRadius: 300
             )
             .ignoresSafeArea()
+            .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 24) {
@@ -57,6 +59,7 @@ struct GratitudeLogView: View {
                                 .font(.system(size: 20))
                                 .foregroundStyle(Color(hex: "FFB6C1"))
                         }
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("CHANNELLING")
                                 .font(.system(size: 9, weight: .semibold, design: .rounded))
@@ -123,7 +126,10 @@ struct GratitudeLogView: View {
 
                     // Save button
                     if !isSaved {
-                        Button { save() } label: {
+                        Button {
+                            HapticManager.impact(.medium)
+                            save()
+                        } label: {
                             Text("Save Today's Gratitude")
                                 .frame(maxWidth: .infinity)
                         }
@@ -134,6 +140,7 @@ struct GratitudeLogView: View {
                         HStack(spacing: 10) {
                             Image(systemName: "heart.rectangle.fill")
                                 .foregroundStyle(Color(hex: "FFB6C1"))
+                                .accessibilityHidden(true)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Hathor has received your heart's offering.")
                                     .font(AppFont.body(14))
@@ -150,6 +157,7 @@ struct GratitudeLogView: View {
 
                         // Sacred Reflection button (premium)
                         Button {
+                            HapticManager.impact(.medium)
                             if StoreService.shared.isPremium {
                                 showReflection = true
                             } else {
@@ -177,6 +185,7 @@ struct GratitudeLogView: View {
                     // History
                     if entries.filter({ !Calendar.current.isDateInToday($0.date) }).count > 0 {
                         Button {
+                            HapticManager.impact(.light)
                             withAnimation(.spring(response: 0.4)) { showHistory.toggle() }
                         } label: {
                             HStack {
@@ -242,6 +251,7 @@ struct GratitudeLogView: View {
             GamificationService.shared.awardXP(amount: 15, source: "gratitude", framework: .energyEnhancement, skillKey: "ee_constitution", detail: "Logged gratitude")
         }
         withAnimation { isSaved = true }
+        HapticManager.notification(.success)
     }
 }
 

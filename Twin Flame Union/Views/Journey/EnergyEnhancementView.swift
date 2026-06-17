@@ -97,6 +97,7 @@ struct EnergyEnhancementView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -113,6 +114,7 @@ struct EnergyEnhancementView: View {
                                 .font(.system(size: 20))
                                 .foregroundStyle(Color(hex: "FF4500"))
                         }
+                        .accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("CHANNELLING")
                                 .font(.system(size: 9, weight: .semibold, design: .rounded))
@@ -145,7 +147,10 @@ struct EnergyEnhancementView: View {
                     .opacity(appeared ? 1 : 0)
 
                     ForEach(modules) { module in
-                        Button { selectedModule = module } label: {
+                        Button {
+                            HapticManager.impact(.light)
+                            selectedModule = module
+                        } label: {
                             HStack(spacing: 16) {
                                 ZStack {
                                     Circle().fill(module.color.opacity(0.18)).frame(width: 52, height: 52)
@@ -161,6 +166,7 @@ struct EnergyEnhancementView: View {
                                 }
                                 Spacer()
                                 Image(systemName: "chevron.right").font(.system(size: 13)).foregroundStyle(AppColors.lavender.opacity(0.4))
+                                    .accessibilityHidden(true)
                             }
                             .padding(18)
                             .background(AppColors.deepViolet.opacity(0.75), in: RoundedRectangle(cornerRadius: 20))
@@ -209,6 +215,7 @@ private struct ModuleDetailSheet: View {
                             Circle().fill(module.color.opacity(0.2)).frame(width: 80, height: 80)
                             Image(systemName: module.icon).font(.system(size: 32)).foregroundStyle(module.color)
                         }
+                        .accessibilityHidden(true)
                         .padding(.top, 20)
 
                         Text(module.title)
@@ -249,6 +256,7 @@ private struct ModuleDetailSheet: View {
                     Button { dismiss() } label: {
                         Image(systemName: "xmark.circle.fill").font(.system(size: 24)).foregroundStyle(AppColors.lavender.opacity(0.6))
                     }
+                    .accessibilityLabel("Close")
                 }
             }
             .toolbarBackground(.hidden, for: .navigationBar)

@@ -100,6 +100,7 @@ private struct PhaseTransition: Identifiable {
 struct MoonPhaseView: View {
 
     private let moon = MoonPhase.current()
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var glowPulse = false
     @State private var selectedPhase: MoonPhaseDetail? = nil
     @State private var showPhaseDetail = false
@@ -169,11 +170,12 @@ struct MoonPhaseView: View {
                         .frame(width: 160 + CGFloat(i * 40), height: 160 + CGFloat(i * 40))
                         .scaleEffect(glowPulse ? 1.08 : 1.0)
                         .animation(
-                            .easeInOut(duration: 2.5 + Double(i) * 0.4)
-                            .repeatForever(autoreverses: true)
-                            .delay(Double(i) * 0.3),
+                            Animation.calm(reduceMotion, .easeInOut(duration: 2.5 + Double(i) * 0.4)
+                                .repeatForever(autoreverses: true)
+                                .delay(Double(i) * 0.3)),
                             value: glowPulse
                         )
+                        .accessibilityHidden(true)
                 }
                 // Inner glow
                 Circle()
@@ -181,13 +183,14 @@ struct MoonPhaseView: View {
                     .frame(width: 140, height: 140)
                     .blur(radius: 20)
                     .scaleEffect(glowPulse ? 1.12 : 1.0)
-                    .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: glowPulse)
+                    .animation(Animation.calm(reduceMotion, .easeInOut(duration: 2.0).repeatForever(autoreverses: true)), value: glowPulse)
+                    .accessibilityHidden(true)
 
                 Text(moon.emoji)
                     .font(.system(size: 90))
             }
             .frame(height: 200)
-            .onAppear { glowPulse = true }
+            .onAppear { if !reduceMotion { glowPulse = true } }
 
             // Phase name + date
             VStack(spacing: 6) {
@@ -205,6 +208,7 @@ struct MoonPhaseView: View {
                 Image(systemName: "sparkle")
                     .font(.system(size: 11))
                     .foregroundStyle(AppColors.gold)
+                    .accessibilityHidden(true)
                 Text("\(illuminationPercent)% illuminated")
                     .font(AppFont.body(13, weight: .semibold))
                     .foregroundStyle(AppColors.gold)
@@ -277,6 +281,7 @@ struct MoonPhaseView: View {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(allPhaseDetails, id: \.phase) { detail in
                     Button {
+                        HapticManager.impact(.light)
                         selectedPhase = detail
                         showPhaseDetail = true
                     } label: {
@@ -356,6 +361,7 @@ struct MoonPhaseView: View {
         }
         .ignoresSafeArea()
         .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     private func formattedDate() -> String {
@@ -512,11 +518,15 @@ private struct PhaseDetailSheet: View {
             }
         }
         .overlay(alignment: .topTrailing) {
-            Button { dismiss() } label: {
+            Button {
+                HapticManager.impact(.light)
+                dismiss()
+            } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 28))
                     .foregroundStyle(AppColors.lavender.opacity(0.7))
             }
+            .accessibilityLabel("Dismiss")
             .padding(20)
         }
         .preferredColorScheme(.dark)
