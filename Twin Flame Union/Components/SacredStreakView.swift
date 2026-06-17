@@ -10,6 +10,7 @@ import SwiftUI
 struct SacredStreakView: View {
     let streak: Int
     @State private var animateFlame = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var flameColor: Color {
         streak == 0 ? AppColors.lavender.opacity(0.3) :
@@ -78,6 +79,7 @@ struct SacredStreakView: View {
                                                  startPoint: .top, endPoint: .bottom)
                         )
                         .scaleEffect(animateFlame && streak > 0 ? 1.12 : 1.0)
+                        .accessibilityHidden(true)
 
                     Text("\(streak)")
                         .font(AppFont.serifHeadline(28))
@@ -130,6 +132,7 @@ struct SacredStreakView: View {
                     Image(systemName: "trophy.fill")
                         .font(.system(size: 10))
                         .foregroundStyle(AppColors.gold.opacity(0.7))
+                        .accessibilityHidden(true)
                     Text("Best: \(bestStreak) days")
                         .font(.system(size: 11, weight: .medium, design: .rounded))
                         .foregroundStyle(AppColors.lavender.opacity(0.6))
@@ -163,8 +166,10 @@ struct SacredStreakView: View {
                 .strokeBorder(flameColor.opacity(streak > 0 ? 0.28 : 0.12), lineWidth: 1)
         )
         .onAppear {
-            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
-                animateFlame = true
+            if !reduceMotion {
+                withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
+                    animateFlame = true
+                }
             }
         }
     }

@@ -262,6 +262,7 @@ struct TFReadingView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             switch viewModel.phase {
             case .intro:
@@ -331,7 +332,10 @@ private struct IntroView: View {
 
             Spacer(minLength: 24)
 
-            Button(action: onStart) {
+            Button {
+                HapticManager.impact(.medium)
+                onStart()
+            } label: {
                 Text("Begin Your Reading")
                     .warmButtonStyle()
             }
@@ -415,7 +419,10 @@ private struct QuestionView: View {
             }
 
             // Next button
-            Button(action: { viewModel.advance() }) {
+            Button {
+                HapticManager.impact(viewModel.currentIndex == quizQuestions.count - 1 ? .medium : .light)
+                viewModel.advance()
+            } label: {
                 Text(viewModel.currentIndex == quizQuestions.count - 1 ? "Reveal My Reading" : "Next")
                     .warmButtonStyle()
             }
@@ -483,9 +490,11 @@ private struct ResultView: View {
                             .fill(type.color.opacity(0.2))
                             .frame(width: 100, height: 100)
                             .blur(radius: 16)
+                            .accessibilityHidden(true)
                         Image(systemName: type.icon)
                             .font(.system(size: 44))
                             .foregroundStyle(type.color)
+                            .accessibilityHidden(true)
                     }
 
                     VStack(spacing: 8) {
@@ -524,6 +533,7 @@ private struct ResultView: View {
                     Image(systemName: "sparkles")
                         .font(.title3)
                         .foregroundStyle(AppColors.gold)
+                        .accessibilityHidden(true)
 
                     Text(type.cosmicMessage)
                         .font(AppFont.serifTitle(17))
@@ -541,7 +551,10 @@ private struct ResultView: View {
                 .padding(.horizontal, 24)
 
                 // Retake
-                Button(action: onRetake) {
+                Button {
+                    HapticManager.impact(.light)
+                    onRetake()
+                } label: {
                     Label("Take Reading Again", systemImage: "arrow.counterclockwise")
                         .font(AppFont.body(14, weight: .semibold))
                         .foregroundStyle(AppColors.lavender)

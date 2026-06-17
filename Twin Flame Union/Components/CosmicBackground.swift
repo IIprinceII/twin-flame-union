@@ -29,6 +29,7 @@ struct CosmicBackground: View {
                 endRadius: 420
             )
             .ignoresSafeArea()
+            .accessibilityHidden(true)
 
             // Nebula wisps — Aphrodite's veil
             nebulaLayer
@@ -37,6 +38,7 @@ struct CosmicBackground: View {
             BreathingStarField()
                 .ignoresSafeArea()
         }
+        .accessibilityHidden(true)
     }
 
     private var nebulaLayer: some View {
@@ -124,6 +126,7 @@ private struct TwinkleStarView: View {
     let spec: BreathingStarField.StarSpec
     let phaseOffset: Double
     @State private var bright = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -140,7 +143,9 @@ private struct TwinkleStarView: View {
                 .frame(width: spec.size, height: spec.size)
                 .opacity(bright ? spec.baseOpacity : spec.baseOpacity * 0.38)
         }
+        .accessibilityHidden(true)
         .onAppear {
+            guard !reduceMotion else { return }
             DispatchQueue.main.asyncAfter(deadline: .now() + phaseOffset) {
                 withAnimation(
                     .easeInOut(duration: spec.twinkleSpeed)

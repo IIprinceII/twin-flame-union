@@ -20,5 +20,6 @@ struct OnboardingProgressBar: View {
                     .animation(.easeInOut(duration: 0.3), value: currentStep)
             }
         }
+        .accessibilityHidden(true)
     }
 }

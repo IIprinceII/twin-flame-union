@@ -14,6 +14,7 @@ struct LoveCoachView: View {
     var body: some View {
         ZStack {
             CosmicBackground()
+                .accessibilityHidden(true)
 
             VStack(spacing: 0) {
 
@@ -93,9 +94,11 @@ private struct IntroCard: View {
                     .fill(AppColors.purple.opacity(0.3))
                     .frame(width: 80, height: 80)
                     .blur(radius: 12)
+                    .accessibilityHidden(true)
                 Image(systemName: "sparkles")
                     .font(.system(size: 36))
                     .foregroundStyle(AppGradients.warm)
+                    .accessibilityHidden(true)
             }
 
             VStack(spacing: 8) {
@@ -210,6 +213,7 @@ private struct BubbleShape: Shape, InsettableShape {
 
 private struct TypingIndicator: View {
     @State private var phase = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 10) {
@@ -217,9 +221,11 @@ private struct TypingIndicator: View {
                 Circle()
                     .fill(AppColors.purple.opacity(0.3))
                     .frame(width: 32, height: 32)
+                    .accessibilityHidden(true)
                 Image(systemName: "sparkles")
                     .font(.system(size: 14))
                     .foregroundStyle(AppColors.gold)
+                    .accessibilityHidden(true)
             }
 
             HStack(spacing: 5) {
@@ -229,11 +235,12 @@ private struct TypingIndicator: View {
                         .frame(width: 7, height: 7)
                         .scaleEffect(phase == i ? 1.3 : 0.8)
                         .animation(
-                            .easeInOut(duration: 0.4).repeatForever().delay(Double(i) * 0.15),
+                            .calm(reduceMotion, .easeInOut(duration: 0.4).repeatForever().delay(Double(i) * 0.15)),
                             value: phase
                         )
                 }
             }
+            .accessibilityLabel("Seraphina is typing")
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(AppColors.deepViolet.opacity(0.8), in: RoundedRectangle(cornerRadius: 18))
@@ -276,6 +283,7 @@ private struct InputBar: View {
                     )
             }
             .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isStreaming)
+            .accessibilityLabel(isStreaming ? "Sending" : "Send message")
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
