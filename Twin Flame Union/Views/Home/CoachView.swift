@@ -558,6 +558,7 @@ private struct CoachInputBar: View {
                     )
             }
             .disabled(isSendDisabled)
+            .buttonStyle(PressableButtonStyle())
             .accessibilityLabel(isStreaming ? "Sending" : "Send message")
         }
         .padding(.horizontal, 16)

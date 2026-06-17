@@ -223,7 +223,7 @@ struct CordCuttingView: View {
                                 )
                                 .shadow(color: step.deityColor.opacity(0.25), radius: 12, y: 4)
                             }
-                            .buttonStyle(.plain)
+                            .buttonStyle(PressableButtonStyle())
                             .padding(.horizontal, 32)
                         }
 

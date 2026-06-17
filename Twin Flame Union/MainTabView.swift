@@ -146,7 +146,7 @@ private struct MiniFrequencyPlayer: View {
                     .background(AppColors.purple.opacity(0.3), in: Circle())
             }
             .accessibilityLabel("Stop frequency")
-            .buttonStyle(.plain)
+            .buttonStyle(PressableButtonStyle())
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 10)
