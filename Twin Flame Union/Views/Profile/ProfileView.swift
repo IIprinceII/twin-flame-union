@@ -278,6 +278,8 @@ struct ProfileView: View {
             }
         }
         .onAppear {
+            if userBirthDate == 0, effectiveBirthDate > 0 { userBirthDate = effectiveBirthDate }
+            if partnerBirthDate == 0, effectivePartnerBirthDate > 0 { partnerBirthDate = effectivePartnerBirthDate }
             streak = StreakTracker.current
             var comps = DateComponents()
             comps.hour   = reminderHour

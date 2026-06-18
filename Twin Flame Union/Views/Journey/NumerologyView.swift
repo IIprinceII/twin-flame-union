@@ -171,6 +171,7 @@ struct NumerologyView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
         .onAppear {
+            if birthdateDouble == 0, effectiveBirthDate > 0 { birthdateDouble = effectiveBirthDate }
             inputName = userName
             if effectiveBirthDate != 0 { inputDate = birthdate }
         }
