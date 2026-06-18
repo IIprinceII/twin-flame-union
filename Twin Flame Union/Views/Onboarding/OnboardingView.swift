@@ -30,12 +30,7 @@ struct OnboardingView: View {
     @AppStorage("userName")              private var userName              = ""
     @AppStorage("userBirthDate")         private var userBirthDate         = 0.0
     @AppStorage("userBirthCity")         private var userBirthCity         = ""
-    @AppStorage("mySunSign")             private var mySunSign             = ""
-    @AppStorage("myMoonSign")            private var myMoonSign            = ""
-    @AppStorage("myRisingSign")          private var myRisingSign          = ""
     @AppStorage("partnerName")           private var storedPartnerName     = ""
-    @AppStorage("partnerSunSign")        private var partnerSunSign        = ""
-    @AppStorage("showPartnerChart")      private var showPartnerChart      = false
 
     // Transient state
     @State private var step             : OnboardingStep = .welcome
@@ -102,9 +97,6 @@ struct OnboardingView: View {
                     case .complete:
                         CompleteStep(
                             name: nameInput,
-                            sunSign:    BirthCalculator.sunSign(for: birthDate),
-                            moonSign:   BirthCalculator.moonSign(for: birthDate),
-                            risingSign: BirthCalculator.risingSign(for: birthTime),
                             onFinish: finish
                         )
                         .transition(slideTransition)
@@ -163,74 +155,13 @@ struct OnboardingView: View {
         userBirthDate = birthDate.timeIntervalSince1970
         userBirthCity   = birthCity
 
-        mySunSign    = BirthCalculator.sunSign(for: birthDate)
-        myMoonSign   = BirthCalculator.moonSign(for: birthDate)
-        myRisingSign = BirthCalculator.risingSign(for: birthTime)
-
         let trimmedPartner = partnerNameInput.trimmingCharacters(in: .whitespaces)
         if includePartner && !trimmedPartner.isEmpty {
             storedPartnerName = trimmedPartner
-            partnerSunSign    = BirthCalculator.sunSign(for: partnerDate)
-            showPartnerChart  = true
         }
 
         hasCompletedOnboarding = true
         onComplete()
-    }
-}
-
-// MARK: - Birth Calculator
-
-enum BirthCalculator {
-
-    // Sun sign from birth month/day
-    static func sunSign(for date: Date) -> String {
-        let cal   = Calendar.current
-        let month = cal.component(.month, from: date)
-        let day   = cal.component(.day,   from: date)
-        switch (month, day) {
-        case (3, 21...), (4, 1..<20):  return "Aries"
-        case (4, 20...), (5, 1..<21):  return "Taurus"
-        case (5, 21...), (6, 1..<21):  return "Gemini"
-        case (6, 21...), (7, 1..<23):  return "Cancer"
-        case (7, 23...), (8, 1..<23):  return "Leo"
-        case (8, 23...), (9, 1..<23):  return "Virgo"
-        case (9, 23...), (10, 1..<23): return "Libra"
-        case (10, 23...), (11, 1..<22): return "Scorpio"
-        case (11, 22...), (12, 1..<22): return "Sagittarius"
-        case (12, 22...), (1, 1..<20): return "Capricorn"
-        case (1, 20...), (2, 1..<19):  return "Aquarius"
-        default:                        return "Pisces"
-        }
-    }
-
-    // Approximate moon sign from birth date
-    // Reference: Jan 1 2000 00:00 UTC → Moon at ~218.3° (Scorpio ~8°)
-    static func moonSign(for date: Date) -> String {
-        let signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
-                     "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
-        var comps = DateComponents()
-        comps.year = 2000; comps.month = 1; comps.day = 1
-        comps.timeZone = TimeZone(identifier: "UTC")
-        let ref   = Calendar(identifier: .gregorian).date(from: comps) ?? Date()
-        let days  = date.timeIntervalSince(ref) / 86400.0
-        var lon   = (218.3 + days * 13.176).truncatingRemainder(dividingBy: 360)
-        if lon < 0 { lon += 360 }
-        return signs[Int(lon / 30) % 12]
-    }
-
-    // Approximate rising sign from birth time (2-hour windows)
-    // Assumes ~40°N latitude; the ascendant shifts ~1 sign per 2 hours
-    static func risingSign(for time: Date) -> String {
-        let signs = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo",
-                     "Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"]
-        let cal   = Calendar.current
-        let hour  = cal.component(.hour,   from: time)
-        let min   = cal.component(.minute, from: time)
-        let totalHours = Double(hour) + Double(min) / 60.0
-        // Aries rises ~at 6 AM as a rough anchor
-        let index = Int((totalHours - 6 + 24).truncatingRemainder(dividingBy: 24) / 2) % 12
-        return signs[index]
     }
 }
 
@@ -396,7 +327,7 @@ private struct BirthdayStep: View {
                         .font(AppFont.serifHeadline(26))
                         .foregroundStyle(AppColors.cream)
 
-                    Text("Used to calculate your sun, moon & rising signs")
+                    Text("Used to personalize your numerology and sacred path")
                         .font(AppFont.body(14))
                         .foregroundStyle(AppColors.lavender)
                         .multilineTextAlignment(.center)
@@ -431,7 +362,7 @@ private struct BirthdayStep: View {
                         .frame(maxWidth: .infinity)
                         .colorScheme(.dark)
 
-                        Text("As accurate as possible — used for your rising sign")
+                        Text("As accurate as possible")
                             .font(AppFont.caption(11))
                             .foregroundStyle(AppColors.lavender.opacity(0.7))
                     }
@@ -447,9 +378,6 @@ private struct BirthdayStep: View {
                         .background(AppColors.deepViolet.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
                         .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1))
                 }
-
-                // Calculated signs preview
-                SignPreviewRow(birthDate: birthDate, birthTime: birthTime)
 
                 Button {
                     HapticManager.impact(.medium)
@@ -487,46 +415,6 @@ private struct OnboardingCard<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 18))
         .overlay(RoundedRectangle(cornerRadius: 18).strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1))
-    }
-}
-
-private struct SignPreviewRow: View {
-    let birthDate: Date
-    let birthTime: Date
-
-    var body: some View {
-        HStack(spacing: 0) {
-            SignPill(label: "Sun",    sign: BirthCalculator.sunSign(for: birthDate),    icon: "sun.max.fill",    color: AppColors.gold)
-            Spacer()
-            SignPill(label: "Moon",   sign: BirthCalculator.moonSign(for: birthDate),   icon: "moon.fill",       color: AppColors.lavender)
-            Spacer()
-            SignPill(label: "Rising", sign: BirthCalculator.risingSign(for: birthTime), icon: "arrow.up.circle.fill", color: Color(hex: "4CAF82"))
-        }
-        .padding(16)
-        .background(AppColors.deepViolet.opacity(0.6), in: RoundedRectangle(cornerRadius: 16))
-        .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(AppColors.gold.opacity(0.2), lineWidth: 1))
-    }
-}
-
-private struct SignPill: View {
-    let label: String
-    let sign: String
-    let icon: String
-    let color: Color
-
-    var body: some View {
-        VStack(spacing: 5) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundStyle(color)
-            Text(sign)
-                .font(AppFont.body(13, weight: .semibold))
-                .foregroundStyle(AppColors.cream)
-            Text(label)
-                .font(AppFont.caption(11))
-                .foregroundStyle(AppColors.lavender.opacity(0.7))
-        }
-        .frame(maxWidth: .infinity)
     }
 }
 
@@ -617,15 +505,6 @@ private struct PartnerStep: View {
                                 .colorScheme(.dark)
                         }
 
-                        // Partner sun sign preview
-                        HStack {
-                            Image(systemName: "sun.max.fill")
-                                .foregroundStyle(AppColors.gold)
-                            Text("Their Sun Sign: \(BirthCalculator.sunSign(for: partnerDate))")
-                                .font(AppFont.body(14, weight: .semibold))
-                                .foregroundStyle(AppColors.cream)
-                        }
-                        .padding(.horizontal, 4)
                     }
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
@@ -749,9 +628,6 @@ private struct NotifBenefit: View {
 
 private struct CompleteStep: View {
     let name: String
-    let sunSign: String
-    let moonSign: String
-    let risingSign: String
     let onFinish: () -> Void
 
     @State private var appeared = false
@@ -800,28 +676,6 @@ private struct CompleteStep: View {
                         .animation(.easeOut(duration: 0.6).delay(0.5), value: appeared)
                 }
 
-                // Chart card
-                VStack(spacing: 16) {
-                    Text("YOUR BIRTH CHART")
-                        .font(AppFont.caption(11, weight: .semibold))
-                        .foregroundStyle(AppColors.lavender.opacity(0.7))
-                        .kerning(2)
-
-                    HStack(spacing: 0) {
-                        CompletionSign(label: "Sun ☉",    sign: sunSign,    color: AppColors.gold)
-                        Divider().frame(height: 44).background(AppColors.purple.opacity(0.3))
-                        CompletionSign(label: "Moon ☽",   sign: moonSign,   color: AppColors.lavender)
-                        Divider().frame(height: 44).background(AppColors.purple.opacity(0.3))
-                        CompletionSign(label: "Rising ↑", sign: risingSign, color: Color(hex: "4CAF82"))
-                    }
-                }
-                .padding(24)
-                .background(AppColors.deepViolet.opacity(0.8), in: RoundedRectangle(cornerRadius: 22))
-                .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(AppColors.gold.opacity(0.25), lineWidth: 1))
-                .padding(.horizontal, 24)
-                .opacity(appeared ? 1 : 0)
-                .scaleEffect(appeared ? 1 : 0.9)
-                .animation(.spring(response: 0.6, dampingFraction: 0.7).delay(0.65), value: appeared)
             }
 
             Spacer()
@@ -842,20 +696,3 @@ private struct CompleteStep: View {
     }
 }
 
-private struct CompletionSign: View {
-    let label: String
-    let sign: String
-    let color: Color
-
-    var body: some View {
-        VStack(spacing: 5) {
-            Text(label)
-                .font(AppFont.caption(11))
-                .foregroundStyle(AppColors.lavender.opacity(0.7))
-            Text(sign)
-                .font(AppFont.body(14, weight: .semibold))
-                .foregroundStyle(color)
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
