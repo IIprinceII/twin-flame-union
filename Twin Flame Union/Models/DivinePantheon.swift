@@ -383,4 +383,16 @@ enum DivinePantheon {
         let day = (Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1) + dayOffset
         return all[(day - 1) % all.count]
     }
+
+    /// Looks up a Deity by exact name. Returns nil if no such Deity is in the council.
+    static func deity(named name: String) -> Deity? {
+        all.first { $0.name == name }
+    }
+
+    /// The council grouped by culture, in canonical order, for reverent browsing.
+    static func grouped() -> [(culture: String, deities: [Deity])] {
+        ["Greek", "Egyptian", "Mexica"].map { culture in
+            (culture: culture, deities: all.filter { $0.culture == culture })
+        }
+    }
 }
