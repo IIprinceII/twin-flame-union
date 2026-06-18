@@ -2,7 +2,7 @@
 //  OnboardingView.swift
 //  Twin Flame Union
 //
-//  First-launch onboarding: name → birthday + time + city → partner → notifications → complete.
+//  First-launch onboarding: name → birthday → partner → notifications → complete.
 //  Saves directly to @AppStorage so ProfileView is pre-filled.
 //
 
@@ -29,15 +29,13 @@ struct OnboardingView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("userName")              private var userName              = ""
     @AppStorage("userBirthDate")         private var userBirthDate         = 0.0
-    @AppStorage("userBirthCity")         private var userBirthCity         = ""
     @AppStorage("partnerName")           private var storedPartnerName     = ""
+    @AppStorage("showPartnerChart")      private var showPartnerChart      = false
 
     // Transient state
     @State private var step             : OnboardingStep = .welcome
     @State private var nameInput        = ""
     @State private var birthDate        = OnboardingView.defaultBirthDate
-    @State private var birthTime        = OnboardingView.defaultBirthTime
-    @State private var birthCity        = ""
     @State private var partnerNameInput = ""
     @State private var partnerDate      = Date()
     @State private var includePartner   = false
@@ -45,9 +43,6 @@ struct OnboardingView: View {
 
     static private var defaultBirthDate: Date {
         Calendar.current.date(from: DateComponents(year: 1995, month: 6, day: 21)) ?? Date()
-    }
-    static private var defaultBirthTime: Date {
-        Calendar.current.date(from: DateComponents(hour: 12, minute: 0)) ?? Date()
     }
 
     var body: some View {
@@ -77,8 +72,6 @@ struct OnboardingView: View {
                     case .birthday:
                         BirthdayStep(
                             birthDate: $birthDate,
-                            birthTime: $birthTime,
-                            birthCity: $birthCity,
                             onNext: advance
                         )
                         .transition(slideTransition)
@@ -152,13 +145,13 @@ struct OnboardingView: View {
     private func finish() {
         let trimmedName = nameInput.trimmingCharacters(in: .whitespaces)
         userName        = trimmedName.isEmpty ? "Beautiful Soul" : trimmedName
-        userBirthDate = birthDate.timeIntervalSince1970
-        userBirthCity   = birthCity
+        userBirthDate   = birthDate.timeIntervalSince1970
 
         let trimmedPartner = partnerNameInput.trimmingCharacters(in: .whitespaces)
         if includePartner && !trimmedPartner.isEmpty {
             storedPartnerName = trimmedPartner
         }
+        showPartnerChart = !storedPartnerName.isEmpty
 
         hasCompletedOnboarding = true
         onComplete()
@@ -303,8 +296,6 @@ private struct NameStep: View {
 
 private struct BirthdayStep: View {
     @Binding var birthDate: Date
-    @Binding var birthTime: Date
-    @Binding var birthCity: String
     let onNext: () -> Void
 
     private let birthDateRange: ClosedRange<Date> = {
@@ -323,11 +314,11 @@ private struct BirthdayStep: View {
                         .font(.system(size: 34))
                         .foregroundStyle(AppColors.gold)
 
-                    Text("Your Cosmic Birth Data")
+                    Text("Your Sacred Birth Date")
                         .font(AppFont.serifHeadline(26))
                         .foregroundStyle(AppColors.cream)
 
-                    Text("Used to personalize your numerology and sacred path")
+                    Text("Used to illuminate your numerology and sacred path")
                         .font(AppFont.body(14))
                         .foregroundStyle(AppColors.lavender)
                         .multilineTextAlignment(.center)
@@ -347,36 +338,6 @@ private struct BirthdayStep: View {
                     .labelsHidden()
                     .frame(maxWidth: .infinity)
                     .colorScheme(.dark)
-                }
-
-                // Time picker
-                OnboardingCard(icon: "clock.fill", label: "Time of Birth") {
-                    VStack(spacing: 6) {
-                        DatePicker(
-                            "",
-                            selection: $birthTime,
-                            displayedComponents: .hourAndMinute
-                        )
-                        .datePickerStyle(.wheel)
-                        .labelsHidden()
-                        .frame(maxWidth: .infinity)
-                        .colorScheme(.dark)
-
-                        Text("As accurate as possible")
-                            .font(AppFont.caption(11))
-                            .foregroundStyle(AppColors.lavender.opacity(0.7))
-                    }
-                }
-
-                // City field
-                OnboardingCard(icon: "location.fill", label: "Birth City (optional)") {
-                    TextField("e.g. Los Angeles, London, Tokyo", text: $birthCity)
-                        .font(AppFont.body(15))
-                        .foregroundStyle(AppColors.cream)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
-                        .background(AppColors.deepViolet.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
-                        .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1))
                 }
 
                 Button {
