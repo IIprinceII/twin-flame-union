@@ -152,12 +152,12 @@ struct ProfileView: View {
     @AppStorage("mySunSign")            private var mySunSignRaw         = ""
     @AppStorage("myMoonSign")           private var myMoonSignRaw        = ""
     @AppStorage("myRisingSign")         private var myRisingSignRaw      = ""
-    @AppStorage("myBirthTimestamp")     private var myBirthTimestamp     = 0.0
+    @AppStorage("userBirthDate")        private var userBirthDate        = 0.0
     @AppStorage("partnerName")          private var partnerName          = ""
     @AppStorage("partnerSunSign")       private var partnerSunSignRaw    = ""
     @AppStorage("partnerMoonSign")      private var partnerMoonSignRaw   = ""
     @AppStorage("partnerRisingSign")    private var partnerRisingSignRaw = ""
-    @AppStorage("partnerBirthTimestamp") private var partnerBirthTimestamp = 0.0
+    @AppStorage("partnerBirthDate")     private var partnerBirthDate     = 0.0
     @AppStorage("showPartnerChart")     private var showPartnerChart     = false
 
     @State private var streak              = StreakTracker.current
@@ -176,6 +176,18 @@ struct ProfileView: View {
     private var partnerSunSign:    ZodiacSign? { ZodiacSign(rawValue: partnerSunSignRaw) }
     private var partnerMoonSign:   ZodiacSign? { ZodiacSign(rawValue: partnerMoonSignRaw) }
     private var partnerRisingSign: ZodiacSign? { ZodiacSign(rawValue: partnerRisingSignRaw) }
+
+    // Effective birth dates: prefer unified key, fall back to legacy keys for existing users.
+    private var effectiveBirthDate: Double {
+        if userBirthDate > 0 { return userBirthDate }
+        let legacy = UserDefaults.standard.double(forKey: "myBirthTimestamp")
+        if legacy == 0 { return UserDefaults.standard.double(forKey: "numeroBirthdate") }
+        return legacy
+    }
+    private var effectivePartnerBirthDate: Double {
+        if partnerBirthDate > 0 { return partnerBirthDate }
+        return UserDefaults.standard.double(forKey: "partnerBirthTimestamp")
+    }
 
     private var showCompatibility: Bool { mySunSign != nil && partnerSunSign != nil }
 
@@ -443,7 +455,7 @@ struct ProfileView: View {
                 // Birth date picker
                 BirthDateRow(
                     label: "🎂 Birth Date",
-                    timestamp: $myBirthTimestamp,
+                    timestamp: $userBirthDate,
                     onDateChange: { ts in
                         if let sign = sunSignFrom(timestamp: ts) {
                             mySunSignRaw = sign.rawValue
@@ -452,7 +464,7 @@ struct ProfileView: View {
                 )
                 Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                 SignPickerRow(
-                    label: myBirthTimestamp > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign",
+                    label: effectiveBirthDate > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign",
                     selectedRaw: $mySunSignRaw
                 )
                 Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
@@ -514,7 +526,7 @@ struct ProfileView: View {
 
                     BirthDateRow(
                         label: "🎂 Birth Date",
-                        timestamp: $partnerBirthTimestamp,
+                        timestamp: $partnerBirthDate,
                         onDateChange: { ts in
                             if let sign = sunSignFrom(timestamp: ts) {
                                 partnerSunSignRaw = sign.rawValue
@@ -522,7 +534,7 @@ struct ProfileView: View {
                         }
                     )
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                    SignPickerRow(label: partnerBirthTimestamp > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign", selectedRaw: $partnerSunSignRaw)
+                    SignPickerRow(label: effectivePartnerBirthDate > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign", selectedRaw: $partnerSunSignRaw)
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                     SignPickerRow(label: "🌙 Moon Sign", selectedRaw: $partnerMoonSignRaw)
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)

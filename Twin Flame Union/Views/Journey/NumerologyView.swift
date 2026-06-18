@@ -107,7 +107,7 @@ private let numberMeanings: [Int: NumberInfo] = [
 
 struct NumerologyView: View {
     @AppStorage("userName")       private var userName   = ""
-    @AppStorage("numeroBirthdate") private var birthdateDouble: Double = 0
+    @AppStorage("userBirthDate") private var birthdateDouble: Double = 0
 
     @State private var inputName      = ""
     @State private var inputDate      = Date()
@@ -117,8 +117,14 @@ struct NumerologyView: View {
     @State private var expressionNum  = 0
     @State private var selectedNumber: Int? = nil
 
+    // Prefer unified key; fall back to legacy numeroBirthdate for existing users.
+    private var effectiveBirthDate: Double {
+        if birthdateDouble > 0 { return birthdateDouble }
+        return UserDefaults.standard.double(forKey: "numeroBirthdate")
+    }
+
     private var birthdate: Date {
-        birthdateDouble == 0 ? Date() : Date(timeIntervalSince1970: birthdateDouble)
+        effectiveBirthDate == 0 ? Date() : Date(timeIntervalSince1970: effectiveBirthDate)
     }
 
     var body: some View {
@@ -166,7 +172,7 @@ struct NumerologyView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             inputName = userName
-            if birthdateDouble != 0 { inputDate = birthdate }
+            if effectiveBirthDate != 0 { inputDate = birthdate }
         }
     }
 

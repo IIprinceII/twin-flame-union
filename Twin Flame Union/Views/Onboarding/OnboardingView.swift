@@ -28,7 +28,7 @@ struct OnboardingView: View {
     // Persisted keys (match ProfileView exactly)
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("userName")              private var userName              = ""
-    @AppStorage("userBirthDateTS")       private var userBirthDateTS       = 0.0
+    @AppStorage("userBirthDate")         private var userBirthDate         = 0.0
     @AppStorage("userBirthCity")         private var userBirthCity         = ""
     @AppStorage("mySunSign")             private var mySunSign             = ""
     @AppStorage("myMoonSign")            private var myMoonSign            = ""
@@ -160,7 +160,7 @@ struct OnboardingView: View {
     private func finish() {
         let trimmedName = nameInput.trimmingCharacters(in: .whitespaces)
         userName        = trimmedName.isEmpty ? "Beautiful Soul" : trimmedName
-        userBirthDateTS = birthDate.timeIntervalSince1970
+        userBirthDate = birthDate.timeIntervalSince1970
         userBirthCity   = birthCity
 
         mySunSign    = BirthCalculator.sunSign(for: birthDate)
