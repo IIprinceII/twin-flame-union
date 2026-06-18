@@ -155,7 +155,7 @@ struct JourneyView: View {
                 JourneyItem(icon: "questionmark.circle.fill",title: "Soul Archetype Quiz",  deity: "Psyche · Seshat",     color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(QuizView())),
                 JourneyItem(icon: "arrow.up.forward.circle.fill", title: "TF Stages",       deity: "Persephone · Osiris", color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(TFStagesView())),
                 JourneyItem(icon: "moon.stars.fill",        title: "Moon Phases",            deity: "Selene · Khonsu",     color: Color(hex: "3D2060"),   accent: Color(hex: "B57BFF"), destination: AnyView(MoonPhaseView())),
-                JourneyItem(icon: "person.3.sequence.fill",  title: "Divine Council Today",   deity: "Nyx · Hermes",        color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(DivineCouncilView())),
+                JourneyItem(icon: "person.3.sequence.fill",  title: "Divine Council Today",   deity: "Khonsu · Hecate",     color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(DivineCouncilView())),
             ]
 
         case .explore:

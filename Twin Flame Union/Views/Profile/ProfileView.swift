@@ -338,6 +338,7 @@ struct ProfileView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
             }
             .padding(16)
             .background(AppColors.purple.opacity(0.12))
@@ -426,6 +427,7 @@ struct ProfileView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
             }
             .padding(16)
             .background(AppColors.purple.opacity(0.12))
@@ -475,6 +477,7 @@ struct ProfileView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
             }
             .padding(16)
             .background(AppColors.purple.opacity(0.12))
@@ -495,6 +498,7 @@ struct ProfileView: View {
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
             }
             .padding(16)
             .background(AppColors.purple.opacity(0.12))
