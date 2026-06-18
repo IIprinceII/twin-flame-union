@@ -34,14 +34,8 @@ enum ClaudeProxyService {
         messages: [Message]
     ) async throws -> String {
         let (url, anonKey) = try loadConfig()
-
-        var req = URLRequest(url: url)
-        req.httpMethod = "POST"
-        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.setValue(anonKey, forHTTPHeaderField: "apikey")
-
         let body = Request(model: model, max_tokens: maxTokens, system: system, messages: messages, stream: nil)
-        req.httpBody = try JSONEncoder().encode(body)
+        let req = try makeURLRequest(url: url, anonKey: anonKey, body: body)
 
         let (data, response) = try await URLSession.shared.data(for: req)
 
@@ -75,15 +69,9 @@ enum ClaudeProxyService {
             Task {
                 do {
                     let (url, anonKey) = try loadConfig()
-
-                    var req = URLRequest(url: url)
-                    req.httpMethod = "POST"
-                    req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                    req.setValue(anonKey, forHTTPHeaderField: "apikey")
-
                     let body = Request(model: model, max_tokens: maxTokens, system: system,
                                        messages: messages, stream: true)
-                    req.httpBody = try JSONEncoder().encode(body)
+                    let req = try makeURLRequest(url: url, anonKey: anonKey, body: body)
 
                     let (bytes, _) = try await URLSession.shared.bytes(for: req)
 
@@ -104,6 +92,25 @@ enum ClaudeProxyService {
                 }
             }
         }
+    }
+
+    // MARK: - Request building
+
+    /// Builds the POST request to the claude-proxy edge function.
+    ///
+    /// Supabase's Edge Function gateway has `verify_jwt` on, so it requires an
+    /// `Authorization: Bearer <jwt>` header IN ADDITION to `apikey` — without it the
+    /// gateway returns 401 "Missing authorization header" before the function runs
+    /// (which surfaced as "the API key isn't working" for Seraphina and every AI call).
+    /// The anon key is itself a valid JWT and serves as the bearer token.
+    static func makeURLRequest(url: URL, anonKey: String, body: Request) throws -> URLRequest {
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(anonKey)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try JSONEncoder().encode(body)
+        return req
     }
 
     // MARK: - Config
