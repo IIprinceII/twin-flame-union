@@ -181,11 +181,11 @@ struct SacredInsightService {
     static func fetchInsight(
         type: InsightType,
         content: String,
-        sunSign: String = "",
+        deityName: String = "",
         tfStage: String = ""
     ) async throws -> String {
         var userMessage = content
-        if !sunSign.isEmpty { userMessage += "\n\nMy sun sign: \(sunSign)" }
+        if !deityName.isEmpty { userMessage += "\n\nMy Guiding Deity: \(deityName)" }
         if !tfStage.isEmpty { userMessage += "\nMy twin flame stage: \(tfStage)" }
 
         return try await ClaudeProxyService.send(
@@ -222,7 +222,7 @@ struct SacredInsightSheet: View {
     let type: InsightType
     let content: String
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("mySunSign") private var mySunSign = ""
+    @AppStorage("myGuidingDeity") private var myGuidingDeity = ""
     @AppStorage("tfCurrentStage") private var tfStageID = 0
 
     @State private var insight = ""
@@ -356,7 +356,7 @@ struct SacredInsightSheet: View {
             insight = try await SacredInsightService.fetchInsight(
                 type: type,
                 content: content,
-                sunSign: mySunSign.isEmpty ? "Unknown" : mySunSign,
+                deityName: myGuidingDeity,
                 tfStage: stage
             )
         } catch {
