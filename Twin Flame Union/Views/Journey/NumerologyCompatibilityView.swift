@@ -114,8 +114,8 @@ private let pairings: [String: LifePathPair] = [
 struct NumerologyCompatibilityView: View {
     @AppStorage("userName")           private var myName   = ""
     @AppStorage("partnerName")        private var tfName   = ""
-    @AppStorage("numeroBirthdate")    private var myBD: Double = 0
-    @AppStorage("tfBirthdate")        private var tfBD: Double = 0
+    @AppStorage("userBirthDate")      private var myBD: Double = 0
+    @AppStorage("partnerBirthDate")   private var tfBD: Double = 0
 
     @State private var myNameInput    = ""
     @State private var tfNameInput    = ""
@@ -125,6 +125,18 @@ struct NumerologyCompatibilityView: View {
     @State private var myLP           = 0
     @State private var tfLP           = 0
     @State private var pair: LifePathPair? = nil
+
+    // Prefer unified keys; fall back to legacy keys for existing users.
+    private var effectiveMyBD: Double {
+        if myBD > 0 { return myBD }
+        let ts = UserDefaults.standard.double(forKey: "userBirthDateTS")
+        if ts > 0 { return ts }
+        return UserDefaults.standard.double(forKey: "numeroBirthdate")
+    }
+    private var effectiveTfBD: Double {
+        if tfBD > 0 { return tfBD }
+        return UserDefaults.standard.double(forKey: "tfBirthdate")
+    }
 
     var body: some View {
         ZStack {
@@ -166,10 +178,12 @@ struct NumerologyCompatibilityView: View {
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
         .onAppear {
+            if myBD == 0, effectiveMyBD > 0 { myBD = effectiveMyBD }
+            if tfBD == 0, effectiveTfBD > 0 { tfBD = effectiveTfBD }
             myNameInput = myName
             tfNameInput = tfName
-            if myBD != 0 { myDate = Date(timeIntervalSince1970: myBD) }
-            if tfBD != 0 { tfDate = Date(timeIntervalSince1970: tfBD) }
+            if effectiveMyBD != 0 { myDate = Date(timeIntervalSince1970: effectiveMyBD) }
+            if effectiveTfBD != 0 { tfDate = Date(timeIntervalSince1970: effectiveTfBD) }
         }
     }
 

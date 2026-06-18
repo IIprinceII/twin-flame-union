@@ -670,7 +670,7 @@ struct DreamInterpretationView: View {
     @State private var interpretation = ""
     @State private var isLoading = true
     @State private var errorMessage: String?
-    @AppStorage("mySunSign") private var mySunSign = ""
+    @AppStorage("myGuidingDeity") private var myGuidingDeity = ""
     @AppStorage("tfCurrentStage") private var tfStageID = 0
 
     private let stageNames = ["Recognition","Testing","Crisis","Runner & Chaser",
@@ -826,7 +826,7 @@ struct DreamInterpretationView: View {
             if !entry.wakeFeeling.isEmpty { dreamDetails += "\n\nFeeling on wake: \(entry.wakeFeeling)" }
             if entry.isLucid { dreamDetails += "\n\nThis was a lucid dream." }
             if entry.isTwinFlameDream { dreamDetails += "\n\nThe dreamer believes this was a twin flame dream." }
-            dreamDetails += "\n\nMy sun sign: \(mySunSign.isEmpty ? "Unknown" : mySunSign)"
+            if !myGuidingDeity.isEmpty { dreamDetails += "\n\nMy Guiding Deity: \(myGuidingDeity)" }
             dreamDetails += "\nMy twin flame stage: \(stage)"
 
             let userMessage = "Interpret this dream through the lens of Morpheus, Hypnos, and the twin flame journey. Be DIRECT. Tell me exactly what this dream means, which deity sent it, and what I need to DO about it.\n\n\(dreamDetails)"

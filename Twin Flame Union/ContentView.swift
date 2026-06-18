@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("userName")    private var userName  = ""
-    @AppStorage("mySunSign")   private var mySunSign = ""
+    @AppStorage("userName")        private var userName       = ""
+    @AppStorage("myGuidingDeity") private var myGuidingDeity = ""
     @State private var streak = StreakTracker.current
     @State private var showMoonSheet = false
     @State private var appeared = false
@@ -240,8 +240,7 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .onAppear {
             streak = StreakTracker.current
-            let sign = mySunSign.isEmpty ? "Unknown" : mySunSign
-            Task { await guidance.fetchIfNeeded(sunSign: sign, moonPhase: moon.name) }
+            Task { await guidance.fetchIfNeeded(deityName: myGuidingDeity, moonPhase: moon.name) }
             withAnimation(.spring(response: 0.65, dampingFraction: 0.80).delay(0.12)) {
                 appeared = true
             }
@@ -515,7 +514,7 @@ private struct StreakCard: View {
 
 private struct DailyGuidanceCard: View {
     let guidance: DailyGuidanceService
-    @AppStorage("mySunSign") private var mySunSign = ""
+    @AppStorage("myGuidingDeity") private var myGuidingDeity = ""
     @State private var expanded = false
     private let moon = MoonPhase.current()
     private let collapsedLineLimit = 4
@@ -550,8 +549,7 @@ private struct DailyGuidanceCard: View {
                         .fixedSize(horizontal: false, vertical: true)
                     Button {
                         HapticManager.impact(.light)
-                        let sign = mySunSign.isEmpty ? "Unknown" : mySunSign
-                        Task { await guidance.retry(sunSign: sign, moonPhase: moon.name) }
+                        Task { await guidance.retry(deityName: myGuidingDeity, moonPhase: moon.name) }
                     } label: {
                         Label("Try Again", systemImage: "arrow.clockwise")
                             .font(AppFont.body(13, weight: .semibold))

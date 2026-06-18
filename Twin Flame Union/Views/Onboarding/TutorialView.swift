@@ -55,7 +55,7 @@ struct TutorialView: View {
                 TutorialBullet(emoji: "🌙", text: "Live moon phase tracker — know the cosmic energy of today"),
                 TutorialBullet(emoji: "🔥", text: "Daily Streak — shows how many consecutive days you've shown up"),
                 TutorialBullet(emoji: "✨", text: "Daily Affirmation card — tap to enter the full affirmation deck"),
-                TutorialBullet(emoji: "🌟", text: "Today's Guidance — AI-generated message personalized to your sun sign and moon phase"),
+                TutorialBullet(emoji: "🌟", text: "Today's Guidance — AI-generated message personalized to your Guiding Deity and today's moon phase"),
                 TutorialBullet(emoji: "🔢", text: "Angel Numbers — tap to look up any number you keep seeing"),
             ]
         ),
@@ -203,8 +203,8 @@ struct TutorialView: View {
             title: "Profile & Settings",
             subtitle: "Your sacred birth chart, partner connection, and app customization — all in one place.",
             bullets: [
-                TutorialBullet(emoji: "☀️", text: "Your Sun, Moon, and Rising signs are calculated from your birth data"),
-                TutorialBullet(emoji: "💞", text: "Add your twin flame's name and sun sign to connect your charts"),
+                TutorialBullet(emoji: "🔢", text: "Your Life Path, Soul Urge, and Expression are calculated from your birth data"),
+                TutorialBullet(emoji: "💞", text: "Choose the God or Goddess who walks with your twin flame to reveal your Sacred Resonance"),
                 TutorialBullet(emoji: "🔔", text: "Enable daily reminders — set the time for your morning affirmation notification"),
                 TutorialBullet(emoji: "🔄", text: "Tap 'View Tutorial' anytime to come back to this walkthrough"),
             ]

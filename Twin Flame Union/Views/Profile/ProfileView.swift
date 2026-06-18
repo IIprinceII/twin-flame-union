@@ -2,145 +2,11 @@
 //  ProfileView.swift
 //  Twin Flame Union
 //
-//  Profile tab with birth chart, partner compatibility, streak, and reminders.
+//  Profile tab with birth dates, guiding deities, numerology, divine resonance, streak, and reminders.
 //
 
 import SwiftUI
 import UserNotifications
-
-// MARK: - Zodiac Element
-
-enum Element: String, CaseIterable {
-    case fire  = "Fire"
-    case earth = "Earth"
-    case air   = "Air"
-    case water = "Water"
-
-    var icon: String {
-        switch self {
-        case .fire:  return "flame.fill"
-        case .earth: return "leaf.fill"
-        case .air:   return "wind"
-        case .water: return "drop.fill"
-        }
-    }
-
-    var color: Color {
-        switch self {
-        case .fire:  return Color(hex: "FF6B47")
-        case .earth: return Color(hex: "4CAF82")
-        case .air:   return Color(hex: "4A90D9")
-        case .water: return Color(hex: "2E86AB")
-        }
-    }
-}
-
-// MARK: - Zodiac Sign
-
-enum ZodiacSign: String, CaseIterable {
-    case aries       = "Aries"
-    case taurus      = "Taurus"
-    case gemini      = "Gemini"
-    case cancer      = "Cancer"
-    case leo         = "Leo"
-    case virgo       = "Virgo"
-    case libra       = "Libra"
-    case scorpio     = "Scorpio"
-    case sagittarius = "Sagittarius"
-    case capricorn   = "Capricorn"
-    case aquarius    = "Aquarius"
-    case pisces      = "Pisces"
-
-    var symbol: String {
-        switch self {
-        case .aries:       return "♈"
-        case .taurus:      return "♉"
-        case .gemini:      return "♊"
-        case .cancer:      return "♋"
-        case .leo:         return "♌"
-        case .virgo:       return "♍"
-        case .libra:       return "♎"
-        case .scorpio:     return "♏"
-        case .sagittarius: return "♐"
-        case .capricorn:   return "♑"
-        case .aquarius:    return "♒"
-        case .pisces:      return "♓"
-        }
-    }
-
-    var element: Element {
-        switch self {
-        case .aries, .leo, .sagittarius:       return .fire
-        case .taurus, .virgo, .capricorn:      return .earth
-        case .gemini, .libra, .aquarius:       return .air
-        case .cancer, .scorpio, .pisces:       return .water
-        }
-    }
-
-    var color: Color { element.color }
-}
-
-// MARK: - Compatibility Calculator
-
-private func compatibilityScore(
-    mySun: ZodiacSign?, partnerSun: ZodiacSign?,
-    myMoon: ZodiacSign?, partnerMoon: ZodiacSign?
-) -> Int {
-    guard let sun1 = mySun, let sun2 = partnerSun else { return 0 }
-
-    var score: Int
-
-    // Base element compatibility
-    let e1 = sun1.element
-    let e2 = sun2.element
-
-    if e1 == e2 {
-        score = 95
-    } else {
-        switch (e1, e2) {
-        case (.fire, .air), (.air, .fire):       score = 85
-        case (.earth, .water), (.water, .earth): score = 85
-        case (.air, .earth), (.earth, .air):     score = 70
-        case (.air, .water), (.water, .air):     score = 60
-        case (.fire, .water), (.water, .fire):   score = 50
-        case (.fire, .earth), (.earth, .fire):   score = 55
-        default:                                 score = 65
-        }
-    }
-
-    // Moon compatibility bonus
-    if let moon1 = myMoon, let moon2 = partnerMoon {
-        if moon1.element == moon2.element {
-            score = min(100, score + 8)
-        } else {
-            let me = moon1.element
-            let pe = moon2.element
-            let compatible: Bool
-            switch (me, pe) {
-            case (.fire, .air), (.air, .fire),
-                 (.earth, .water), (.water, .earth):
-                compatible = true
-            default:
-                compatible = false
-            }
-            if compatible {
-                score = min(100, score + 4)
-            }
-        }
-    }
-
-    return score
-}
-
-private func compatibilityDescription(_ score: Int) -> String {
-    switch score {
-    case 90...100: return "An extraordinary soul resonance. Your energies merge like stars in perfect alignment — rare and transcendent."
-    case 80..<90:  return "A powerful and harmonious connection. Your elemental energies flow together with natural ease and deep understanding."
-    case 70..<80:  return "A dynamic bond with great potential. Your differences create a beautiful tension that can lead to profound growth."
-    case 60..<70:  return "A relationship that invites deep learning. Through each other, you discover hidden aspects of yourselves."
-    default:       return "A transformative connection. The contrast between your energies is your greatest teacher and catalyst for change."
-    }
-}
 
 // MARK: - Profile View
 
@@ -149,16 +15,12 @@ struct ProfileView: View {
     @AppStorage("reminderEnabled")      private var reminderEnabled      = false
     @AppStorage("reminderHour")         private var reminderHour         = 9
     @AppStorage("reminderMinute")       private var reminderMinute       = 0
-    @AppStorage("mySunSign")            private var mySunSignRaw         = ""
-    @AppStorage("myMoonSign")           private var myMoonSignRaw        = ""
-    @AppStorage("myRisingSign")         private var myRisingSignRaw      = ""
-    @AppStorage("myBirthTimestamp")     private var myBirthTimestamp     = 0.0
+    @AppStorage("userBirthDate")        private var userBirthDate        = 0.0
     @AppStorage("partnerName")          private var partnerName          = ""
-    @AppStorage("partnerSunSign")       private var partnerSunSignRaw    = ""
-    @AppStorage("partnerMoonSign")      private var partnerMoonSignRaw   = ""
-    @AppStorage("partnerRisingSign")    private var partnerRisingSignRaw = ""
-    @AppStorage("partnerBirthTimestamp") private var partnerBirthTimestamp = 0.0
+    @AppStorage("partnerBirthDate")     private var partnerBirthDate     = 0.0
     @AppStorage("showPartnerChart")     private var showPartnerChart     = false
+    @AppStorage("myGuidingDeity")       private var myGuidingDeity       = ""
+    @AppStorage("partnerGuidingDeity")  private var partnerGuidingDeity  = ""
 
     @State private var streak              = StreakTracker.current
     @State private var editingName         = false
@@ -167,23 +29,21 @@ struct ProfileView: View {
     @State private var showPermissionAlert = false
     @State private var showTutorial        = false
     @State private var appeared            = false
+    @State private var showMyDeityPicker   = false
+    @State private var showPartnerDeityPicker = false
 
     private var displayName: String { userName.isEmpty ? "Soul" : userName }
 
-    private var mySunSign:      ZodiacSign? { ZodiacSign(rawValue: mySunSignRaw) }
-    private var myMoonSign:     ZodiacSign? { ZodiacSign(rawValue: myMoonSignRaw) }
-    private var myRisingSign:   ZodiacSign? { ZodiacSign(rawValue: myRisingSignRaw) }
-    private var partnerSunSign:    ZodiacSign? { ZodiacSign(rawValue: partnerSunSignRaw) }
-    private var partnerMoonSign:   ZodiacSign? { ZodiacSign(rawValue: partnerMoonSignRaw) }
-    private var partnerRisingSign: ZodiacSign? { ZodiacSign(rawValue: partnerRisingSignRaw) }
-
-    private var showCompatibility: Bool { mySunSign != nil && partnerSunSign != nil }
-
-    private var score: Int {
-        compatibilityScore(
-            mySun: mySunSign, partnerSun: partnerSunSign,
-            myMoon: myMoonSign, partnerMoon: partnerMoonSign
-        )
+    // Effective birth dates: prefer unified key, fall back to legacy keys for existing users.
+    private var effectiveBirthDate: Double {
+        if userBirthDate > 0 { return userBirthDate }
+        let legacy = UserDefaults.standard.double(forKey: "myBirthTimestamp")
+        if legacy == 0 { return UserDefaults.standard.double(forKey: "numeroBirthdate") }
+        return legacy
+    }
+    private var effectivePartnerBirthDate: Double {
+        if partnerBirthDate > 0 { return partnerBirthDate }
+        return UserDefaults.standard.double(forKey: "partnerBirthTimestamp")
     }
 
     var body: some View {
@@ -229,16 +89,14 @@ struct ProfileView: View {
                     // MARK: Streak
                     streakSection
 
-                    // MARK: Birth Chart
-                    birthChartSection
+                    // MARK: My Birth Date + Guiding Deity
+                    myChartSection
 
-                    // MARK: Partner's Chart
+                    // MARK: Partner's Birth Date + Guiding Deity
                     partnerChartSection
 
-                    // MARK: Compatibility
-                    if showCompatibility {
-                        compatibilitySection
-                    }
+                    // MARK: Divine Resonance + Sacred Numerology
+                    divineLinksSection
 
                     // MARK: Daily Reminder
                     reminderSection
@@ -266,6 +124,8 @@ struct ProfileView: View {
             }
         }
         .onAppear {
+            if userBirthDate == 0, effectiveBirthDate > 0 { userBirthDate = effectiveBirthDate }
+            if partnerBirthDate == 0, effectivePartnerBirthDate > 0 { partnerBirthDate = effectivePartnerBirthDate }
             streak = StreakTracker.current
             var comps = DateComponents()
             comps.hour   = reminderHour
@@ -433,38 +293,22 @@ struct ProfileView: View {
         .padding(.horizontal, 24)
     }
 
-    // MARK: - Birth Chart Section
+    // MARK: - My Chart Section (Birth Date + Guiding Deity)
 
-    private var birthChartSection: some View {
+    private var myChartSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ProfileSectionHeader(title: "My Birth Chart")
+            ProfileSectionHeader(title: "My Sacred Profile")
 
             VStack(spacing: 0) {
                 // Birth date picker
                 BirthDateRow(
                     label: "🎂 Birth Date",
-                    timestamp: $myBirthTimestamp,
-                    onDateChange: { ts in
-                        if let sign = sunSignFrom(timestamp: ts) {
-                            mySunSignRaw = sign.rawValue
-                        }
-                    }
+                    timestamp: $userBirthDate
                 )
                 Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                SignPickerRow(
-                    label: myBirthTimestamp > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign",
-                    selectedRaw: $mySunSignRaw
-                )
-                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                SignPickerRow(
-                    label: "🌙 Moon Sign",
-                    selectedRaw: $myMoonSignRaw
-                )
-                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                SignPickerRow(
-                    label: "↑ Rising Sign",
-                    selectedRaw: $myRisingSignRaw
-                )
+                guidingDeityCard
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 4)
             }
             .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 20))
             .overlay(
@@ -475,12 +319,44 @@ struct ProfileView: View {
         .padding(.horizontal, 24)
     }
 
-    // MARK: - Partner Chart Section
+    // MARK: - Guiding Deity Card (My)
+
+    private var guidingDeityCard: some View {
+        Button { showMyDeityPicker = true } label: {
+            HStack(spacing: 14) {
+                if let deity = DivinePantheon.deity(named: myGuidingDeity) {
+                    Image(systemName: deity.symbol).foregroundStyle(deity.color).font(.system(size: 24))
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(deity.name).font(.headline).foregroundStyle(AppColors.cream)
+                        Text("Walks with you · \(deity.culture)").font(.caption).foregroundStyle(AppColors.lavender)
+                    }
+                } else {
+                    Image(systemName: "sparkles").foregroundStyle(AppColors.gold).font(.system(size: 24))
+                        .accessibilityHidden(true)
+                    Text("Choose your Guiding Deity").font(.headline).foregroundStyle(AppColors.cream)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
+            }
+            .padding(16)
+            .background(AppColors.purple.opacity(0.12))
+            .cornerRadius(14)
+        }
+        .buttonStyle(.plain)
+        .sheet(isPresented: $showMyDeityPicker) {
+            GuidingDeityPickerView(selectedName: $myGuidingDeity, title: "Your Guiding Deity")
+        }
+        .accessibilityHint("Choose the God or Goddess who walks with you")
+    }
+
+    // MARK: - Partner Chart Section (Birth Date + Guiding Deity)
 
     private var partnerChartSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                ProfileSectionHeader(title: "Partner's Chart")
+                ProfileSectionHeader(title: "Twin Flame's Profile")
                 Spacer()
                 Button {
                     HapticManager.impact(.light)
@@ -490,7 +366,7 @@ struct ProfileView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(AppColors.lavender)
                 }
-                .accessibilityLabel(showPartnerChart ? "Collapse partner chart" : "Expand partner chart")
+                .accessibilityLabel(showPartnerChart ? "Collapse twin flame profile" : "Expand twin flame profile")
                 .padding(.trailing, 4)
             }
 
@@ -514,19 +390,12 @@ struct ProfileView: View {
 
                     BirthDateRow(
                         label: "🎂 Birth Date",
-                        timestamp: $partnerBirthTimestamp,
-                        onDateChange: { ts in
-                            if let sign = sunSignFrom(timestamp: ts) {
-                                partnerSunSignRaw = sign.rawValue
-                            }
-                        }
+                        timestamp: $partnerBirthDate
                     )
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                    SignPickerRow(label: partnerBirthTimestamp > 0 ? "☀️ Sun Sign (auto)" : "☀️ Sun Sign", selectedRaw: $partnerSunSignRaw)
-                    Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                    SignPickerRow(label: "🌙 Moon Sign", selectedRaw: $partnerMoonSignRaw)
-                    Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                    SignPickerRow(label: "↑ Rising Sign", selectedRaw: $partnerRisingSignRaw)
+                    partnerGuidingDeityCard
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 4)
                 }
                 .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 20))
                 .overlay(
@@ -539,97 +408,53 @@ struct ProfileView: View {
         .padding(.horizontal, 24)
     }
 
-    // MARK: - Compatibility Section
+    // MARK: - Guiding Deity Card (Partner)
 
-    private var compatibilitySection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 6) {
-                ProfileSectionHeader(title: "Soul Compatibility")
+    private var partnerGuidingDeityCard: some View {
+        Button { showPartnerDeityPicker = true } label: {
+            HStack(spacing: 14) {
+                if let deity = DivinePantheon.deity(named: partnerGuidingDeity) {
+                    Image(systemName: deity.symbol).foregroundStyle(deity.color).font(.system(size: 24))
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(deity.name).font(.headline).foregroundStyle(AppColors.cream)
+                        Text("Walks with your twin flame · \(deity.culture)").font(.caption).foregroundStyle(AppColors.lavender)
+                    }
+                } else {
+                    Image(systemName: "sparkles").foregroundStyle(AppColors.gold).font(.system(size: 24))
+                        .accessibilityHidden(true)
+                    Text("Choose your twin flame's Guiding Deity").font(.headline).foregroundStyle(AppColors.cream)
+                }
                 Spacer()
-                HStack(spacing: 4) {
-                    Image(systemName: "waveform")
-                        .font(.system(size: 10))
-                        .foregroundStyle(Color(hex: "88D8B0").opacity(0.7))
-                    Text("Harmonia · Maat")
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color(hex: "88D8B0").opacity(0.7))
-                }
-                .padding(.trailing, 4)
+                Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
             }
+            .padding(16)
+            .background(AppColors.purple.opacity(0.12))
+            .cornerRadius(14)
+        }
+        .buttonStyle(.plain)
+        .sheet(isPresented: $showPartnerDeityPicker) {
+            GuidingDeityPickerView(selectedName: $partnerGuidingDeity, title: "Your Twin Flame's Guiding Deity")
+        }
+        .accessibilityHint("Choose the God or Goddess who walks with your twin flame")
+    }
 
-            VStack(spacing: 20) {
-                // Score ring
-                ZStack {
-                    Circle()
-                        .stroke(AppColors.purple.opacity(0.2), lineWidth: 12)
-                        .frame(width: 140, height: 140)
+    // MARK: - Divine Links Section (Resonance + Numerology)
 
-                    Circle()
-                        .trim(from: 0, to: CGFloat(score) / 100)
-                        .stroke(
-                            AngularGradient(
-                                colors: [AppColors.gold, AppColors.coral, AppColors.gold],
-                                center: .center
-                            ),
-                            style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                        )
-                        .frame(width: 140, height: 140)
-                        .rotationEffect(.degrees(-90))
-                        .animation(.spring(response: 1, dampingFraction: 0.7), value: score)
+    private var divineLinksSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ProfileSectionHeader(title: "Sacred Union")
 
-                    VStack(spacing: 2) {
-                        Text("\(score)")
-                            .font(AppFont.serifHeadline(36))
-                            .foregroundStyle(AppColors.gold)
-                        Text("/ 100")
-                            .font(AppFont.caption(13))
-                            .foregroundStyle(AppColors.lavender)
-                    }
-                }
-
-                VStack(spacing: 6) {
-                    Text("Soul Resonance")
-                        .font(AppFont.body(13, weight: .semibold))
-                        .foregroundStyle(AppColors.lavender)
-                        .textCase(.uppercase)
-                        .kerning(1.5)
-
-                    Text(compatibilityDescription(score))
-                        .font(AppFont.body(14))
-                        .foregroundStyle(AppColors.cream)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                        .padding(.horizontal, 16)
-                }
-
-                // Sign badges
-                if let sun1 = mySunSign, let sun2 = partnerSunSign {
-                    HStack(spacing: 20) {
-                        VStack(spacing: 4) {
-                            Text(sun1.symbol)
-                                .font(.system(size: 28))
-                            Text(sun1.rawValue)
-                                .font(AppFont.caption(12))
-                                .foregroundStyle(sun1.color)
-                        }
-
-                        Image(systemName: "heart.fill")
-                            .font(.system(size: 16))
-                            .foregroundStyle(AppColors.coral.opacity(0.7))
-
-                        VStack(spacing: 4) {
-                            Text(sun2.symbol)
-                                .font(.system(size: 28))
-                            Text(sun2.rawValue)
-                                .font(AppFont.caption(12))
-                                .foregroundStyle(sun2.color)
-                        }
-                    }
-                }
+            VStack(spacing: 0) {
+                divineResonanceCard
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 4)
+                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
+                sacredNumerologyCard
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 4)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 24)
-            .padding(.horizontal, 20)
             .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 20))
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
@@ -637,6 +462,48 @@ struct ProfileView: View {
             )
         }
         .padding(.horizontal, 24)
+    }
+
+    // MARK: - Divine Resonance Card
+
+    private var divineResonanceCard: some View {
+        NavigationLink(destination: SacredSoulResonanceView()) {
+            HStack(spacing: 14) {
+                Image(systemName: "infinity").foregroundStyle(AppColors.gold).font(.system(size: 22))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Divine Resonance").font(.headline).foregroundStyle(AppColors.cream)
+                    Text("How your Deities weave your union").font(.caption).foregroundStyle(AppColors.lavender)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
+            }
+            .padding(16)
+            .background(AppColors.purple.opacity(0.12))
+            .cornerRadius(14)
+        }
+    }
+
+    // MARK: - Sacred Numerology Card
+
+    private var sacredNumerologyCard: some View {
+        NavigationLink(destination: NumerologyView()) {
+            HStack(spacing: 14) {
+                Image(systemName: "numbers").foregroundStyle(AppColors.gold).font(.system(size: 22))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Sacred Numerology").font(.headline).foregroundStyle(AppColors.cream)
+                    Text("Your Life Path, Soul Urge & Expression").font(.caption).foregroundStyle(AppColors.lavender)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
+            }
+            .padding(16)
+            .background(AppColors.purple.opacity(0.12))
+            .cornerRadius(14)
+        }
     }
 
     // MARK: - Reminder Section
@@ -790,37 +657,11 @@ struct ProfileView: View {
     }
 }
 
-// MARK: - Sun Sign Calculator
-
-private func sunSignFrom(timestamp: Double) -> ZodiacSign? {
-    guard timestamp > 0 else { return nil }
-    let date = Date(timeIntervalSince1970: timestamp)
-    let cal = Calendar.current
-    let month = cal.component(.month, from: date)
-    let day   = cal.component(.day,   from: date)
-    switch month {
-    case 1:  return day >= 20 ? .aquarius    : .capricorn
-    case 2:  return day >= 19 ? .pisces      : .aquarius
-    case 3:  return day >= 21 ? .aries       : .pisces
-    case 4:  return day >= 20 ? .taurus      : .aries
-    case 5:  return day >= 21 ? .gemini      : .taurus
-    case 6:  return day >= 21 ? .cancer      : .gemini
-    case 7:  return day >= 23 ? .leo         : .cancer
-    case 8:  return day >= 23 ? .virgo       : .leo
-    case 9:  return day >= 23 ? .libra       : .virgo
-    case 10: return day >= 24 ? .scorpio     : .libra
-    case 11: return day >= 23 ? .sagittarius : .scorpio
-    case 12: return day >= 22 ? .capricorn   : .sagittarius
-    default: return nil
-    }
-}
-
 // MARK: - Birth Date Row
 
 private struct BirthDateRow: View {
     let label: String
     @Binding var timestamp: Double
-    let onDateChange: (Double) -> Void
 
     @State private var isExpanded = false
 
@@ -865,7 +706,6 @@ private struct BirthDateRow: View {
                         get: { date },
                         set: { newDate in
                             timestamp = newDate.timeIntervalSince1970
-                            onDateChange(newDate.timeIntervalSince1970)
                         }
                     ),
                     in: ...Date(),
@@ -877,72 +717,6 @@ private struct BirthDateRow: View {
                 .colorScheme(.dark)
                 .padding(.horizontal, 18)
                 .padding(.bottom, 8)
-            }
-        }
-    }
-}
-
-// MARK: - Sign Picker Row
-
-private struct SignPickerRow: View {
-    let label: String
-    @Binding var selectedRaw: String
-
-    var selected: ZodiacSign? { ZodiacSign(rawValue: selectedRaw) }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(label)
-                .font(AppFont.body(14, weight: .semibold))
-                .foregroundStyle(AppColors.cream)
-                .padding(.horizontal, 18)
-                .padding(.top, 12)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    // None / clear option
-                    Button {
-                        selectedRaw = ""
-                    } label: {
-                        Text("—")
-                            .font(AppFont.caption(13))
-                            .foregroundStyle(selectedRaw.isEmpty ? .white : AppColors.lavender)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                selectedRaw.isEmpty
-                                    ? AppColors.purple.opacity(0.6)
-                                    : AppColors.deepViolet.opacity(0.5),
-                                in: Capsule()
-                            )
-                            .overlay(Capsule().strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1))
-                    }
-
-                    ForEach(ZodiacSign.allCases, id: \.self) { sign in
-                        Button {
-                            selectedRaw = sign.rawValue
-                        } label: {
-                            HStack(spacing: 5) {
-                                Text(sign.symbol)
-                                    .font(.system(size: 14))
-                                Text(sign.rawValue)
-                                    .font(AppFont.caption(12, weight: selected == sign ? .semibold : .regular))
-                                    .foregroundStyle(selected == sign ? .white : AppColors.lavender)
-                            }
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 6)
-                            .background(
-                                selected == sign
-                                    ? sign.color.opacity(0.6)
-                                    : AppColors.deepViolet.opacity(0.5),
-                                in: Capsule()
-                            )
-                            .overlay(Capsule().strokeBorder(selected == sign ? sign.color : AppColors.purple.opacity(0.3), lineWidth: 1))
-                        }
-                    }
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 12)
             }
         }
     }

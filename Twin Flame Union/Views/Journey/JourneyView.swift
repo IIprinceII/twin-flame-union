@@ -155,7 +155,7 @@ struct JourneyView: View {
                 JourneyItem(icon: "questionmark.circle.fill",title: "Soul Archetype Quiz",  deity: "Psyche · Seshat",     color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(QuizView())),
                 JourneyItem(icon: "arrow.up.forward.circle.fill", title: "TF Stages",       deity: "Persephone · Osiris", color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(TFStagesView())),
                 JourneyItem(icon: "moon.stars.fill",        title: "Moon Phases",            deity: "Selene · Khonsu",     color: Color(hex: "3D2060"),   accent: Color(hex: "B57BFF"), destination: AnyView(MoonPhaseView())),
-                JourneyItem(icon: "globe.americas.fill",    title: "Astrology Transits",     deity: "Nyx · Hermes",        color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(TransitTrackerView())),
+                JourneyItem(icon: "person.3.sequence.fill",  title: "Divine Council Today",   deity: "Khonsu · Hecate",     color: Color(hex: "8B5CF6"),   accent: Color(hex: "C4B5FD"), destination: AnyView(DivineCouncilView())),
             ]
 
         case .explore:
@@ -163,7 +163,7 @@ struct JourneyView: View {
                 JourneyItem(icon: "heart.text.square.fill", title: "Love Languages",       deity: "Eros · Anteros",      color: Color(hex: "E74C8B"),   accent: Color(hex: "F48FB1"), destination: AnyView(LoveLanguageQuizView())),
                 JourneyItem(icon: "number.circle.fill",     title: "Numerology Match",      deity: "Lachesis · Thoth",    color: Color(hex: "4A90D9"),   accent: Color(hex: "7BB8F0"), destination: AnyView(NumerologyCompatibilityView())),
                 JourneyItem(icon: "numbers",                title: "Numerology",             deity: "Seshat · Hermes",     color: Color(hex: "4A90D9"),   accent: Color(hex: "7BB8F0"), destination: AnyView(NumerologyView())),
-                JourneyItem(icon: "person.2.fill",          title: "Compatibility",          deity: "Harmonia · Maat",     color: Color(hex: "D97B4A"),   accent: Color(hex: "FFAB76"), destination: AnyView(CompatibilityDeepDiveView())),
+                JourneyItem(icon: "person.2.fill",          title: "Soul Resonance",         deity: "Harmonia · Maat",     color: Color(hex: "D97B4A"),   accent: Color(hex: "FFAB76"), destination: AnyView(SacredSoulResonanceView())),
                 JourneyItem(icon: "square.and.arrow.up.fill",title: "Share Affirmations",   deity: "Iris · Nefertem",     color: Color(hex: "D97B4A"),   accent: Color(hex: "FFAB76"), destination: AnyView(ShareableAffirmationsView())),
             ]
         }
