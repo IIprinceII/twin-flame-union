@@ -58,7 +58,7 @@
 		09E4EE9F2F7884E700D7ED9B /* TFWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TFWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		09E4EEA12F7884E700D7ED9B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		09E4EEA32F7884E700D7ED9B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		E77E41DA1CCF1CD6AA143BC7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = "Twin Flame Union/PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
+		E77E41DA1CCF1CD6AA143BC7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = "Twin Flame Union/PrivacyInfo.xcprivacy"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -89,15 +89,11 @@
 		};
 		0929385F2F74F15D00EC2FE0 /* Twin Flame UnionTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = "Twin Flame UnionTests";
 			sourceTree = "<group>";
 		};
 		092938692F74F15D00EC2FE0 /* Twin Flame UnionUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = "Twin Flame UnionUITests";
 			sourceTree = "<group>";
 		};
