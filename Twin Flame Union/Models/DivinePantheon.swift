@@ -391,8 +391,10 @@ enum DivinePantheon {
 
     /// The council grouped by culture, in canonical order, for reverent browsing.
     static func grouped() -> [(culture: String, deities: [Deity])] {
-        ["Greek", "Egyptian", "Mexica"].map { culture in
-            (culture: culture, deities: all.filter { $0.culture == culture })
-        }
+        // Canonical display order; cultures with no Deities are dropped, so a future
+        // Roman (or other) Deity added to `all` appears automatically and none is lost.
+        ["Greek", "Roman", "Egyptian", "Mexica"]
+            .map { culture in (culture: culture, deities: all.filter { $0.culture == culture }) }
+            .filter { !$0.deities.isEmpty }
     }
 }

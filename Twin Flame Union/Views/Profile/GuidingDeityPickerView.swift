@@ -22,13 +22,13 @@ struct GuidingDeityPickerView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(group.culture)
                                 .font(AppFont.serifTitle(20))
-                                .foregroundColor(AppColors.gold)
+                                .foregroundStyle(AppColors.gold)
                                 .padding(.horizontal, 16)
 
                             ForEach(group.deities, id: \.name) { deity in
                                 Button {
                                     selectedName = deity.name
-                                    HapticManager.impact(.medium)
+                                    HapticManager.impact(.light)
                                     dismiss()
                                 } label: {
                                     deityRow(deity)
@@ -43,35 +43,36 @@ struct GuidingDeityPickerView: View {
             .background(AppColors.deepViolet.ignoresSafeArea())
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }.foregroundColor(AppColors.lavender)
+                    Button("Close") { dismiss() }.foregroundStyle(AppColors.lavender)
                 }
             }
         }
     }
 
     private func deityRow(_ deity: Deity) -> some View {
-        HStack(spacing: 14) {
+        let isChosen = selectedName == deity.name
+        return HStack(spacing: 14) {
             Image(systemName: deity.symbol)
                 .font(.system(size: 22))
-                .foregroundColor(deity.color)
+                .foregroundStyle(deity.color)
                 .frame(width: 40)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 3) {
                 Text(deity.name)
                     .font(.headline)
-                    .foregroundColor(AppColors.cream)
+                    .foregroundStyle(AppColors.cream)
                 Text(deity.domain)
                     .font(.caption)
-                    .foregroundColor(AppColors.lavender)
+                    .foregroundStyle(AppColors.lavender)
                     .fixedSize(horizontal: false, vertical: true)
             }
             Spacer()
-            if selectedName == deity.name {
+            if isChosen {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(AppColors.gold)
-                    .accessibilityLabel("Currently chosen")
+                    .foregroundStyle(AppColors.gold)
             }
         }
         .padding(14)
@@ -80,6 +81,6 @@ struct GuidingDeityPickerView: View {
         .padding(.horizontal, 16)
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(deity.name), \(deity.culture). \(deity.domain)")
+        .accessibilityLabel("\(deity.name), \(deity.culture). \(deity.domain)\(isChosen ? ". Currently chosen" : "")")
     }
 }
