@@ -125,21 +125,20 @@ struct CoachView: View {
     @FocusState private var inputFocused: Bool
 
     // Soul profile for Seraphina context
-    @AppStorage("mySunSign")        private var mySunSign      = ""
-    @AppStorage("myMoonSign")       private var myMoonSign     = ""
-    @AppStorage("partnerSunSign")   private var partnerSunSign = ""
-    @AppStorage("tfCurrentStage")   private var tfStageID      = 0
+    @AppStorage("myGuidingDeity")      private var myGuidingDeity      = ""
+    @AppStorage("partnerGuidingDeity") private var partnerGuidingDeity = ""
+    @AppStorage("tfCurrentStage")      private var tfStageID           = 0
 
     private let stageNames = ["Recognition","Testing","Crisis","Runner & Chaser",
                                "Surrender","Illumination","Radiance","Harmonizing Union"]
 
     private var coachContext: CoachContext {
         CoachContext(
-            sunSign:         mySunSign,
-            moonSign:        myMoonSign,
-            tfStage:         stageNames[min(tfStageID, stageNames.count - 1)],
-            partnerSunSign:  partnerSunSign,
-            heartChakraState: ""
+            guidingDeity:        myGuidingDeity,
+            partnerGuidingDeity: partnerGuidingDeity,
+            todaysDeity:         DivinePantheon.today.name,
+            tfStage:             stageNames[min(tfStageID, stageNames.count - 1)],
+            heartChakraState:    ""
         )
     }
 
@@ -256,10 +255,9 @@ struct CoachView: View {
             viewModel.loadHistory()
             viewModel.context = coachContext
         }
-        .onChange(of: mySunSign)      { viewModel.context = coachContext }
-        .onChange(of: myMoonSign)     { viewModel.context = coachContext }
-        .onChange(of: tfStageID)      { viewModel.context = coachContext }
-        .onChange(of: partnerSunSign) { viewModel.context = coachContext }
+        .onChange(of: tfStageID)            { viewModel.context = coachContext }
+        .onChange(of: myGuidingDeity)       { viewModel.context = coachContext }
+        .onChange(of: partnerGuidingDeity)  { viewModel.context = coachContext }
     }
 }
 

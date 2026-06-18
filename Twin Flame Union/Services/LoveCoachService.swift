@@ -11,11 +11,11 @@ import Foundation
 // MARK: - Coach Context
 
 struct CoachContext {
-    let sunSign: String
-    let moonSign: String
+    let guidingDeity: String        // the God/Goddess the soul has chosen to walk with them
+    let partnerGuidingDeity: String // their twin flame's Guiding Deity (may be empty)
+    let todaysDeity: String         // the Deity governing today (DivinePantheon.today.name)
     let tfStage: String
-    let partnerSunSign: String
-    let heartChakraState: String   // "balanced", "blocked", or "overactive"
+    let heartChakraState: String    // "balanced", "blocked", or "overactive"
 }
 
 struct LoveCoachService {
@@ -395,20 +395,30 @@ struct LoveCoachService {
 
     private static func systemPrompt(context: CoachContext?) -> String {
         guard let ctx = context,
-              !ctx.sunSign.isEmpty || !ctx.tfStage.isEmpty else {
+              !ctx.guidingDeity.isEmpty || !ctx.tfStage.isEmpty || !ctx.todaysDeity.isEmpty else {
             return basePrompt
         }
         var lines: [String] = []
-        if !ctx.sunSign.isEmpty         { lines.append("My Sun Sign: \(ctx.sunSign)") }
-        if !ctx.moonSign.isEmpty        { lines.append("My Moon Sign: \(ctx.moonSign)") }
-        if !ctx.partnerSunSign.isEmpty  { lines.append("Twin Flame Sun Sign: \(ctx.partnerSunSign)") }
-        if !ctx.tfStage.isEmpty         { lines.append("Current TF Journey Stage: \(ctx.tfStage)") }
-        if !ctx.heartChakraState.isEmpty { lines.append("Heart Chakra State: \(ctx.heartChakraState)") }
+        if !ctx.guidingDeity.isEmpty {
+            lines.append("The God/Goddess walking with this soul: \(ctx.guidingDeity)")
+        }
+        if !ctx.partnerGuidingDeity.isEmpty {
+            lines.append("The God/Goddess walking with their twin flame: \(ctx.partnerGuidingDeity)")
+        }
+        if !ctx.todaysDeity.isEmpty {
+            lines.append("The Deity governing today: \(ctx.todaysDeity)")
+        }
+        if !ctx.tfStage.isEmpty {
+            lines.append("Current TF Journey Stage: \(ctx.tfStage)")
+        }
+        if !ctx.heartChakraState.isEmpty {
+            lines.append("Heart Chakra State: \(ctx.heartChakraState)")
+        }
         let profile = lines.joined(separator: "\n")
         return basePrompt + """
 
-        \n\nSoul Profile for this session (use this context to give deeply personal, specific guidance — \
-        reference their stage, signs, and energy state where relevant):\n\(profile)
+        \n\nSacred context for this session (channel the named Gods and Goddesses directly, with \
+        reverence; speak to their stage and energy where relevant):\n\(profile)
         """
     }
 
