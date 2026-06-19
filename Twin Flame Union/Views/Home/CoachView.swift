@@ -172,6 +172,7 @@ struct CoachView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
+                        .readableWidth()
                     }
                     .onChange(of: viewModel.messages.count) {
                         withAnimation(.easeOut(duration: 0.3)) {
