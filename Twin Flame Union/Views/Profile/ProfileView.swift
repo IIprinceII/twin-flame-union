@@ -423,6 +423,10 @@ struct ProfileView: View {
                 divineResonanceCard
                     .padding(.horizontal, 18)
                     .padding(.vertical, 4)
+                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
+                connectCard
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 4)
             }
             .background(AppColors.deepViolet.opacity(0.7), in: RoundedRectangle(cornerRadius: 20))
             .overlay(
@@ -450,6 +454,27 @@ struct ProfileView: View {
             }
             .padding(16)
             .background(AppColors.purple.opacity(0.12))
+            .cornerRadius(14)
+        }
+    }
+
+    // MARK: - Twin Flame Connect Card
+
+    private var connectCard: some View {
+        NavigationLink(destination: ConnectView()) {
+            HStack(spacing: 14) {
+                Image(systemName: "link").foregroundStyle(AppColors.rose).font(.system(size: 22))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Twin Flame Connection").font(.headline).foregroundStyle(AppColors.cream)
+                    Text("Create or join a sacred bond · Eros · Harmonia").font(.caption).foregroundStyle(AppColors.lavender)
+                }
+                Spacer()
+                Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
+                    .accessibilityHidden(true)
+            }
+            .padding(16)
+            .background(AppColors.rose.opacity(0.08))
             .cornerRadius(14)
         }
     }
