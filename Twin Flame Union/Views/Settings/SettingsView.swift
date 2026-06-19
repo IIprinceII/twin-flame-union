@@ -33,6 +33,7 @@ struct SettingsView: View {
     @State private var showExporter   = false
     @State private var exportDocument: JSONDocument?
     @State private var showWellnessDisclaimer = false
+    @State private var deletionError: String?
 
     var body: some View {
         ZStack {
@@ -104,6 +105,14 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("This permanently deletes your profile and all of your data on this device — journals, dreams, manifestations, progress, and settings. This cannot be undone.")
+        }
+        .alert("Couldn't Delete Your Data", isPresented: Binding(
+            get: { deletionError != nil },
+            set: { if !$0 { deletionError = nil } }
+        )) {
+            Button("OK", role: .cancel) { deletionError = nil }
+        } message: {
+            Text(deletionError ?? "Couldn't fully delete your data. Please try again.")
         }
     }
 
@@ -214,6 +223,14 @@ struct SettingsView: View {
             } label: {
                 SettingsRowButton(icon: "envelope.fill", iconColor: AppColors.rose, label: "Contact / Feedback", showChevron: true)
             }
+
+            Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 16)
+
+            Text("AI features — Seraphina and your dream & journal insights — send your messages to a trusted third-party AI provider to generate responses. Your words are processed to create your reading and are not used to train models.")
+                .font(AppFont.caption(12))
+                .foregroundStyle(AppColors.lavender.opacity(0.6))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
         }
     }
 
@@ -327,21 +344,30 @@ struct SettingsView: View {
 
     /// Full account deletion (Apple Guideline 5.1.1(v)): erases every on-device
     /// record and the user's profile, then returns the app to first-launch onboarding.
+    /// If any delete or save throws, the user is shown an error and navigation is blocked
+    /// so they are not left believing data was erased when records may persist.
     private func deleteAccount() {
-        // 1. Delete every SwiftData record across all models.
-        try? modelContext.delete(model: JournalEntry.self)
-        try? modelContext.delete(model: DreamEntry.self)
-        try? modelContext.delete(model: SynchronicityEntry.self)
-        try? modelContext.delete(model: ChakraEntry.self)
-        try? modelContext.delete(model: ManifestationItem.self)
-        try? modelContext.delete(model: ConnectionMoment.self)
-        try? modelContext.delete(model: PrayerEntry.self)
-        try? modelContext.delete(model: GratitudeEntry.self)
-        try? modelContext.delete(model: SoulProfile.self)
-        try? modelContext.delete(model: XPEvent.self)
-        try? modelContext.delete(model: Achievement.self)
-        try? modelContext.delete(model: DailyChallenge.self)
-        try? modelContext.save()
+        do {
+            // 1. Delete every SwiftData record across all models.
+            try modelContext.delete(model: JournalEntry.self)
+            try modelContext.delete(model: DreamEntry.self)
+            try modelContext.delete(model: SynchronicityEntry.self)
+            try modelContext.delete(model: ChakraEntry.self)
+            try modelContext.delete(model: ManifestationItem.self)
+            try modelContext.delete(model: ConnectionMoment.self)
+            try modelContext.delete(model: PrayerEntry.self)
+            try modelContext.delete(model: GratitudeEntry.self)
+            try modelContext.delete(model: SoulProfile.self)
+            try modelContext.delete(model: XPEvent.self)
+            try modelContext.delete(model: Achievement.self)
+            try modelContext.delete(model: DailyChallenge.self)
+            try modelContext.save()
+        } catch {
+            // Data could not be fully erased — surface error and do NOT navigate to onboarding,
+            // so the user knows their data may still be present.
+            deletionError = "Couldn't fully delete your data. Please try again."
+            return
+        }
 
         // 2. Cancel any scheduled notifications.
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -354,6 +380,7 @@ struct SettingsView: View {
         }
 
         // 4. Return to first-launch onboarding so the user starts completely fresh.
+        //    Only reached when all deletes and the save succeeded.
         hasCompletedOnboarding = false
     }
 

@@ -10,12 +10,12 @@ import SwiftUI
 // MARK: - Data Models
 
 struct Affirmation: Identifiable {
-    let id: UUID
+    /// Stable identity derived from text — survives cold relaunches so favorites persist.
+    var id: String { text }
     let text: String
     let category: AffirmationCategory
 
     init(text: String, category: AffirmationCategory) {
-        self.id = UUID()
         self.text = text
         self.category = category
     }
@@ -154,8 +154,8 @@ struct AffirmationsView: View {
 
     private var deck: [Affirmation] { allAffirmations }
 
-    private var favoriteIDs: Set<UUID> {
-        let parts = favoritesStorage.split(separator: ",").compactMap { UUID(uuidString: String($0)) }
+    private var favoriteIDs: Set<String> {
+        let parts = favoritesStorage.split(separator: ",").map { String($0) }.filter { !$0.isEmpty }
         return Set(parts)
     }
 
@@ -420,20 +420,20 @@ struct AffirmationsView: View {
 
     // MARK: - Favorites Persistence
 
-    private func addFavorite(_ id: UUID) {
+    private func addFavorite(_ id: String) {
         var ids = favoriteIDs
         ids.insert(id)
         saveFavorites(ids)
     }
 
-    private func removeFavorite(_ id: UUID) {
+    private func removeFavorite(_ id: String) {
         var ids = favoriteIDs
         ids.remove(id)
         saveFavorites(ids)
     }
 
-    private func saveFavorites(_ ids: Set<UUID>) {
-        favoritesStorage = ids.map { $0.uuidString }.joined(separator: ",")
+    private func saveFavorites(_ ids: Set<String>) {
+        favoritesStorage = ids.joined(separator: ",")
     }
 }
 
@@ -502,8 +502,8 @@ private struct AffirmationCard: View {
 
 private struct FavoritesSheet: View {
     let allAffirmations: [Affirmation]
-    let favoriteIDs: Set<UUID>
-    let onRemove: (UUID) -> Void
+    let favoriteIDs: Set<String>
+    let onRemove: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
 
