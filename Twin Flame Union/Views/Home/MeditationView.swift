@@ -371,9 +371,25 @@ final class MeditationViewModel {
                 }
                 try? await Task.sleep(for: .seconds(phase.duration))
                 guard !Task.isCancelled else { return }
-                currentPhase = phase.next
+                let next = phase.next
+                currentPhase = next
+                await updateLiveActivityPhase(next)
             }
         }
+    }
+
+    /// Push the current breath phase to the Lock Screen / Dynamic Island.
+    private func updateLiveActivityPhase(_ phase: BreathPhase) async {
+        guard let activity = liveActivity,
+              let clock,
+              ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let state = MeditationActivityAttributes.ContentState(
+            endDate: clock.endDate,
+            phase: phase.instruction,
+            isRunning: true,
+            sessionName: selectedSession.name
+        )
+        await activity.update(ActivityContent(state: state, staleDate: nil))
     }
 
     // MARK: Live Activity
