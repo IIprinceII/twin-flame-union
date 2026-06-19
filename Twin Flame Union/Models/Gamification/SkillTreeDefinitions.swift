@@ -188,7 +188,10 @@ struct AchievementDef {
 }
 
 enum AchievementCatalog {
-    static let all: [AchievementDef] = general + vibrational + energy + apollux + hidden
+    // Trimmed to only the 10 achievements that shouldUnlock() in GamificationService
+    // actually implements — so the UI counter shows an honest obtainable total.
+    // The 24 entries that hit `default: return false` have been removed.
+    static let all: [AchievementDef] = general + energy + apollux
 
     private static let general: [AchievementDef] = [
         AchievementDef(key: "first_flame", title: "First Flame", detail: "Begin your sacred journey.", icon: "flame.fill", rarity: "common", framework: "general", xpReward: 10),
@@ -201,42 +204,12 @@ enum AchievementCatalog {
         AchievementDef(key: "trinity_balance", title: "Trinity Balance", detail: "Earn XP in all three frameworks in a single day.", icon: "triangle.fill", rarity: "rare", framework: "general", xpReward: 100),
     ]
 
-    private static let vibrational: [AchievementDef] = [
-        AchievementDef(key: "energy_awakening", title: "Energy Awakening", detail: "Complete all Vibrational Game lessons.", icon: "waveform", rarity: "common", framework: "vibrational", xpReward: 50),
-        AchievementDef(key: "connection_mapper", title: "Connection Mapper", detail: "Log 10 connection moments.", icon: "point.3.connected.trianglepath.dotted", rarity: "common", framework: "vibrational", xpReward: 50),
-        AchievementDef(key: "sacred_linguist", title: "Sacred Linguist", detail: "Write 25 prayers.", icon: "text.book.closed.fill", rarity: "rare", framework: "vibrational", xpReward: 100),
-        AchievementDef(key: "vibration_builder", title: "Vibration Builder", detail: "Manifest 3 items from the board.", icon: "checkmark.seal.fill", rarity: "epic", framework: "vibrational", xpReward: 150),
-        AchievementDef(key: "hermes_protocol", title: "Hermes Protocol", detail: "Log 50 synchronicities.", icon: "bolt.fill", rarity: "rare", framework: "vibrational", xpReward: 100),
-        AchievementDef(key: "harmonias_balance", title: "Harmonia's Balance", detail: "Vibrational Score above 667 for 7 days.", icon: "waveform", rarity: "legendary", framework: "vibrational", xpReward: 300),
-    ]
-
     private static let energy: [AchievementDef] = [
         AchievementDef(key: "constitution_awakened", title: "Constitution Awakened", detail: "Complete your first chakra check-in.", icon: "rays", rarity: "common", framework: "energy", xpReward: 25),
-        AchievementDef(key: "frequency_healer", title: "Frequency Healer", detail: "Use solfeggio frequencies for 60+ minutes total.", icon: "waveform.circle.fill", rarity: "rare", framework: "energy", xpReward: 75),
-        AchievementDef(key: "1111_devotee", title: "11:11 Devotee", detail: "Complete the 11:11 ritual 11 times.", icon: "clock.fill", rarity: "rare", framework: "energy", xpReward: 100),
-        AchievementDef(key: "1111_on_11th", title: "11:11 on the 11th", detail: "Complete the ritual on the 11th of any month.", icon: "sparkles", rarity: "epic", framework: "energy", xpReward: 150),
-        AchievementDef(key: "master_number", title: "Master Number", detail: "Complete the ritual on 11/11 at 11:11 PM.", icon: "star.fill", rarity: "legendary", framework: "energy", xpReward: 500),
-        AchievementDef(key: "sekhmets_fire", title: "Sekhmet's Fire", detail: "All Energy Enhancement skills at level 5+.", icon: "flame.fill", rarity: "epic", framework: "energy", xpReward: 200),
-        AchievementDef(key: "radiant_constitution", title: "Radiant Constitution", detail: "Maintain 'C' constitution for 14 days.", icon: "sun.max.fill", rarity: "legendary", framework: "energy", xpReward: 300),
     ]
 
     private static let apollux: [AchievementDef] = [
         AchievementDef(key: "intent_set", title: "Intent Set", detail: "Create your first manifestation intention.", icon: "target", rarity: "common", framework: "apollux", xpReward: 25),
-        AchievementDef(key: "thought_holder", title: "Thought Holder", detail: "Complete thought stabilization 10 times.", icon: "brain.head.profile", rarity: "common", framework: "apollux", xpReward: 50),
-        AchievementDef(key: "dream_walker", title: "Dream Walker", detail: "Log 20 dreams.", icon: "moon.zzz.fill", rarity: "rare", framework: "apollux", xpReward: 75),
-        AchievementDef(key: "darkness_navigator", title: "Darkness Navigator", detail: "Complete 10 darkness meditations.", icon: "moon.fill", rarity: "epic", framework: "apollux", xpReward: 150),
-        AchievementDef(key: "emotional_alchemist", title: "Emotional Alchemist", detail: "Journal with 7 different emotional states.", icon: "flame.fill", rarity: "rare", framework: "apollux", xpReward: 75),
-        AchievementDef(key: "athenas_wisdom", title: "Athena's Wisdom", detail: "All Apollux skills at level 5+.", icon: "lightbulb.fill", rarity: "epic", framework: "apollux", xpReward: 200),
-        AchievementDef(key: "mind_sovereign", title: "Mind Sovereign", detail: "Complete every mind practice at least 3 times.", icon: "crown.fill", rarity: "legendary", framework: "apollux", xpReward: 300),
-    ]
-
-    private static let hidden: [AchievementDef] = [
-        AchievementDef(key: "twin_flame_dream", title: "Twin Flame Dream", detail: "Log a dream marked as a twin flame dream.", icon: "moon.stars.fill", rarity: "common", framework: "general", xpReward: 30),
-        AchievementDef(key: "full_moon_ritual", title: "Full Moon Ritual", detail: "Complete a meditation during a full moon.", icon: "moon.circle.fill", rarity: "rare", framework: "general", xpReward: 50),
-        AchievementDef(key: "astral_linkage", title: "The Astral Linkage", detail: "Earn XP in all three frameworks in one session.", icon: "link.circle.fill", rarity: "rare", framework: "general", xpReward: 100),
-        AchievementDef(key: "golden_ratio", title: "Golden Ratio", detail: "Equal XP in all three frameworks (within 5%).", icon: "infinity", rarity: "legendary", framework: "general", xpReward: 300),
-        AchievementDef(key: "answered_prayer", title: "Answered Prayer", detail: "Mark a prayer as answered.", icon: "hands.sparkles.fill", rarity: "epic", framework: "general", xpReward: 100),
-        AchievementDef(key: "pantheon_scholar", title: "Pantheon Scholar", detail: "Experience 22 different deity days.", icon: "text.book.closed.fill", rarity: "epic", framework: "general", xpReward: 150),
     ]
 }
 
