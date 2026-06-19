@@ -133,6 +133,7 @@ struct JourneyView: View {
                 JourneyItem(icon: "hand.thumbsup.fill",     title: "Gratitude Log",       deity: "Hathor · Renenutet",  color: AppColors.gold,   accent: Color(hex: "FFE082"), destination: AnyView(GratitudeLogView())),
                 JourneyItem(icon: "hands.sparkles.fill",    title: "Prayer Journal",      deity: "Ra · Amun",           color: AppColors.coral,   accent: Color(hex: "E0B3FF"), destination: AnyView(PrayerJournalView())),
                 JourneyItem(icon: "timeline.selection",     title: "Connection Timeline", deity: "Clotho · Lachesis",   color: Color(hex: "E74C8B"),   accent: Color(hex: "F48FB1"), destination: AnyView(ConnectionTimelineView())),
+                JourneyItem(icon: "magnifyingglass",        title: "Search Journals",     deity: "Seshat · Thoth",      color: Color(hex: "7B9EA6"),   accent: Color(hex: "A8D8EA"), destination: AnyView(CrossJournalSearchView())),
             ]
 
         case .healing:
