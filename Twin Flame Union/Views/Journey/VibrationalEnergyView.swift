@@ -64,6 +64,8 @@ private let lessons: [EnergyLesson] = [
 struct VibrationalEnergyView: View {
     @State private var selectedLesson: EnergyLesson?
     @State private var appeared = false
+    @AppStorage(WellnessDisclaimer.ackKey) private var disclaimerAcked = false
+    @State private var showDisclaimer = false
 
     var body: some View {
         ZStack {
@@ -131,6 +133,9 @@ struct VibrationalEnergyView: View {
                         .opacity(appeared ? 1 : 0)
                     }
 
+                    DisclaimerFooter()
+                        .padding(.horizontal, 20)
+
                     Spacer().frame(height: 40)
                 }
             }
@@ -139,7 +144,13 @@ struct VibrationalEnergyView: View {
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
-        .onAppear { withAnimation(.easeOut(duration: 0.7)) { appeared = true } }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.7)) { appeared = true }
+            if !disclaimerAcked { showDisclaimer = true }
+        }
+        .sheet(isPresented: $showDisclaimer) {
+            WellnessDisclaimerSheet()
+        }
         .sheet(item: $selectedLesson) { lesson in
             LessonDetailSheet(lesson: lesson)
         }
