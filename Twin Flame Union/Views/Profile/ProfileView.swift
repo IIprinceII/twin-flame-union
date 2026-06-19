@@ -2,7 +2,7 @@
 //  ProfileView.swift
 //  Twin Flame Union
 //
-//  Profile tab with birth dates, guiding deities, numerology, divine resonance, streak, and reminders.
+//  Profile tab with guiding deities, divine resonance, streak, and reminders.
 //
 
 import SwiftUI
@@ -15,9 +15,7 @@ struct ProfileView: View {
     @AppStorage("reminderEnabled")      private var reminderEnabled      = false
     @AppStorage("reminderHour")         private var reminderHour         = 9
     @AppStorage("reminderMinute")       private var reminderMinute       = 0
-    @AppStorage("userBirthDate")        private var userBirthDate        = 0.0
     @AppStorage("partnerName")          private var partnerName          = ""
-    @AppStorage("partnerBirthDate")     private var partnerBirthDate     = 0.0
     @AppStorage("showPartnerChart")     private var showPartnerChart     = false
     @AppStorage("myGuidingDeity")       private var myGuidingDeity       = ""
     @AppStorage("partnerGuidingDeity")  private var partnerGuidingDeity  = ""
@@ -33,18 +31,6 @@ struct ProfileView: View {
     @State private var showPartnerDeityPicker = false
 
     private var displayName: String { userName.isEmpty ? "Soul" : userName }
-
-    // Effective birth dates: prefer unified key, fall back to legacy keys for existing users.
-    private var effectiveBirthDate: Double {
-        if userBirthDate > 0 { return userBirthDate }
-        let legacy = UserDefaults.standard.double(forKey: "myBirthTimestamp")
-        if legacy == 0 { return UserDefaults.standard.double(forKey: "numeroBirthdate") }
-        return legacy
-    }
-    private var effectivePartnerBirthDate: Double {
-        if partnerBirthDate > 0 { return partnerBirthDate }
-        return UserDefaults.standard.double(forKey: "partnerBirthTimestamp")
-    }
 
     var body: some View {
         ZStack {
@@ -89,13 +75,13 @@ struct ProfileView: View {
                     // MARK: Streak
                     streakSection
 
-                    // MARK: My Birth Date + Guiding Deity
+                    // MARK: My Guiding Deity
                     myChartSection
 
-                    // MARK: Partner's Birth Date + Guiding Deity
+                    // MARK: Partner's Guiding Deity
                     partnerChartSection
 
-                    // MARK: Divine Resonance + Sacred Numerology
+                    // MARK: Divine Resonance
                     divineLinksSection
 
                     // MARK: Daily Reminder
@@ -124,8 +110,6 @@ struct ProfileView: View {
             }
         }
         .onAppear {
-            if userBirthDate == 0, effectiveBirthDate > 0 { userBirthDate = effectiveBirthDate }
-            if partnerBirthDate == 0, effectivePartnerBirthDate > 0 { partnerBirthDate = effectivePartnerBirthDate }
             streak = StreakTracker.current
             var comps = DateComponents()
             comps.hour   = reminderHour
@@ -293,19 +277,13 @@ struct ProfileView: View {
         .padding(.horizontal, 24)
     }
 
-    // MARK: - My Chart Section (Birth Date + Guiding Deity)
+    // MARK: - My Chart Section (Guiding Deity)
 
     private var myChartSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             ProfileSectionHeader(title: "My Sacred Profile")
 
             VStack(spacing: 0) {
-                // Birth date picker
-                BirthDateRow(
-                    label: "🎂 Birth Date",
-                    timestamp: $userBirthDate
-                )
-                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                 guidingDeityCard
                     .padding(.horizontal, 18)
                     .padding(.vertical, 4)
@@ -351,7 +329,7 @@ struct ProfileView: View {
         .accessibilityHint("Choose the God or Goddess who walks with you")
     }
 
-    // MARK: - Partner Chart Section (Birth Date + Guiding Deity)
+    // MARK: - Partner Chart Section (Guiding Deity)
 
     private var partnerChartSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -386,12 +364,6 @@ struct ProfileView: View {
                     .padding(.horizontal, 18)
                     .padding(.vertical, 14)
 
-                    Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-
-                    BirthDateRow(
-                        label: "🎂 Birth Date",
-                        timestamp: $partnerBirthDate
-                    )
                     Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
                     partnerGuidingDeityCard
                         .padding(.horizontal, 18)
@@ -440,7 +412,7 @@ struct ProfileView: View {
         .accessibilityHint("Choose the God or Goddess who walks with your twin flame")
     }
 
-    // MARK: - Divine Links Section (Resonance + Numerology)
+    // MARK: - Divine Links Section (Resonance)
 
     private var divineLinksSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -448,10 +420,6 @@ struct ProfileView: View {
 
             VStack(spacing: 0) {
                 divineResonanceCard
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 4)
-                Divider().background(AppColors.purple.opacity(0.3)).padding(.horizontal, 18)
-                sacredNumerologyCard
                     .padding(.horizontal, 18)
                     .padding(.vertical, 4)
             }
@@ -474,27 +442,6 @@ struct ProfileView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Divine Resonance").font(.headline).foregroundStyle(AppColors.cream)
                     Text("How your Deities weave your union").font(.caption).foregroundStyle(AppColors.lavender)
-                }
-                Spacer()
-                Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
-                    .accessibilityHidden(true)
-            }
-            .padding(16)
-            .background(AppColors.purple.opacity(0.12))
-            .cornerRadius(14)
-        }
-    }
-
-    // MARK: - Sacred Numerology Card
-
-    private var sacredNumerologyCard: some View {
-        NavigationLink(destination: NumerologyView()) {
-            HStack(spacing: 14) {
-                Image(systemName: "numbers").foregroundStyle(AppColors.gold).font(.system(size: 22))
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Sacred Numerology").font(.headline).foregroundStyle(AppColors.cream)
-                    Text("Your Life Path, Soul Urge & Expression").font(.caption).foregroundStyle(AppColors.lavender)
                 }
                 Spacer()
                 Image(systemName: "chevron.right").foregroundStyle(AppColors.lavender).font(.caption)
@@ -654,71 +601,6 @@ struct ProfileView: View {
 
     private func cancelReminder() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["dailyAffirmation"])
-    }
-}
-
-// MARK: - Birth Date Row
-
-private struct BirthDateRow: View {
-    let label: String
-    @Binding var timestamp: Double
-
-    @State private var isExpanded = false
-
-    private var date: Date {
-        timestamp > 0 ? Date(timeIntervalSince1970: timestamp) : Date(timeIntervalSinceReferenceDate: -946771200) // ~1970
-    }
-
-    private var displayText: String {
-        guard timestamp > 0 else { return "Set date" }
-        let f = DateFormatter()
-        f.dateStyle = .medium
-        f.timeStyle = .none
-        return f.string(from: date)
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Button {
-                withAnimation(.spring(response: 0.35)) { isExpanded.toggle() }
-            } label: {
-                HStack(spacing: 12) {
-                    Text(label)
-                        .font(AppFont.body(14, weight: .semibold))
-                        .foregroundStyle(AppColors.cream)
-                    Spacer()
-                    Text(displayText)
-                        .font(AppFont.caption(13))
-                        .foregroundStyle(timestamp > 0 ? AppColors.gold : AppColors.lavender.opacity(0.5))
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(AppColors.lavender.opacity(0.5))
-                }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 14)
-            }
-            .buttonStyle(.plain)
-
-            if isExpanded {
-                DatePicker(
-                    "",
-                    selection: Binding(
-                        get: { date },
-                        set: { newDate in
-                            timestamp = newDate.timeIntervalSince1970
-                        }
-                    ),
-                    in: ...Date(),
-                    displayedComponents: .date
-                )
-                .datePickerStyle(.wheel)
-                .labelsHidden()
-                .tint(AppColors.gold)
-                .colorScheme(.dark)
-                .padding(.horizontal, 18)
-                .padding(.bottom, 8)
-            }
-        }
     }
 }
 

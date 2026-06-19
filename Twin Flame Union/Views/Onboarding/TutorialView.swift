@@ -201,9 +201,9 @@ struct TutorialView: View {
             icon: "person.fill",
             iconColor: Color(hex: "4CAF82"),
             title: "Profile & Settings",
-            subtitle: "Your sacred birth chart, partner connection, and app customization — all in one place.",
+            subtitle: "Your sacred soul profile, partner connection, and app customization — all in one place.",
             bullets: [
-                TutorialBullet(emoji: "🔢", text: "Your Life Path, Soul Urge, and Expression are calculated from your birth data"),
+                TutorialBullet(emoji: "👑", text: "Choose the God or Goddess who walks with you to align your sacred path"),
                 TutorialBullet(emoji: "💞", text: "Choose the God or Goddess who walks with your twin flame to reveal your Sacred Resonance"),
                 TutorialBullet(emoji: "🔔", text: "Enable daily reminders — set the time for your morning affirmation notification"),
                 TutorialBullet(emoji: "🔄", text: "Tap 'View Tutorial' anytime to come back to this walkthrough"),

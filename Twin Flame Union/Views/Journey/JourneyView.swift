@@ -161,8 +161,6 @@ struct JourneyView: View {
         case .explore:
             return [
                 JourneyItem(icon: "heart.text.square.fill", title: "Love Languages",       deity: "Eros · Anteros",      color: Color(hex: "E74C8B"),   accent: Color(hex: "F48FB1"), destination: AnyView(LoveLanguageQuizView())),
-                JourneyItem(icon: "number.circle.fill",     title: "Numerology Match",      deity: "Lachesis · Thoth",    color: Color(hex: "4A90D9"),   accent: Color(hex: "7BB8F0"), destination: AnyView(NumerologyCompatibilityView())),
-                JourneyItem(icon: "numbers",                title: "Numerology",             deity: "Seshat · Hermes",     color: Color(hex: "4A90D9"),   accent: Color(hex: "7BB8F0"), destination: AnyView(NumerologyView())),
                 JourneyItem(icon: "person.2.fill",          title: "Soul Resonance",         deity: "Harmonia · Maat",     color: Color(hex: "D97B4A"),   accent: Color(hex: "FFAB76"), destination: AnyView(SacredSoulResonanceView())),
                 JourneyItem(icon: "square.and.arrow.up.fill",title: "Share Affirmations",   deity: "Iris · Nefertem",     color: Color(hex: "D97B4A"),   accent: Color(hex: "FFAB76"), destination: AnyView(ShareableAffirmationsView())),
             ]

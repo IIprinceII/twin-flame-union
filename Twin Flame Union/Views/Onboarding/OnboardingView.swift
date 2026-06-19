@@ -2,7 +2,7 @@
 //  OnboardingView.swift
 //  Twin Flame Union
 //
-//  First-launch onboarding: name → birthday → partner → notifications → complete.
+//  First-launch onboarding: name → partner → notifications → complete.
 //  Saves directly to @AppStorage so ProfileView is pre-filled.
 //
 
@@ -14,7 +14,6 @@ import UserNotifications
 private enum OnboardingStep: Int, CaseIterable {
     case welcome
     case name
-    case birthday
     case partner
     case notifications
     case complete
@@ -28,22 +27,15 @@ struct OnboardingView: View {
     // Persisted keys (match ProfileView exactly)
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @AppStorage("userName")              private var userName              = ""
-    @AppStorage("userBirthDate")         private var userBirthDate         = 0.0
     @AppStorage("partnerName")           private var storedPartnerName     = ""
     @AppStorage("showPartnerChart")      private var showPartnerChart      = false
 
     // Transient state
     @State private var step             : OnboardingStep = .welcome
     @State private var nameInput        = ""
-    @State private var birthDate        = OnboardingView.defaultBirthDate
     @State private var partnerNameInput = ""
-    @State private var partnerDate      = Date()
     @State private var includePartner   = false
     @State private var goingForward     = true
-
-    static private var defaultBirthDate: Date {
-        Calendar.current.date(from: DateComponents(year: 1995, month: 6, day: 21)) ?? Date()
-    }
 
     var body: some View {
         ZStack {
@@ -69,16 +61,9 @@ struct OnboardingView: View {
                     case .name:
                         NameStep(nameInput: $nameInput, onNext: advance)
                             .transition(slideTransition)
-                    case .birthday:
-                        BirthdayStep(
-                            birthDate: $birthDate,
-                            onNext: advance
-                        )
-                        .transition(slideTransition)
                     case .partner:
                         PartnerStep(
                             partnerName: $partnerNameInput,
-                            partnerDate: $partnerDate,
                             include: $includePartner,
                             onNext: advance,
                             onSkip: advance
@@ -104,7 +89,7 @@ struct OnboardingView: View {
     // MARK: - Progress Dots
 
     private var progressDots: some View {
-        let contentSteps: [OnboardingStep] = [.name, .birthday, .partner, .notifications]
+        let contentSteps: [OnboardingStep] = [.name, .partner, .notifications]
         return HStack(spacing: 8) {
             ForEach(contentSteps, id: \.rawValue) { s in
                 Capsule()
@@ -131,8 +116,7 @@ struct OnboardingView: View {
         withAnimation(.easeInOut(duration: 0.45)) {
             switch step {
             case .welcome:       step = .name
-            case .name:          step = .birthday
-            case .birthday:      step = .partner
+            case .name:          step = .partner
             case .partner:       step = .notifications
             case .notifications: step = .complete
             case .complete:      finish()
@@ -145,7 +129,6 @@ struct OnboardingView: View {
     private func finish() {
         let trimmedName = nameInput.trimmingCharacters(in: .whitespaces)
         userName        = trimmedName.isEmpty ? "Beautiful Soul" : trimmedName
-        userBirthDate   = birthDate.timeIntervalSince1970
 
         let trimmedPartner = partnerNameInput.trimmingCharacters(in: .whitespaces)
         if includePartner && !trimmedPartner.isEmpty {
@@ -292,68 +275,6 @@ private struct NameStep: View {
     }
 }
 
-// MARK: - Birthday Step
-
-private struct BirthdayStep: View {
-    @Binding var birthDate: Date
-    let onNext: () -> Void
-
-    private let birthDateRange: ClosedRange<Date> = {
-        let start = Calendar.current.date(from: DateComponents(year: 1920, month: 1, day: 1))!
-        let end   = Calendar.current.date(from: DateComponents(year: 2010, month: 12, day: 31))!
-        return start...end
-    }()
-
-    var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 32) {
-                Spacer().frame(height: 12)
-
-                VStack(spacing: 10) {
-                    Image(systemName: "moon.stars.fill")
-                        .font(.system(size: 34))
-                        .foregroundStyle(AppColors.gold)
-
-                    Text("Your Sacred Birth Date")
-                        .font(AppFont.serifHeadline(26))
-                        .foregroundStyle(AppColors.cream)
-
-                    Text("Used to illuminate your numerology and sacred path")
-                        .font(AppFont.body(14))
-                        .foregroundStyle(AppColors.lavender)
-                        .multilineTextAlignment(.center)
-                        .lineSpacing(4)
-                        .padding(.horizontal, 32)
-                }
-
-                // Date picker
-                OnboardingCard(icon: "calendar", label: "Birthday") {
-                    DatePicker(
-                        "",
-                        selection: $birthDate,
-                        in: birthDateRange,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity)
-                    .colorScheme(.dark)
-                }
-
-                Button {
-                    HapticManager.impact(.medium)
-                    onNext()
-                } label: {
-                    Text("Continue")
-                        .warmButtonStyle()
-                }
-                .padding(.bottom, 52)
-            }
-            .padding(.horizontal, 24)
-        }
-    }
-}
-
 private struct OnboardingCard<Content: View>: View {
     let icon: String
     let label: String
@@ -383,16 +304,9 @@ private struct OnboardingCard<Content: View>: View {
 
 private struct PartnerStep: View {
     @Binding var partnerName: String
-    @Binding var partnerDate: Date
     @Binding var include: Bool
     let onNext: () -> Void
     let onSkip: () -> Void
-
-    private let dateRange: ClosedRange<Date> = {
-        let s = Calendar.current.date(from: DateComponents(year: 1920, month: 1, day: 1))!
-        let e = Calendar.current.date(from: DateComponents(year: 2010, month: 12, day: 31))!
-        return s...e
-    }()
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -456,16 +370,6 @@ private struct PartnerStep: View {
                                 .background(AppColors.deepViolet.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
                                 .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(AppColors.purple.opacity(0.3), lineWidth: 1))
                         }
-
-                        // Partner birthday
-                        OnboardingCard(icon: "calendar", label: "Their Birthday") {
-                            DatePicker("", selection: $partnerDate, in: dateRange, displayedComponents: .date)
-                                .datePickerStyle(.wheel)
-                                .labelsHidden()
-                                .frame(maxWidth: .infinity)
-                                .colorScheme(.dark)
-                        }
-
                     }
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
