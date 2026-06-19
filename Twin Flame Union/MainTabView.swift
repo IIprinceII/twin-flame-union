@@ -88,7 +88,10 @@ struct MainTabView: View {
             }
         }
         .animation(.spring(response: 0.4), value: toneGenerator.isPlaying)
-        .onAppear { StreakTracker.checkIn() }
+        .onAppear {
+            StreakTracker.checkIn()
+            NotificationScheduler.shared.reschedule()
+        }
         .onChange(of: selectedTab) {
             HapticManager.impact(.light)
         }
