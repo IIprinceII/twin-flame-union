@@ -233,6 +233,7 @@ struct ContentView: View {
 
                     Spacer().frame(height: 24)
                 }
+                .readableWidth()
             }
         }
         .navigationTitle("")

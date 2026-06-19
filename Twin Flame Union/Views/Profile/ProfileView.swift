@@ -93,6 +93,7 @@ struct ProfileView: View {
                     Spacer().frame(height: 20)
                 }
                 .padding(.top, 8)
+                .readableWidth()
             }
         }
         .navigationTitle("Profile")

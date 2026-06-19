@@ -69,6 +69,7 @@ struct JourneyView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
                     .padding(.bottom, 40)
+                    .readableWidth()
                 }
                 .animation(.easeInOut(duration: 0.2), value: selectedCategory)
             }
