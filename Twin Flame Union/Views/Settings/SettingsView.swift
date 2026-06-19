@@ -125,7 +125,7 @@ struct SettingsView: View {
             }
             .tint(AppColors.gold)
             .onChange(of: reminderEnabled) {
-                reminderEnabled ? scheduleReminder() : cancelReminder()
+                NotificationScheduler.shared.reschedule()
             }
 
             if reminderEnabled {
@@ -146,7 +146,7 @@ struct SettingsView: View {
                     let comps = Calendar.current.dateComponents([.hour, .minute], from: reminderTime)
                     reminderHour   = comps.hour   ?? 9
                     reminderMinute = comps.minute ?? 0
-                    scheduleReminder()
+                    NotificationScheduler.shared.reschedule()
                 }
             }
 
