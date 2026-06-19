@@ -50,22 +50,44 @@ serve(async (req) => {
   }
   const cappedTokens = Math.min(Number(max_tokens) || 300, MAX_TOKENS_CAP);
 
-  // Per-IP rate limit (fail-open on infrastructure error so a DB hiccup
-  // never takes the AI features offline).
-  const ip = (req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
+  // Abuse controls. The anon key ships inside the app binary, so these caps — not
+  // the key — are what protect the paid Anthropic account. They FAIL CLOSED: if the
+  // limiter backend is unavailable, or the platform gives no client IP, we refuse
+  // the request rather than forward it to the paid upstream.
+  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
+  if (!ip) {
+    return json({ error: "Request origin could not be verified." }, 400);
+  }
   try {
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // Hard global daily ceiling — a backstop against a leaked anon key draining the
+    // Anthropic budget even from many IPs. Tune p_max_per_day to your budget.
+    const { data: underGlobal, error: gErr } = await admin.rpc(
+      "check_proxy_under_global_cap",
+      { p_max_per_day: 5000 },
+    );
+    if (gErr || underGlobal === false) {
+      if (gErr) console.error("global-cap check failed:", gErr.message);
+      return json({ error: "Service temporarily unavailable. Please try again shortly." }, 503);
+    }
+
+    // Per-IP rate limit (this call also records the hit).
     const { data: underLimit, error: rlErr } = await admin.rpc("check_proxy_rate", { p_ip: ip });
     if (rlErr) {
       console.error("rate-limit check failed:", rlErr.message);
-    } else if (underLimit === false) {
+      return json({ error: "Service temporarily unavailable. Please try again shortly." }, 503);
+    }
+    if (underLimit === false) {
       return json({ error: "Rate limit exceeded. Try again shortly." }, 429);
     }
   } catch (e) {
+    // Fail closed: never forward to the paid upstream when the limiter is down.
     console.error("rate-limit unavailable:", e);
+    return json({ error: "Service temporarily unavailable. Please try again shortly." }, 503);
   }
 
   const upstream = await fetch("https://api.anthropic.com/v1/messages", {
